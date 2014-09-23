@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="871.0" prefWidth="1311.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainFXMLController">
+    <children>
+      <Separator halignment="LEFT" layoutX="83.0" layoutY="6.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="1128.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="83.0" AnchorPane.rightAnchor="-46.0" AnchorPane.topAnchor="6.0" />
+      <AnchorPane fx:id="connectToDatabaseAnchorPane" layoutX="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane fx:id="anchorPaneVisualize" layoutX="88.0" prefHeight="871.0" prefWidth="1223.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="88.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.5" layoutX="21.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <items>
+                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="VISUALIZE" textAlignment="CENTER">
+                           <font>
+                              <Font name="Menlo Regular" size="20.0" />
+                           </font>
+                        </Label>
+                        <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="260.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="378.0" SplitPane.resizableWithParent="false">
+                           <items>
+                              <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">
+                                 <tooltip>
+                                    <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+                                 </tooltip>
+                              </Button>
+                              <Button id="barChartButton" fx:id="handleBarChartButton" onAction="#barChartButton">
+                                 <tooltip>
+                                    <Tooltip text="This button opens up the visualize pane" />
+                                 </tooltip>
+                              </Button>
+                              <Button id="lineChartButton" fx:id="handleLineChartButton" onAction="#lineChartButton">
+                                 <tooltip>
+                                    <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                 </tooltip>
+                              </Button>
+                           </items>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </ToolBar>
+                     </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="anchorPaneTables" layoutX="88.0" prefHeight="871.0" prefWidth="1223.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="88.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <SplitPane fx:id="splitPaneTables" dividerPositions="0.12008733624454149" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="Your connected tables" textAlignment="CENTER">
+                           <font>
+                              <Font name="Menlo Regular" size="20.0" />
+                           </font>
+                        </Label>
+                        <TabPane id="tabPane" fx:id="tabPane" prefHeight="526.0" prefWidth="673.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </TabPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="anchorPaneCombine" layoutX="98.0" layoutY="10.0" prefHeight="871.0" prefWidth="1223.0" visible="false">
+               <children>
+                  <SplitPane fx:id="splitPaneTables1" dividerPositions="0.5" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <items>
+                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="Combine Columns" textAlignment="CENTER">
+                           <font>
+                              <Font name="Menlo Regular" size="20.0" />
+                           </font>
+                        </Label>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="978.0" layoutY="82.0" text="Combined Columns" />
+                              <HBox fx:id="hBoxWithTreeViews" layoutX="95.0" layoutY="40.0" />
+                              <TreeView fx:id="treeViewCombinedColumns" layoutX="940.0" layoutY="119.0" prefHeight="200.0" prefWidth="200.0" />
+                              <Button layoutX="1010.0" layoutY="343.0" mnemonicParsing="false" onAction="#createNewCombinedColumnButton" text="Button" />
+                           </children>
+                        </AnchorPane>
+                     </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="871.0" prefWidth="86.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1225.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ToolBar id="toolBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <padding>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="250.0" />
+               </padding>
+               <items>
+                  <Button id="newConnectionButton" fx:id="newConnectionButton1" onAction="#newConnectionButton">
+                     <tooltip>
+                        <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+                     </tooltip>
+                  </Button>
+                  <Button id="dataButton" fx:id="dataButton" onAction="#handleDataButton">
+                     <tooltip>
+                        <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+                     </tooltip>
+                  </Button>
+                  <Button id="visualizeButton" fx:id="visualizeButton" onAction="#visualizeButton">
+                     <tooltip>
+                        <Tooltip text="This button opens up the visualize pane" />
+                     </tooltip>
+                  </Button>
+                  <Button id="combineButton" fx:id="combineButton" onAction="#combineButton">
+                     <tooltip>
+                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                     </tooltip>
+                  </Button>
+               </items>
+            </ToolBar>
+         </children>
+      </AnchorPane>
+    </children>
+</AnchorPane>
