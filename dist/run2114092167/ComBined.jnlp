@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ComBined.jar" size="70971" download="eager" />
+    <jar href="ComBined.jar" size="70950" download="eager" />
     <jar href="lib/controlsfx-8.0.6_20.jar" size="856539" download="eager" />
     <jar href="lib/controlsfx-samples-8.0.6_20.jar" size="604038" download="eager" />
     <jar href="lib/mysql-connector-java-5.1.23-bin.jar" size="827901" download="eager" />

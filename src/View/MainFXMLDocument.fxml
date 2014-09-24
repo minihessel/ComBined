@@ -82,6 +82,7 @@
                               <Label layoutX="978.0" layoutY="82.0" text="Combined Columns" />
                               <HBox fx:id="hBoxWithTreeViews" layoutX="95.0" layoutY="40.0" />
                               <TreeView fx:id="treeViewCombinedColumns" layoutX="940.0" layoutY="119.0" prefHeight="200.0" prefWidth="200.0" />
+                              <Button mnemonicParsing="false" onAction="#btnMakeTreeViewWithCombined" text="Button" />
                               <Button layoutX="1010.0" layoutY="343.0" mnemonicParsing="false" onAction="#createNewCombinedColumnButton" text="Button" />
                            </children>
                         </AnchorPane>
