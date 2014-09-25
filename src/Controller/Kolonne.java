@@ -44,8 +44,6 @@ public class Kolonne {
 
     }
 
-
-
     void addColumn(Kolonne kol) {
         listOfColumns.add(kol);
     }
@@ -53,20 +51,20 @@ public class Kolonne {
     void addField(String item) {
         fields.add(item);
     }
-    
-        void combineColumns() {
 
+    void combineColumns() {
         Collections.sort(listOfColumns, new ColumnTableComperator());
-        for (Kolonne kol : listOfColumns) {
 
-            fields.addAll(kol.allFields());
-            System.out.println(kol.allFields());
+        for (Kolonne kol : listOfColumns) {
+            for (int i = 0; i < kol.fields.size(); i++) {
+                fields.add(kol.fields.get(i));
+            }
         }
-        System.out.println(allFields());
+
     }
 
     List<String> allFields() {
-        return new ArrayList<String>(fields);
+        return new ArrayList<>(fields);
     }
 
     //Overkjører toString for å isteden returnere kolonnenavn og felter
