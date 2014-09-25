@@ -76,7 +76,7 @@ public class MainFXMLController implements Initializable {
     TextField txtInstance = new TextField();
     ChoiceBox choiceBoxTables = new ChoiceBox();
 
-    Map<TreeItem, List> mapOverKolonnerOgTreItems = new HashMap<TreeItem, List>();
+    Map<TreeItem, Kolonne> mapOverKolonnerOgTreItems = new HashMap<TreeItem, Kolonne>();
 
     Dialog dlg;
     public int tabPaneCounter = 0;
@@ -113,7 +113,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     HBox hBoxWithTreeViews;
 
-    List<List<Kolonne>> listOfCombinedColumns = new ArrayList<List<Kolonne>>();
+    List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
 
     TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
@@ -219,12 +219,14 @@ public class MainFXMLController implements Initializable {
         treItem.expandedProperty().set(true);
 
         //vi lager en liste(som tilsvarer en kombinert kolonne). Listen skal inneholde kolonner(altså den kombinerte kolonnen skal inneholde hvilke kolonner den skal være)   
-        List<Kolonne> combinedColumn = new ArrayList<Kolonne>();
+        //  List<Kolonne> combinedColumn = new ArrayList<Kolonne>();
+        Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl3,true);
+
         //vi legger til den nye combinedColumn(den nye kombinerte kolonnen i combinedColumn over kombinerte kolonner
-        listOfCombinedColumns.add(combinedColumn);
+        listOfCombinedColumns.add(kol);
         listOfColumnNames.add(treItem.getValue().toString());
         //deretter mapper vi den nye kombinerte kolonnen opp mot treitemet, sånn at vi senere kan hente ut den kombinerte kolonnen
-        mapOverKolonnerOgTreItems.put(treItem, listOfCombinedColumns.get(listOfCombinedColumns.size() - 1));
+        mapOverKolonnerOgTreItems.put(treItem, kol);
         //Deretter putter vi kolonnen i treeviewet for kombinerte kolonner
         kombinerteKolonnerRoot.getChildren().add(treItem);
 
@@ -339,7 +341,7 @@ public class MainFXMLController implements Initializable {
         //  String query = textField.getText();
         SQL_manager sql_manager = new SQL_manager();
         //her skjer oppkoblingen
-        sql_manager.getConnection("localhost", 8889, "eskildb");
+        sql_manager.getConnection("localhost", 8889, "employees");
 
         //laster inn dataen med en query
         tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
@@ -407,9 +409,11 @@ public class MainFXMLController implements Initializable {
     }
 
     public void addColumnToCombinedColumn(TreeCell treeCell, int hvilkenTabell, int DRAGGEDINDEX) {
-        List<Kolonne> targetCombinedColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
+        Kolonne targetCombinedColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
         Kolonne sourceDraggedColumn = getTablesList().get(hvilkenTabell).listofColumns.get(DRAGGEDINDEX);
-        targetCombinedColumn.add(sourceDraggedColumn);
+
+        targetCombinedColumn.listOfColumns.add(sourceDraggedColumn);
+        
     }
 
     private void makeTableViewWithCombinedColumns(Table tbl, TableView tableView) {
@@ -417,29 +421,11 @@ public class MainFXMLController implements Initializable {
         tableView.getItems().clear();
         tableView.getColumns().clear();
 
-        int counter = 0;
-        tbl.numberofRows = 0;
-
         //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
-        for (List<Kolonne> list : listOfCombinedColumns) {
+        for (Kolonne kol : listOfCombinedColumns) {
 
-            Collections.sort(list, new ColumnTableComperator());
-            int antallRader = 0;
-
-            //deretter looper vi igjennom alle kolonnene i den kombinerte kolonnen for å sjekke hvor mange rader det er
-            for (Kolonne kol : list) {
-
-                antallRader += kol.tbl.numberofRows;
-            }
-            //Hvis det er FLER rader i denne kombinerte kolonnen i noe annet i tbl3, blir dette antall rader. Dette fordi en kolonne kan ha 7 rader, mens en annen 6
-            if (antallRader > tbl.numberofRows) {
-                tbl.numberofRows
-                        = antallRader;
-            }
-
-            //Deretter lager vi den kombinerte kolonnen
-            tbl.loadCombinedColumns(list, listOfColumnNames.get(counter), tbl);
-            counter++;
+           
+            tbl.listofColumns.add(kol);
 
         }
 

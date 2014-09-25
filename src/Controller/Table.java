@@ -5,6 +5,7 @@ import combined.checkForInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -31,6 +32,7 @@ public class Table {
     public Table() {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
+        
 
     }
 
@@ -94,33 +96,7 @@ public class Table {
 
     }
 
-    //metoden for å kombinere flere kolonner sammen
-    public void loadCombinedColumns(List<Kolonne> listOfCombined, String navn, Table tbl) {
-
-        Boolean isInteger = false;
-        Boolean isString = false;
-        for (Kolonne kol : listOfCombined) {
-
-            //har brukeren faktisk sendt i en kolonne som enten inneholder streng eller int?
-            if (checkForInteger.isInteger(kol.allFields().get(0))) {
-                isInteger = true;
-
-            } else if (checkForInteger.isInteger(kol.allFields().get(0)) == false) {
-                isString = true;
-
-            }
-        }
-        if (isInteger && isString == false || isString && isInteger == false) {
-
-            Kolonne kolComb = new Kolonne(listOfCombined, navn, tbl);
-
-            listofColumns.add(kolComb);
-
-        } else {
-            System.out.println("kombo not allowed");
-        }
-
-    }
+   
 
     public TableView fillTableView(TableView tableView, Table tbl) {
 
@@ -150,9 +126,13 @@ public class Table {
 
         }
 
+      
         for (Kolonne kol : listofColumns) {
-
-            dataen.addAll(kol.allFields());
+            if(kol.amICombined == true)
+            {
+                kol.combineColumns();
+            }
+          dataen.addAll(kol.allFields());
 
         }
 
