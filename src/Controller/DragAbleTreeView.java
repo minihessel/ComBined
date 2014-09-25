@@ -28,32 +28,9 @@ public class DragAbleTreeView {
     private static TreeItem DRAGGEDTARGET;
     private static int DRAGGEDINDEX;
 
-    private void addDragAndDrop(TreeCell<String> treeCell,MainFXMLController mainFXMLController) {
+    private void addDragAndDrop(TreeCell<String> treeCell, MainFXMLController mainFXMLController) {
         //denne metoden legger til mulighet for drag and drop på treeviews.
         //ved å legge til drag and drop kan brukeren dra kolonner for å lage kombinerte kolonner. 
-        treeCell.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            int clickCount = 0;
-
-            @Override
-            public void handle(MouseEvent event) {
-
-                if (clickCount >= 2 && treeCell.getTreeItem().valueProperty().get() == "ColumnTrue") {
-                    Optional<String> response = Dialogs.create()
-                            .title("Text Input Dialog")
-                            .masthead("Look, a Text Input Dialog")
-                            .message("Please enter your name:")
-                            .showTextInput("walter");
-
-                    treeCell.setText("asd");
-
-// The Java 8 way to get the response value (with lambda expression).
-                    response.ifPresent(name
-                            -> treeCell.getTreeItem().setValue(name));
-                }
-                clickCount++;
-            }
-        });
 
         treeCell.setOnDragDetected(new EventHandler<MouseEvent>() {
             //brukeren har tatt tak i et treitem og drar det
@@ -97,12 +74,7 @@ public class DragAbleTreeView {
         });
 
         treeCell.setOnDragDropped(new EventHandler<DragEvent>() {
-            
-
             public void handle(DragEvent event) {
-                for (Table tbl : mainFXMLController.tablesList) {
-                    System.out.println(tbl);
-                }
                 //brukeren har sluppet elementet og vi må sjekke at elementet brukeren drar over faktisk er et treitem
                 //dette for å sørge for at brukeren ikke kan slippe tre itemet hvor som helst
                 if (DRAGGEDSOURCE != null && DRAGGEDTARGET != null) {
@@ -110,19 +82,12 @@ public class DragAbleTreeView {
                         System.out.println("hva med her");
 
                         DRAGGEDTARGET.getChildren().add(DRAGGEDSOURCE.getTreeItem());
-
                         int hvilkenTabell = Integer.parseInt(DRAGGEDSOURCE.getTreeView().getUserData().toString());
-
-                        System.out.println(hvilkenTabell);
                         //kaller på den kombinerte kolonnen ved å bruke map og sende inn treitemet
                         //deretter sier vi at vi skal legge til denne kolonnen i den kombinerte kolonnen
-                        mainFXMLController.mapOverKolonnerOgTreItems.get(treeCell.getTreeItem()).
-                                add(
-                                        mainFXMLController.getTablesList().get(hvilkenTabell).listofColumns.get(DRAGGEDINDEX)
-                                );
-                        //     mapOverKolonnerOgTreItems.get(treeCell.getTreeItem()).add(tablesList.get(hvilkenTabell).listofColumns.get(DRAGGEDINDEX));
-                    } 
-                    else {
+                        mainFXMLController.addColumnToCombinedColumn(treeCell, hvilkenTabell, DRAGGEDINDEX);
+
+                    } else {
                         Dialogs.create()
                                 .title("Information Dialog")
                                 .masthead(null)
@@ -131,8 +96,7 @@ public class DragAbleTreeView {
 
                         treeCell.setText("asd");
                     }
-                } 
-                else {
+                } else {
                     Dialogs.create()
                             .title("Information Dialog")
                             .masthead(null)
@@ -153,7 +117,7 @@ public class DragAbleTreeView {
         });
     }
 
-    public void makeTreeViewDragAble(TreeView treeView,MainFXMLController mainFXMLController) {
+    public void makeTreeViewDragAble(TreeView treeView, MainFXMLController mainFXMLController) {
 
         treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
             @Override
@@ -173,7 +137,7 @@ public class DragAbleTreeView {
                     }
                 };
 
-                addDragAndDrop(treeCell,mainFXMLController);
+                addDragAndDrop(treeCell, mainFXMLController);
                 treeView.setEditable(true);
                 return treeCell;
             }
