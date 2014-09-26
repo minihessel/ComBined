@@ -11,7 +11,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +37,12 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.ButtonBar;
 import org.controlsfx.control.action.AbstractAction;
 import org.controlsfx.control.action.Action;
@@ -111,7 +113,7 @@ public class MainFXMLController implements Initializable {
     TreeView treeViewCombinedColumns;
 
     @FXML
-    HBox hBoxWithTreeViews;
+    TabPane hBoxWithTreeViews;
 
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
@@ -158,8 +160,10 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException {
         setVisibleView("tableView");
-      //  openDialogWithSQLConnectionInfo();
-         createTabPaneWithTable("employees");
+        //  openDialogWithSQLConnectionInfo();
+        createTabPaneWithTable("test");
+        treeViewCombinedColumns.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+
 
     }
 
@@ -170,7 +174,7 @@ public class MainFXMLController implements Initializable {
         Tab tab = new Tab();
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
-        makeTableViewWithCombinedColumns(tbl3, tableViewCombined);
+     tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
     }
 
     @FXML
@@ -189,10 +193,10 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void createNewCombinedColumnButton(ActionEvent event) {
-        createNewCombinedColumn();
+        createNewCombinedColumn(tbl3);
     }
 
-    private void createNewCombinedColumn() {
+    private void createNewCombinedColumn(Table tbl) {
         Image nodeImage = new Image(
                 getClass().getResourceAsStream("/Icons/root.png"));
         //metode for å lage en ny kombinert kolonne
@@ -221,10 +225,11 @@ public class MainFXMLController implements Initializable {
 
         //vi lager en liste(som tilsvarer en kombinert kolonne). Listen skal inneholde kolonner(altså den kombinerte kolonnen skal inneholde hvilke kolonner den skal være)   
         //  List<Kolonne> combinedColumn = new ArrayList<Kolonne>();
-        Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl3,true);
+        Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl, true);
 
         //vi legger til den nye combinedColumn(den nye kombinerte kolonnen i combinedColumn over kombinerte kolonner
-        listOfCombinedColumns.add(kol);
+ 
+        tbl.listofColumns.add(kol);
         listOfColumnNames.add(treItem.getValue().toString());
         //deretter mapper vi den nye kombinerte kolonnen opp mot treitemet, sånn at vi senere kan hente ut den kombinerte kolonnen
         mapOverKolonnerOgTreItems.put(treItem, kol);
@@ -342,7 +347,7 @@ public class MainFXMLController implements Initializable {
         //  String query = textField.getText();
         SQL_manager sql_manager = new SQL_manager();
         //her skjer oppkoblingen
-        sql_manager.getConnection("localhost", 8889, "employees");
+        sql_manager.getConnection("localhost", 8889, "eskildb");
 
         //laster inn dataen med en query
         tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
@@ -360,8 +365,14 @@ public class MainFXMLController implements Initializable {
 
         TreeItem<String> treeView2Root = new TreeItem<String>("MYSQL");
 
+                
         for (Kolonne kol : tabellen.listofColumns) {
-            treeView2Root.getChildren().add(new TreeItem<>(kol.NAVN));
+            Image nodeImage = new Image(
+                getClass().getResourceAsStream("/Icons/root.png"));
+            TreeItem treItem = new TreeItem();
+            treItem.setGraphic(new ImageView(nodeImage));
+            treItem.setValue(kol.NAVN);
+            treeView2Root.getChildren().add(treItem);
         }
         treeView.setRoot(treeView2Root);
         treeView.setShowRoot(false);
@@ -372,10 +383,10 @@ public class MainFXMLController implements Initializable {
         Tab tab = new Tab();
 
         Optional<String> response = Dialogs.create()
-                .title("Text Input Dialog")
-                .masthead("Look, a Text Input Dialog")
-                .message("Please enter your name:")
-                .showTextInput("walter");
+                .title("Your table name")
+               
+                .message("What would you like to name your table in the tabview?")
+                .showTextInput(" ");
 
         //spør brukeren hva denne tabpanen skal hete
         response.ifPresent(name
@@ -391,12 +402,15 @@ public class MainFXMLController implements Initializable {
         tab.setId("" + tabPaneCounter);
 
         VBox pane = new VBox();
-        Label lbl = new Label("TABELL OG SERVER 3:");
-        treeView.setUserData(tabPaneCounter);
-        pane.getChildren().add(lbl);
-        pane.getChildren().add(treeView);
 
-        hBoxWithTreeViews.getChildren().add(pane);
+        treeView.setUserData(tabPaneCounter);
+
+        pane.getChildren().add(treeView);
+        Tab treeViewTab = new Tab();
+        treeViewTab.setText(tab.getText());
+        treeViewTab.setContent(pane);
+
+        hBoxWithTreeViews.getTabs().add(treeViewTab);
 
         tabPaneCounter++;
 
@@ -414,7 +428,7 @@ public class MainFXMLController implements Initializable {
         Kolonne sourceDraggedColumn = getTablesList().get(hvilkenTabell).listofColumns.get(DRAGGEDINDEX);
 
         targetCombinedColumn.listOfColumns.add(sourceDraggedColumn);
-        
+
     }
 
     private void makeTableViewWithCombinedColumns(Table tbl, TableView tableView) {
@@ -423,12 +437,7 @@ public class MainFXMLController implements Initializable {
         tableView.getColumns().clear();
 
         //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
-        for (Kolonne kol : listOfCombinedColumns) {
-
-           
-            tbl.listofColumns.add(kol);
-
-        }
+   
 
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
         tableView = tbl.fillTableView(tableView, tbl);

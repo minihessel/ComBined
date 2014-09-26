@@ -80,6 +80,7 @@ public class DragAbleTreeView {
                 if (DRAGGEDSOURCE != null && DRAGGEDTARGET != null) {
                     if (DRAGGEDTARGET.getGraphic() != null) {
                         System.out.println("hva med her");
+                       
 
                         DRAGGEDTARGET.getChildren().add(DRAGGEDSOURCE.getTreeItem());
                         int hvilkenTabell = Integer.parseInt(DRAGGEDSOURCE.getTreeView().getUserData().toString());

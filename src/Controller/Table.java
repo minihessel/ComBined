@@ -136,7 +136,7 @@ public class Table {
 
         }
 
-        dataen = transpose(dataen);
+       dataen = transpose(dataen);
 
         //laster inn all dataen i tableviewen.
         tableView.setItems(dataen);
