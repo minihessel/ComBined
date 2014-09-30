@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
@@ -12,6 +13,7 @@
 
 <AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="871.0" prefWidth="1311.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainFXMLController">
     <children>
+      <ImageView fx:id="imageView" opacity="0.55" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Separator halignment="LEFT" layoutX="83.0" layoutY="6.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="1128.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="83.0" AnchorPane.rightAnchor="-46.0" AnchorPane.topAnchor="6.0" />
       <AnchorPane fx:id="connectToDatabaseAnchorPane" layoutX="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -24,7 +26,7 @@
                               <Font name="Menlo Regular" size="20.0" />
                            </font>
                         </Label>
-                        <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="260.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="378.0" SplitPane.resizableWithParent="false">
+                        <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
                            <items>
                               <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">
                                  <tooltip>
@@ -90,6 +92,11 @@
                   </SplitPane>
                </children>
             </AnchorPane>
+            <Button id="btnHelp" fx:id="btnHelp" layoutX="1263.0" layoutY="824.0" onAction="#btnHelp" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <tooltip>
+                  <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+               </tooltip>
+            </Button>
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="871.0" prefWidth="86.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1225.0" AnchorPane.topAnchor="0.0">
@@ -99,22 +106,22 @@
                   <Insets bottom="1.0" left="1.0" right="1.0" top="250.0" />
                </padding>
                <items>
-                  <Button id="newConnectionButton" fx:id="newConnectionButton1" onAction="#newConnectionButton">
+                  <Button id="newConnectionButton" fx:id="btnNewConnection" onAction="#newConnectionButton">
                      <tooltip>
                         <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
                      </tooltip>
                   </Button>
-                  <Button id="dataButton" fx:id="dataButton" onAction="#handleDataButton">
+                  <Button id="dataButton" fx:id="btnConnectedTables" onAction="#handleDataButton">
                      <tooltip>
                         <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
                      </tooltip>
                   </Button>
-                  <Button id="visualizeButton" fx:id="visualizeButton" onAction="#visualizeButton">
+                  <Button id="visualizeButton" fx:id="btnVisualize" onAction="#visualizeButton">
                      <tooltip>
                         <Tooltip text="This button opens up the visualize pane" />
                      </tooltip>
                   </Button>
-                  <Button id="combineButton" fx:id="combineButton" onAction="#combineButton">
+                  <Button id="combineButton" fx:id="btnCombine" onAction="#combineButton">
                      <tooltip>
                         <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
                      </tooltip>

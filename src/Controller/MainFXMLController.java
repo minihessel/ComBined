@@ -18,6 +18,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -43,6 +46,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.controlsfx.control.ButtonBar;
 import org.controlsfx.control.action.AbstractAction;
 import org.controlsfx.control.action.Action;
@@ -82,8 +86,20 @@ public class MainFXMLController implements Initializable {
 
     Dialog dlg;
     public int tabPaneCounter = 0;
+    static Stage stage; 
     @FXML
     private Label label;
+    
+     @FXML
+    private Button btnNewConnection;
+       @FXML
+    private Button btnConnectedTables;
+         @FXML
+    private Button btnVisualize;
+         
+           @FXML
+    private Button btnCombine;
+     
     @FXML
     Button visualizeButton;
 
@@ -115,10 +131,17 @@ public class MainFXMLController implements Initializable {
     @FXML
     TabPane hBoxWithTreeViews;
 
+    @FXML
+            ImageView imageView;
+    
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
 
     TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
+    
+    String whichView; 
+    
+    
 
     @FXML
     private void visualizeButton(ActionEvent event) {
@@ -129,6 +152,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void handleDataButton(ActionEvent event) {
         setVisibleView("tableView");
+        whichView = "tableView";
     }
 
     @FXML
@@ -160,6 +184,9 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException {
         setVisibleView("tableView");
+      
+ 
+        
         //  openDialogWithSQLConnectionInfo();
         createTabPaneWithTable("test");
         treeViewCombinedColumns.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -176,6 +203,17 @@ public class MainFXMLController implements Initializable {
         tabPane.getTabs().add(tab);
      tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
     }
+    
+        @FXML
+    private void btnHelp(ActionEvent event) throws IOException {
+       
+IntroController introController = new IntroController();
+
+introController.openWindow();
+        
+        
+        
+    }
 
     @FXML
     private void barChartButton(ActionEvent event) {
@@ -188,6 +226,13 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void lineChartButton(ActionEvent event) {
+
+    }
+    
+  
+    
+      @FXML
+    private void btnNextUserInterFaceIntro(ActionEvent event) {
 
     }
 
@@ -240,8 +285,25 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+
+
+        
         treeViewCombinedColumns.setRoot(kombinerteKolonnerRoot);
         treeViewCombinedColumns.setShowRoot(false);
+        
+
+        
+        btnConnectedTables.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        btnVisualize.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        Image noTables = new Image(
+                getClass().getResourceAsStream("/Icons/no_tables.png"));
+         imageView.setImage(noTables);
+        imageView.visibleProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        
+        
+
 
     }
 

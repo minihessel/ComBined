@@ -39,6 +39,12 @@
 
 }
 
+#btnHelp{
+    -fx-graphic:url('/Icons/help.png');
+    -fx-background-color: transparent; 
+
+}
+
 
 .button:hover {
 
