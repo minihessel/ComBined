@@ -19,12 +19,13 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -46,6 +47,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.ButtonBar;
 import org.controlsfx.control.action.AbstractAction;
@@ -53,6 +55,7 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.DialogStyle;
 import org.controlsfx.dialog.Dialogs;
+import quicktime.app.spaces.Controller;
 
 /**
  *
@@ -83,23 +86,23 @@ public class MainFXMLController implements Initializable {
     ChoiceBox choiceBoxTables = new ChoiceBox();
 
     Map<TreeItem, Kolonne> mapOverKolonnerOgTreItems = new HashMap<TreeItem, Kolonne>();
-
+     String whichHelpView;
     Dialog dlg;
     public int tabPaneCounter = 0;
-    static Stage stage; 
+    static Stage stage;
     @FXML
     private Label label;
-    
-     @FXML
+
+    @FXML
     private Button btnNewConnection;
-       @FXML
+    @FXML
     private Button btnConnectedTables;
-         @FXML
+    @FXML
     private Button btnVisualize;
-         
-           @FXML
+
+    @FXML
     private Button btnCombine;
-     
+
     @FXML
     Button visualizeButton;
 
@@ -132,16 +135,16 @@ public class MainFXMLController implements Initializable {
     TabPane hBoxWithTreeViews;
 
     @FXML
-            ImageView imageView;
-    
+    ImageView imageView;
+
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
 
     TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
-    
-    String whichView; 
-    
-    
+
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
+
+    IntroController introController;
 
     @FXML
     private void visualizeButton(ActionEvent event) {
@@ -152,12 +155,18 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void handleDataButton(ActionEvent event) {
         setVisibleView("tableView");
-        whichView = "tableView";
+        whichHelpView = "tableView";
     }
 
     @FXML
     private void combineButton(ActionEvent event) {
         setVisibleView("combineView");
+          whichHelpView = "combineView";
+          System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
+          for (String k : treeViewCombinedColumns.getStyleClass())
+          {
+              System.out.println(k);
+          }
     }
 
     public void setVisibleView(String whichView) {
@@ -184,12 +193,10 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException {
         setVisibleView("tableView");
-      
- 
-        
+
         //  openDialogWithSQLConnectionInfo();
         createTabPaneWithTable("test");
-        treeViewCombinedColumns.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+     
 
 
     }
@@ -201,18 +208,27 @@ public class MainFXMLController implements Initializable {
         Tab tab = new Tab();
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
-     tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
+        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
     }
-    
-        @FXML
-    private void btnHelp(ActionEvent event) throws IOException {
-       
-IntroController introController = new IntroController();
 
-introController.openWindow();
-        
-        
-        
+    @FXML
+    private void btnHelp(ActionEvent event) throws IOException {
+
+        loadHelpScreen();
+
+    }
+
+    void loadHelpScreen() throws IOException {
+        Parent root = fxmlLoader.load();
+        stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("My New Stage Title");
+        stage.setScene(new Scene(root));
+        introController = fxmlLoader.getController();
+        introController.setValue(whichHelpView);
+        stage.showAndWait();
+
     }
 
     @FXML
@@ -228,10 +244,8 @@ introController.openWindow();
     private void lineChartButton(ActionEvent event) {
 
     }
-    
-  
-    
-      @FXML
+
+    @FXML
     private void btnNextUserInterFaceIntro(ActionEvent event) {
 
     }
@@ -243,7 +257,7 @@ introController.openWindow();
 
     private void createNewCombinedColumn(Table tbl) {
         Image nodeImage = new Image(
-                getClass().getResourceAsStream("/Icons/root.png"));
+                getClass().getResourceAsStream("/Icons/combined_column_icon.png"));
         //metode for å lage en ny kombinert kolonne
         //først lager vi trenoden i treeviewen
         TreeItem treItem = new TreeItem(" ", new ImageView(nodeImage));
@@ -273,7 +287,6 @@ introController.openWindow();
         Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl, true);
 
         //vi legger til den nye combinedColumn(den nye kombinerte kolonnen i combinedColumn over kombinerte kolonner
- 
         tbl.listofColumns.add(kol);
         listOfColumnNames.add(treItem.getValue().toString());
         //deretter mapper vi den nye kombinerte kolonnen opp mot treitemet, sånn at vi senere kan hente ut den kombinerte kolonnen
@@ -286,25 +299,17 @@ introController.openWindow();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-
-
-        
         treeViewCombinedColumns.setRoot(kombinerteKolonnerRoot);
         treeViewCombinedColumns.setShowRoot(false);
-        
 
-        
         btnConnectedTables.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
-btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnVisualize.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         Image noTables = new Image(
                 getClass().getResourceAsStream("/Icons/no_tables.png"));
-         imageView.setImage(noTables);
+        imageView.setImage(noTables);
         imageView.visibleProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
-        
-        
-
-
+System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
     }
 
     final Action actionListenerSQLConnect = new AbstractAction("Login") {
@@ -427,12 +432,11 @@ btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0))
 
         TreeItem<String> treeView2Root = new TreeItem<String>("MYSQL");
 
-                
         for (Kolonne kol : tabellen.listofColumns) {
-            Image nodeImage = new Image(
-                getClass().getResourceAsStream("/Icons/root.png"));
+           
             TreeItem treItem = new TreeItem();
-            treItem.setGraphic(new ImageView(nodeImage));
+            treItem.setGraphic(new ImageView(new Image(
+                    getClass().getResourceAsStream("/Icons/column_icon.png"))));
             treItem.setValue(kol.NAVN);
             treeView2Root.getChildren().add(treItem);
         }
@@ -444,19 +448,7 @@ btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0))
 
         Tab tab = new Tab();
 
-        Optional<String> response = Dialogs.create()
-                .title("Your table name")
-               
-                .message("What would you like to name your table in the tabview?")
-                .showTextInput(" ");
-
-        //spør brukeren hva denne tabpanen skal hete
-        response.ifPresent(name
-                -> tab.setText(name));
-
-        if (response.isPresent() == false) {
-            tab.setText("Unnamed");
-        }
+        tab.setText(whichTable + "@" + sql_manager.instanceName);
         treeView2Root.setValue(tab.getText());
         tabPane.getTabs().add(tab);
 
@@ -499,8 +491,6 @@ btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0))
         tableView.getColumns().clear();
 
         //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
-   
-
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
         tableView = tbl.fillTableView(tableView, tbl);
 

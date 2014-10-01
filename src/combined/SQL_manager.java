@@ -23,6 +23,8 @@ public class SQL_manager {
      static Connection conn;
 
     static Statement st;
+    
+     public String instanceName; 
 
     public SQL_manager () {
     
@@ -44,7 +46,7 @@ public class SQL_manager {
    
 
    public Connection getConnection(String mySqlAdress, Integer myPort,String sqlInstance) throws SQLException{
-    
+   instanceName = sqlInstance;
         
         try {
             // Step 1: Load the JDBC driver.

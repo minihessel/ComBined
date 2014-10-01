@@ -50,7 +50,7 @@ public class DragAbleTreeView {
                 //og hvilken index det har
                 DRAGGEDINDEX = (treeCell.getTreeView().getSelectionModel().getSelectedIndex());
 
-                event.consume();
+              
 
             }
         });
@@ -64,11 +64,12 @@ public class DragAbleTreeView {
                 if (event.getGestureSource() != treeCell
                         && event.getDragboard().hasString()) {
 
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                   event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 
+                 
                 }
 
-                event.consume();
+           
             }
 
         });
@@ -80,7 +81,7 @@ public class DragAbleTreeView {
                 if (DRAGGEDSOURCE != null && DRAGGEDTARGET != null) {
                     if (DRAGGEDTARGET.getGraphic() != null) {
                         System.out.println("hva med her");
-                       
+                      
 
                         DRAGGEDTARGET.getChildren().add(DRAGGEDSOURCE.getTreeItem());
                         int hvilkenTabell = Integer.parseInt(DRAGGEDSOURCE.getTreeView().getUserData().toString());
@@ -109,13 +110,13 @@ public class DragAbleTreeView {
                 boolean success = false;
 
                 /* data dropped */
-                event.setDropCompleted(success);
-
-                event.consume();
-
+               DRAGGEDTARGET.setGraphic(DRAGGEDSOURCE.getGraphic());
+             
+        
             }
 
         });
+          
     }
 
     public void makeTreeViewDragAble(TreeView treeView, MainFXMLController mainFXMLController) {
@@ -133,7 +134,8 @@ public class DragAbleTreeView {
 
                         } else {
                             setText(null);
-                            setGraphic(null);
+                          setGraphic(null);
+                                  
                         }
                     }
                 };
