@@ -8,7 +8,6 @@ package Controller;
 import combined.SQL_manager;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,19 +15,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -41,21 +38,13 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.control.ButtonBar;
-import org.controlsfx.control.action.AbstractAction;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
+
 import org.controlsfx.dialog.Dialogs;
-import quicktime.app.spaces.Controller;
 
 /**
  *
@@ -86,7 +75,7 @@ public class MainFXMLController implements Initializable {
     ChoiceBox choiceBoxTables = new ChoiceBox();
 
     Map<TreeItem, Kolonne> mapOverKolonnerOgTreItems = new HashMap<TreeItem, Kolonne>();
-     String whichHelpView;
+    String whichHelpView;
     Dialog dlg;
     public int tabPaneCounter = 0;
     static Stage stage;
@@ -135,6 +124,8 @@ public class MainFXMLController implements Initializable {
     TabPane hBoxWithTreeViews;
 
     @FXML
+    Separator separator;
+    @FXML
     ImageView imageView;
 
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
@@ -145,6 +136,12 @@ public class MainFXMLController implements Initializable {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
 
     IntroController introController;
+ 
+    @FXML
+    BorderPane borderPane;
+    @FXML
+    VBox vBoxMenu;
+    @FXML Button btnMenu;
 
     @FXML
     private void visualizeButton(ActionEvent event) {
@@ -152,6 +149,7 @@ public class MainFXMLController implements Initializable {
 
     }
 
+  
     @FXML
     private void handleDataButton(ActionEvent event) {
         setVisibleView("tableView");
@@ -161,12 +159,11 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void combineButton(ActionEvent event) {
         setVisibleView("combineView");
-          whichHelpView = "combineView";
-          System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
-          for (String k : treeViewCombinedColumns.getStyleClass())
-          {
-              System.out.println(k);
-          }
+        whichHelpView = "combineView";
+        System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
+        for (String k : treeViewCombinedColumns.getStyleClass()) {
+            System.out.println(k);
+        }
     }
 
     public void setVisibleView(String whichView) {
@@ -195,9 +192,7 @@ public class MainFXMLController implements Initializable {
         setVisibleView("tableView");
 
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("test");
-     
-
+        createTabPaneWithTable("employees");
 
     }
 
@@ -291,6 +286,7 @@ public class MainFXMLController implements Initializable {
         listOfColumnNames.add(treItem.getValue().toString());
         //deretter mapper vi den nye kombinerte kolonnen opp mot treitemet, sånn at vi senere kan hente ut den kombinerte kolonnen
         mapOverKolonnerOgTreItems.put(treItem, kol);
+
         //Deretter putter vi kolonnen i treeviewet for kombinerte kolonner
         kombinerteKolonnerRoot.getChildren().add(treItem);
 
@@ -298,9 +294,13 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
+
+        borderPane.setLeft(sidebar);
 
         treeViewCombinedColumns.setRoot(kombinerteKolonnerRoot);
         treeViewCombinedColumns.setShowRoot(false);
+        treeViewCombinedColumns.setUserData("combinedColumnTree");
 
         btnConnectedTables.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
@@ -309,100 +309,7 @@ public class MainFXMLController implements Initializable {
                 getClass().getResourceAsStream("/Icons/no_tables.png"));
         imageView.setImage(noTables);
         imageView.visibleProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
-System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
-    }
-
-    final Action actionListenerSQLConnect = new AbstractAction("Login") {
-        // This method is called when the  button is clicked ...
-        public void handle(ActionEvent ae) {
-
-            Dialog dlg = (Dialog) ae.getSource();
-
-            SQL_manager sql_manager = new SQL_manager();
-
-            try {
-                Connection conn = sql_manager.getConnection(txtIP.getText(), Integer.parseInt(txtPort.getText()), txtInstance.getText());
-            } catch (SQLException ex) {
-                Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                sql_manager.getAllTables(choiceBoxTables);
-            } catch (SQLException ex) {
-                Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            for (Object k : choiceBoxTables.getItems().toArray()) {
-                System.out.println(k);
-            }
-            openDialogWithWhichTableInfo();
-            dlg.hide();
-
-        }
-
-    };
-
-    final Action actionListenerWhichTable = new AbstractAction("OK") {
-        // This method is called when the button is clicked ...
-        public void handle(ActionEvent ae) {
-            Dialog d = (Dialog) ae.getSource();
-            d.hide();
-            try {
-                createTabPaneWithTable(choiceBoxTables.getSelectionModel().getSelectedItem().toString());
-            } catch (SQLException ex) {
-                Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    };
-
-    private void openDialogWithSQLConnectionInfo() {
-
-        // Create the custom dialog.
-        dlg = new Dialog(null, "Login Dialog", false, DialogStyle.UNDECORATED);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(0, 10, 0, 10));
-
-        grid.add(new Label("IP:"), 0, 0);
-        grid.add(txtIP, 1, 0);
-        grid.add(new Label("Port:"), 0, 1);
-        grid.add(txtPort, 1, 1);
-
-        grid.add(new Label("Instance:"), 0, 2);
-        grid.add(txtInstance, 1, 2);
-
-        ButtonBar.setType(actionListenerSQLConnect, ButtonBar.ButtonType.OK_DONE);
-
-        // Do some validation (using the Java 8 lambda syntax).
-        dlg.setMasthead("Please enter your connection information to your database");
-        dlg.setContent(grid);
-        dlg.getActions().addAll(actionListenerSQLConnect, Dialog.Actions.CANCEL);
-
-        dlg.show();
-
-    }
-
-    private void openDialogWithWhichTableInfo() {
-
-        // Create the custom dialog.
-        dlg = new Dialog(null, "OK", false, DialogStyle.UNDECORATED);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(0, 10, 0, 10));
-        grid.add(new Label("Table:"), 0, 0);
-        grid.add(choiceBoxTables, 1, 0);
-        ButtonBar.setType(actionListenerWhichTable, ButtonBar.ButtonType.OK_DONE);
-        // Do some validation (using the Java 8 lambda syntax).
-        dlg.setMasthead("Great, now which table would you like to get data from?");
-        dlg.setContent(grid);
-        dlg.getActions().addAll(actionListenerWhichTable, Dialog.Actions.CANCEL);
-
-        dlg.show();
-
+        System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
     }
 
     public void createTabPaneWithTable(String whichTable) throws SQLException {
@@ -414,18 +321,29 @@ System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
         //  String query = textField.getText();
         SQL_manager sql_manager = new SQL_manager();
         //her skjer oppkoblingen
-        sql_manager.getConnection("localhost", 8889, "eskildb");
+        sql_manager.getConnection("localhost", 8889, "employees");
 
         //laster inn dataen med en query
         tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabPaneCounter, tabellen);
+     
         TableView tableViewet = new TableView();
+           System.out.println("vBOX HEIGHT : " +vBox.getHeight());
+          System.out.println("TABPANE HEIGHT : " +tabPane.getHeight());
+            System.out.println("TABLEVIEW HEIGHT : " +tableViewet.getHeight());
+        
+            
         //legger til tableviewet i tabben
+
         vBox.getChildren().add(tableViewet);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId("" + tabPaneCounter);
+        vBox.setMinHeight(100000000); 
+vBox.setPrefHeight(10000000); 
+vBox.setMaxHeight(100000000); 
+
 
         //lager en ny treeview med en liste over alle kolonnene i tabellen
         TreeView treeView = new TreeView();
@@ -433,11 +351,12 @@ System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
         TreeItem<String> treeView2Root = new TreeItem<String>("MYSQL");
 
         for (Kolonne kol : tabellen.listofColumns) {
-           
+
             TreeItem treItem = new TreeItem();
             treItem.setGraphic(new ImageView(new Image(
                     getClass().getResourceAsStream("/Icons/column_icon.png"))));
             treItem.setValue(kol.NAVN);
+            mapOverKolonnerOgTreItems.put(treItem, kol);
             treeView2Root.getChildren().add(treItem);
         }
         treeView.setRoot(treeView2Root);
@@ -451,6 +370,7 @@ System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
         tab.setText(whichTable + "@" + sql_manager.instanceName);
         treeView2Root.setValue(tab.getText());
         tabPane.getTabs().add(tab);
+     
 
         tab.setContent(vBox);
         tab.setId("" + tabPaneCounter);
@@ -485,6 +405,15 @@ System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
 
     }
 
+    public void removeColumnToCombinedColumn(TreeCell treeCell) {
+        Kolonne parentColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem().getParent());
+        // Kolonne targetCombinedColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
+        Kolonne targetForDelete = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
+        //    System.out.println(parentColumn);
+
+        parentColumn.listOfColumns.remove(targetForDelete);
+    }
+
     private void makeTableViewWithCombinedColumns(Table tbl, TableView tableView) {
         tbl.listofColumns.clear();
         tableView.getItems().clear();
@@ -495,5 +424,7 @@ System.out.println("BEFORE + " +treeViewCombinedColumns.getStyleClass());
         tableView = tbl.fillTableView(tableView, tbl);
 
     }
+
+  
 
 }

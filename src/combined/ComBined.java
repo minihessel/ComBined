@@ -27,8 +27,8 @@ public class ComBined extends Application {
         stage.show();
         
         //Setting the lowest size the user should be able to resize to
-        stage.setMinHeight(871);
-        stage.setMinWidth(1311);
+        stage.setMinHeight(975);
+        stage.setMinWidth(1315);
     }
 
     /**

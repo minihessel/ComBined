@@ -24,6 +24,7 @@
     -fx-graphic:url('/Icons/bar_chart_icon.png');
     -fx-background-color: transparent;
 
+
 }
 
 #pieChartButton{
@@ -45,6 +46,15 @@
 
 }
 
+
+
+#btnMenu
+{
+    -fx-graphic:url('/Icons/menu.png');
+    -fx-background-color: transparent; 
+
+}
+
 #btnNewCombinedColumn{
     -fx-graphic:url('/Icons/add_new_combined_column.png');
     -fx-background-color: transparent; 
@@ -55,26 +65,26 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 0;
-  
+
 }
 
 .tree-cell{
     -fx-background-color:  transparent;
     -fx-padding: 0;
     -fx-indent: 20;
-       
+
 }
 .tree-view {
-  
+
 }
 
 
 
-    
+
 
 .tree-view .tree-cell:filled{
     -fx-background-color: transparent;
-       -fx-text-fill: black;
+    -fx-text-fill: black;
 }
 
 

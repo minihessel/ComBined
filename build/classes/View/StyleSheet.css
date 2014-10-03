@@ -24,6 +24,7 @@
     -fx-graphic:url('/Icons/bar_chart_icon.png');
     -fx-background-color: transparent;
 
+
 }
 
 #pieChartButton{
@@ -41,6 +42,22 @@
 
 #btnHelp{
     -fx-graphic:url('/Icons/help.png');
+    -fx-background-color: transparent; 
+
+}
+
+.sidebar {
+  -fx-padding: 10 10 10 10;
+  -fx-background-insets: 0 10 0 0;
+  -fx-border-insets: 0 10 0 0;
+  -fx-background-color: linear-gradient(to bottom, derive(lavenderblush, -10%), derive(mistyrose, 10%));
+  -fx-border-color: derive(mistyrose, -20%);
+  -fx-border-width: 4;
+}
+
+#btnMenu
+{
+    -fx-graphic:url('/Icons/menu.png');
     -fx-background-color: transparent; 
 
 }
