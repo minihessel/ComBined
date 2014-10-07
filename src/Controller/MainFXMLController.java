@@ -136,12 +136,13 @@ public class MainFXMLController implements Initializable {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
 
     IntroController introController;
- 
+
     @FXML
     BorderPane borderPane;
     @FXML
     VBox vBoxMenu;
-    @FXML Button btnMenu;
+    @FXML
+    Button btnMenu;
 
     @FXML
     private void visualizeButton(ActionEvent event) {
@@ -149,7 +150,6 @@ public class MainFXMLController implements Initializable {
 
     }
 
-  
     @FXML
     private void handleDataButton(ActionEvent event) {
         setVisibleView("tableView");
@@ -200,7 +200,9 @@ public class MainFXMLController implements Initializable {
     private void btnMakeTreeViewWithCombined(ActionEvent event) throws IOException {
 
         TableView tableViewCombined = new TableView();
+
         Tab tab = new Tab();
+
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
         tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
@@ -328,22 +330,19 @@ public class MainFXMLController implements Initializable {
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabPaneCounter, tabellen);
-     
-        TableView tableViewet = new TableView();
-           System.out.println("vBOX HEIGHT : " +vBox.getHeight());
-          System.out.println("TABPANE HEIGHT : " +tabPane.getHeight());
-            System.out.println("TABLEVIEW HEIGHT : " +tableViewet.getHeight());
-        
-            
-        //legger til tableviewet i tabben
 
+        TableView tableViewet = new TableView();
+        System.out.println("vBOX HEIGHT : " + vBox.getHeight());
+        System.out.println("TABPANE HEIGHT : " + tabPane.getHeight());
+        System.out.println("TABLEVIEW HEIGHT : " + tableViewet.getHeight());
+
+        //legger til tableviewet i tabben
         vBox.getChildren().add(tableViewet);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId("" + tabPaneCounter);
-        vBox.setMinHeight(100000000); 
-vBox.setPrefHeight(10000000); 
-vBox.setMaxHeight(100000000); 
-
+        vBox.setMinHeight(100000000);
+        vBox.setPrefHeight(10000000);
+        vBox.setMaxHeight(100000000);
 
         //lager en ny treeview med en liste over alle kolonnene i tabellen
         TreeView treeView = new TreeView();
@@ -370,7 +369,6 @@ vBox.setMaxHeight(100000000);
         tab.setText(whichTable + "@" + sql_manager.instanceName);
         treeView2Root.setValue(tab.getText());
         tabPane.getTabs().add(tab);
-     
 
         tab.setContent(vBox);
         tab.setId("" + tabPaneCounter);
@@ -424,7 +422,5 @@ vBox.setMaxHeight(100000000);
         tableView = tbl.fillTableView(tableView, tbl);
 
     }
-
-  
 
 }

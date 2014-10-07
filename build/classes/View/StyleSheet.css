@@ -46,14 +46,7 @@
 
 }
 
-.sidebar {
-  -fx-padding: 10 10 10 10;
-  -fx-background-insets: 0 10 0 0;
-  -fx-border-insets: 0 10 0 0;
-  -fx-background-color: linear-gradient(to bottom, derive(lavenderblush, -10%), derive(mistyrose, 10%));
-  -fx-border-color: derive(mistyrose, -20%);
-  -fx-border-width: 4;
-}
+
 
 #btnMenu
 {
@@ -72,26 +65,26 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 0;
-  
+
 }
 
 .tree-cell{
     -fx-background-color:  transparent;
     -fx-padding: 0;
     -fx-indent: 20;
-       
+
 }
 .tree-view {
-  
+
 }
 
 
 
-    
+
 
 .tree-view .tree-cell:filled{
     -fx-background-color: transparent;
-       -fx-text-fill: black;
+    -fx-text-fill: black;
 }
 
 

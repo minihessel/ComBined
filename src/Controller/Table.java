@@ -32,7 +32,6 @@ public class Table {
     public Table() {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
-        
 
     }
 
@@ -67,37 +66,6 @@ public class Table {
 
     }
 
-    public void loadDataCombined(Table tbl) {
-
-        int teller = 0;
-
-        for (int a = 1; a <= tbl.numberofRows; a++) {
-            ObservableList<String> row = FXCollections.observableArrayList();
-
-            for (int i = 1; i <= listofColumns.size(); i++) {
-                Kolonne kol = listofColumns.get(i - 1);
-
-                try {
-                    System.out.println(kol.allFields().get(1) + " herr");
-                    row.add(kol.allFields().get(teller));
-
-                } //Dersom SQL databasen ikke har noe data i denne kolonnen(null), legger vi bare inn et tomt felt
-                catch (NullPointerException npe) {
-                    row.add(" ");
-                }
-
-            }
-            teller++;
-            //legger til all dataen i arraylisten "dataen"
-            dataen.add(row);
-
-        }
-        System.out.println("lagt til");
-
-    }
-
-   
-
     public TableView fillTableView(TableView tableView, Table tbl) {
 
         //Metode for å fylle tableview med kolonner og rader
@@ -117,8 +85,7 @@ public class Table {
                 }
             });
 
-            col.prefWidthProperty().bind(tableView.widthProperty().divide(4)); //for å automatisere bredden på kolonnene 
-
+            //col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
             tableView.getColumns().add(col);
 
@@ -126,20 +93,19 @@ public class Table {
 
         }
 
-      
         for (Kolonne kol : listofColumns) {
-            if(kol.amICombined == true)
-            {
+            if (kol.amICombined == true) {
                 kol.combineColumns();
             }
-          dataen.addAll(kol.allFields());
+            dataen.addAll(kol.allFields());
 
         }
 
-       dataen = transpose(dataen);
+        dataen = transpose(dataen);
 
         //laster inn all dataen i tableviewen.
         tableView.setItems(dataen);
+        tableView.setMinHeight(1000);
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
 

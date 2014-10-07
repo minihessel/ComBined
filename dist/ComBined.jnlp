@@ -11,11 +11,10 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ComBined.jar" size="260470" download="eager" />
-    <jar href="lib/controlsfx-8.20.7.jar" size="936168" download="eager" />
-    <jar href="lib/controlsfx-samples-8.20.7.jar" size="627543" download="eager" />
-    <jar href="lib/fxsampler-1.0.8.jar" size="29451" download="eager" />
+    <jar href="ComBined.jar" size="250613" download="eager" />
+    <jar href="lib/controlsfx-8.20.7_DENNE.jar" size="936168" download="eager" />
     <jar href="lib/mysql-connector-java-5.1.23-bin.jar" size="827901" download="eager" />
+    <jar href="lib/openjfx-dialogs-1.0.2.jar" size="148557" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="ComBined" >
     <param name="requiredFXVersion" value="8.0+"/>

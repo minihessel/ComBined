@@ -19,7 +19,8 @@ import javafx.util.Duration;
 
 /**
  * 
- * @author Eskil Hesselroth
+ * 
+ * Built up on https://gist.github.com/jewelsea/1437374
   /**
      * Animates a node on and off screen to the left.
      */
