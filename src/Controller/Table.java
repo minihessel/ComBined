@@ -7,10 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -66,7 +69,7 @@ public class Table {
 
     }
 
-    public TableView fillTableView(TableView tableView, Table tbl) {
+    public TableView fillTableView(TableView tableView, Table tbl,TextField filterField) {
 
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
@@ -107,6 +110,17 @@ public class Table {
         tableView.setItems(dataen);
         tableView.setMinHeight(1000);
         //returnerer tableviewn til tableviewn som kalte på denne metoden
+        
+
+        FilteredList<List <String>> filteredItems = new FilteredList(dataen, e -> true);
+        tableView.setItems(filteredItems);
+
+    
+            filteredItems.predicateProperty().bind(
+                Bindings.createObjectBinding(()
+                        -> li -> li.get(3).contains(filterField.getText()),filterField.textProperty()
+                )  
+            );
         return tableView;
 
     }

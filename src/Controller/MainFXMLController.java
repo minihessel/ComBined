@@ -91,6 +91,9 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private Button btnCombine;
+    
+    @FXML
+    TextField filterField;
 
     @FXML
     Button visualizeButton;
@@ -205,7 +208,7 @@ public class MainFXMLController implements Initializable {
 
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
-        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
+        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3,filterField);
     }
 
     @FXML
@@ -338,7 +341,7 @@ public class MainFXMLController implements Initializable {
 
         //legger til tableviewet i tabben
         vBox.getChildren().add(tableViewet);
-        tableViewet = tabellen.fillTableView(tableViewet, tabellen);
+        tableViewet = tabellen.fillTableView(tableViewet, tabellen,filterField);
         vBox.setId("" + tabPaneCounter);
         vBox.setMinHeight(100000000);
         vBox.setPrefHeight(10000000);
@@ -419,7 +422,7 @@ public class MainFXMLController implements Initializable {
 
         //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
-        tableView = tbl.fillTableView(tableView, tbl);
+        tableView = tbl.fillTableView(tableView, tbl,filterField);
 
     }
 

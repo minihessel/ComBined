@@ -173,5 +173,6 @@
             </Button>
          </top>
       </BorderPane>
+      <TextField fx:id="filterField" />
     </children>
 </AnchorPane>
