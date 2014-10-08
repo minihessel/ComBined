@@ -1,22 +1,23 @@
 package Controller;
 
 import combined.SQL_manager;
-import combined.checkForInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 /**
@@ -70,7 +71,8 @@ public class Table {
     }
 
     public TableView fillTableView(TableView tableView, Table tbl,TextField filterField) {
-
+   List<TextField> list = new ArrayList();
+     
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
         int counter = 0;
@@ -90,6 +92,15 @@ public class Table {
 
             //col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
+            TextField txtField = new TextField();
+            Label lbl = new Label(col.getText());
+            VBox vbox =  new VBox();
+                 vbox.getChildren().add(lbl);
+            vbox.getChildren().add(txtField);
+       
+            list.add(txtField);
+            col.setGraphic(vbox);
+            
             tableView.getColumns().add(col);
 
             counter++;
@@ -106,24 +117,37 @@ public class Table {
 
         dataen = transpose(dataen);
 
-        //laster inn all dataen i tableviewen.
-        tableView.setItems(dataen);
-        tableView.setMinHeight(1000);
-        //returnerer tableviewn til tableviewn som kalte på denne metoden
         
+        
+      
 
-        FilteredList<List <String>> filteredItems = new FilteredList(dataen, e -> true);
+        FilteredList<List<String>> filteredItems = new FilteredList(dataen, e -> true);
         tableView.setItems(filteredItems);
 
-    
-            filteredItems.predicateProperty().bind(
+        filteredItems.predicateProperty().bind(
                 Bindings.createObjectBinding(()
-                        -> li -> li.get(3).contains(filterField.getText()),filterField.textProperty()
-                )  
-            );
+                        -> li -> {
+                    for (int i = 0; i < li.size(); i++) {
+                        if (!li.get(i).contains(list.get(i).getText())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                list.stream().map(TextField::textProperty)
+                .collect(Collectors.toList())
+                .toArray(new StringProperty[list.size()])));
+
+        //laster inn all dataen i tableviewen.
+        //tableView.setItems(dataen);
+        tableView.setMinHeight(1000);
+        //returnerer tableviewn til tableviewn som kalte på denne metoden
+       
         return tableView;
 
     }
+    
+    
 
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {
         ObservableList<List<String>> ret
