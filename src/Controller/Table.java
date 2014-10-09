@@ -71,7 +71,7 @@ public class Table {
     }
 
     public TableView fillTableView(TableView tableView, Table tbl,TextField filterField) {
-   List<TextField> list = new ArrayList();
+   List<TextField> listOfTxtFields = new ArrayList();
      
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
@@ -92,13 +92,15 @@ public class Table {
 
             //col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
+                //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
+                // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
             Label lbl = new Label(col.getText());
             VBox vbox =  new VBox();
                  vbox.getChildren().add(lbl);
             vbox.getChildren().add(txtField);
        
-            list.add(txtField);
+            listOfTxtFields.add(txtField);
             col.setGraphic(vbox);
             
             tableView.getColumns().add(col);
@@ -106,7 +108,10 @@ public class Table {
             counter++;
 
         }
-
+        
+        
+        //Her sjekker jeg om kolonnen som kommer er en vanlig eller kombinert kolonne. Er den en kombinert kaller vi på CombineColumns()
+        // for å kombinere kolonnen.
         for (Kolonne kol : listofColumns) {
             if (kol.amICombined == true) {
                 kol.combineColumns();
@@ -114,35 +119,37 @@ public class Table {
             dataen.addAll(kol.allFields());
 
         }
-
+        //ettersom jeg snakker til data vertikalt(fordi jeg snakker om kolonner), men tableView snakker om data i rader(horisontalt)
+        //, snur jeg dataen fra vertikalt til horisontalt ved å bruke transpose.
         dataen = transpose(dataen);
 
         
         
       
-
+        // Her legger jeg til filtreringen på tekstfeltene. Det viktige er at dette skjer dynamisk, fordi jeg ikke vet hvor mange tekstfelter jeg har
+        //Bruker lambda funksjon som sier at HVIS det finnes rader som har teksten fra alle tekstfeltene, vis dem
+        // med andre ord: den sjekker rett og slett :
+        // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         FilteredList<List<String>> filteredItems = new FilteredList(dataen, e -> true);
         tableView.setItems(filteredItems);
 
-        filteredItems.predicateProperty().bind(
-                Bindings.createObjectBinding(()
+        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(()
                         -> li -> {
                     for (int i = 0; i < li.size(); i++) {
-                        if (!li.get(i).contains(list.get(i).getText())) {
+                        if (!li.get(i).contains(listOfTxtFields.get(i).getText())) {
                             return false;
                         }
                     }
                     return true;
                 },
-                list.stream().map(TextField::textProperty)
+                listOfTxtFields.stream().map(TextField::textProperty)
                 .collect(Collectors.toList())
-                .toArray(new StringProperty[list.size()])));
+                .toArray(new StringProperty[listOfTxtFields.size()])));
 
-        //laster inn all dataen i tableviewen.
-        //tableView.setItems(dataen);
+  
         tableView.setMinHeight(1000);
+        
         //returnerer tableviewn til tableviewn som kalte på denne metoden
-       
         return tableView;
 
     }
