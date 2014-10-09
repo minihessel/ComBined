@@ -70,9 +70,9 @@ public class Table {
 
     }
 
-    public TableView fillTableView(TableView tableView, Table tbl,TextField filterField) {
-   List<TextField> listOfTxtFields = new ArrayList();
-     
+    public TableView fillTableView(TableView tableView, Table tbl, TextField filterField) {
+        List<TextField> listOfTxtFields = new ArrayList();
+
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
         int counter = 0;
@@ -92,24 +92,23 @@ public class Table {
 
             //col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
-                //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
-                // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
+            //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
+            // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
             Label lbl = new Label(col.getText());
-            VBox vbox =  new VBox();
-                 vbox.getChildren().add(lbl);
+            VBox vbox = new VBox();
+            vbox.getChildren().add(lbl);
             vbox.getChildren().add(txtField);
-       
+
             listOfTxtFields.add(txtField);
             col.setGraphic(vbox);
-            
+
             tableView.getColumns().add(col);
 
             counter++;
 
         }
-        
-        
+
         //Her sjekker jeg om kolonnen som kommer er en vanlig eller kombinert kolonne. Er den en kombinert kaller vi på CombineColumns()
         // for å kombinere kolonnen.
         for (Kolonne kol : listofColumns) {
@@ -123,9 +122,6 @@ public class Table {
         //, snur jeg dataen fra vertikalt til horisontalt ved å bruke transpose.
         dataen = transpose(dataen);
 
-        
-        
-      
         // Her legger jeg til filtreringen på tekstfeltene. Det viktige er at dette skjer dynamisk, fordi jeg ikke vet hvor mange tekstfelter jeg har
         //Bruker lambda funksjon som sier at HVIS det finnes rader som har teksten fra alle tekstfeltene, vis dem
         // med andre ord: den sjekker rett og slett :
@@ -134,9 +130,12 @@ public class Table {
         tableView.setItems(filteredItems);
 
         filteredItems.predicateProperty().bind(Bindings.createObjectBinding(()
-                        -> li -> {
+                -> li -> {
                     for (int i = 0; i < li.size(); i++) {
-                        if (!li.get(i).contains(listOfTxtFields.get(i).getText())) {
+                        if (!li.get(i).toLowerCase().
+                        contains(
+                                listOfTxtFields.get(i).getText().toLowerCase()
+                        )) {
                             return false;
                         }
                     }
@@ -146,15 +145,12 @@ public class Table {
                 .collect(Collectors.toList())
                 .toArray(new StringProperty[listOfTxtFields.size()])));
 
-  
         tableView.setMinHeight(1000);
-        
+
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
 
     }
-    
-    
 
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {
         ObservableList<List<String>> ret
