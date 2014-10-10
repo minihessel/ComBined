@@ -3,9 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package combined;
-
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -16,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.scene.control.ChoiceBox;
-
 
 /**
  *
@@ -46,12 +43,14 @@ public class SQL_manager {
             choiceBox.getItems().add(rs.getString(3));
 
         }
-            ds.getConnection().close();
+        ds.getConnection().close();
 
     }
 
     public boolean getConnection(String mySqlAdress, String myPort, String sqlInstance) throws SQLException, ClassNotFoundException {
-
+    //metode for å etablere en tilkobling mot en database
+    //bruker Hikari som er et library for Connection Pool
+    //vi legger tilkoblingen i connection poolet. 
         try {
             HikariConfig config = new HikariConfig();
             config.setMaximumPoolSize(100);
@@ -67,6 +66,7 @@ public class SQL_manager {
             ds.getConnection();
             ds.getConnection().close();
             System.out.println("Success, connected");
+            instanceName = sqlInstance;
             return true;
 
         } catch (Exception e) {
@@ -87,8 +87,8 @@ public class SQL_manager {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
-            ds.getConnection().close();
+        ds.getConnection().close();
         return null;
-        
+
     }
 }

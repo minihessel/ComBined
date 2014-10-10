@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
@@ -48,13 +49,14 @@
                   <ImageView fx:id="imageView" opacity="0.55" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   <AnchorPane fx:id="anchorPaneVisualize" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.5" layoutX="21.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.5, 0.5" layoutX="21.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <items>
                               <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="VISUALIZE" textAlignment="CENTER">
                                  <font>
                                     <Font name="Menlo Regular" size="20.0" />
                                  </font>
                               </Label>
+                              <PieChart fx:id="pieChart" />
                               <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
                                  <items>
                                     <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">

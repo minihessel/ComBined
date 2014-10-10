@@ -14,7 +14,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -33,6 +35,8 @@ public class Table {
     int tableNumber;
     int numberofRows;
     ObservableList<List<String>> dataen;
+    SortedList<List<String>> sortedData;
+    FilteredList<List<String>> filteredItems; 
 
     public Table() {
         listofColumns = new ArrayList<>();
@@ -52,7 +56,8 @@ public class Table {
             Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
 
             listofColumns.add(kol);
-            System.out.println("lzzzzegger til kolonne i settet med navn " + kol);
+      
+
 
         }
 
@@ -132,7 +137,7 @@ public class Table {
         //Bruker lambda funksjon som sier at HVIS det finnes rader som har teksten fra alle tekstfeltene, vis dem
         // med andre ord: den sjekker rett og slett :
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
-        FilteredList<List<String>> filteredItems = new FilteredList(dataen, e -> true);
+        filteredItems = new FilteredList(dataen, e -> true);
 
         filteredItems.predicateProperty().bind(Bindings.createObjectBinding(()
                 -> li -> {
@@ -153,13 +158,14 @@ public class Table {
         tableView.setMinHeight(1000);
        
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
-        SortedList<List<String>> sortedData = new SortedList<>(filteredItems);
+        sortedData = new SortedList<>(filteredItems);
         //å binder det til tableViewen..Da mister vi ikke sorting funksjonalitet.
         sortedData.comparatorProperty().bind(tableView.comparatorProperty());
         //deretter setter vi tableView til å bruke denne nye "sorted data". 
         tableView.setItems(sortedData);
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
+   
         return tableView;
 
     }

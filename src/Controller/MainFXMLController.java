@@ -5,6 +5,7 @@
  *///
 package Controller;
 
+import View.mouseHooverAnimationPieChart.MouseHoverAnimation;
 import combined.SQL_manager;
 import java.io.IOException;
 import java.net.URL;
@@ -16,13 +17,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -39,12 +44,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialog;
-
 import org.controlsfx.dialog.Dialogs;
+
+import org.controlsfx.dialog.Wizard;
+import org.controlsfx.dialog.Wizard.LinearFlow;
+import org.controlsfx.validation.Validator;
+import org.fxmisc.easybind.EasyBind;
 
 /**
  *
@@ -73,6 +83,7 @@ public class MainFXMLController implements Initializable {
     TextField txtPort = new TextField();
     TextField txtInstance = new TextField();
     ChoiceBox choiceBoxTables = new ChoiceBox();
+    int userSelectedTableInTabPane;
 
     Map<TreeItem, Kolonne> mapOverKolonnerOgTreItems = new HashMap<TreeItem, Kolonne>();
     String whichHelpView;
@@ -91,8 +102,9 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private Button btnCombine;
-    
 
+    @FXML
+    PieChart pieChart;
 
     @FXML
     Button visualizeButton;
@@ -192,9 +204,9 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException {
         setVisibleView("tableView");
-   SQL_manager sql_manager = new SQL_manager();
+        SQL_manager sql_manager = new SQL_manager();
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("test",sql_manager);
+        createTabPaneWithTable("test", sql_manager);
 
     }
 
@@ -232,10 +244,87 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void barChartButton(ActionEvent event) {
+        showLinearWizard();
+    }
+
+    private void showLinearWizard() {
+        Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
+
+        ChoiceBox choiceBoxNames = new ChoiceBox();
+
+        for (Kolonne kolonne : table.listofColumns) {
+            choiceBoxNames.getItems().add(kolonne.NAVN);
+        }
+
+        ChoiceBox choiceBoxValues = new ChoiceBox();
+
+        for (Kolonne kolonne : table.listofColumns) {
+            choiceBoxValues.getItems().add(kolonne.NAVN);
+
+        }
+
+        Wizard wizard = new Wizard();
+
+        wizard.setTitle("Connection Wizard");
+
+        // --- page 1
+        int row = 0;
+
+        GridPane page1Grid = new GridPane();
+        page1Grid.setVgap(10);
+        page1Grid.setHgap(30);
+
+        page1Grid.add(new Label("Check which field that represent the names: "), 0, row);
+
+        wizard.getValidationSupport().registerValidator(choiceBoxNames, Validator.createEmptyValidator("You must select what represents names"));
+        page1Grid.add(choiceBoxNames, 1, row++);
+
+        page1Grid.add(new Label("Check which field that represent the values: "), 0, row);
+
+        wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
+        page1Grid.add(choiceBoxValues, 1, row);
+
+   //     page1Grid.add(statusLabel, 1, row);
+        Wizard.WizardPane page1 = new Wizard.WizardPane();
+        page1.setHeaderText("Please Enter Your Connection Details");
+        page1.setContent(page1Grid);
+
+       // page2Grid.add(new Label("Now select which table: "), 0, 0);
+        //wizard.getValidationSupport().registerValidator(cb, Validator.createEmptyValidator("The port number field is mandatory"));
+        //   page2Grid.add(cb, 1, 0);
+//
+        wizard.setFlow(new LinearFlow(page1));
+
+       // System.out.println("page3: " + page3);
+        // show wizard and wait for response
+        wizard.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.FINISH) {
+                int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
+                int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
+                getPieChartData(en, to);
+            }
+
+        });
+
     }
 
     @FXML
     private void pieChartButton(ActionEvent event) {
+        /*  Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
+
+         Tab tab = new Tab();
+         ChoiceBox choiceBoxValues = new ChoiceBox();
+
+         for (Kolonne kolonne : table.listofColumns) {
+         choiceBoxValues.getItems().add(kolonne.NAVN);
+         }
+
+         tab.setContent(choiceBoxValues);
+         tabPane.getTabs().add(tab);
+
+         */
+        showLinearWizard();
+        //  getPieChartData(tabPaneCounter, tabPaneCounter);
 
     }
 
@@ -283,7 +372,7 @@ public class MainFXMLController implements Initializable {
 
         //vi lager en liste(som tilsvarer en kombinert kolonne). Listen skal inneholde kolonner(altså den kombinerte kolonnen skal inneholde hvilke kolonner den skal være)   
         //  List<Kolonne> combinedColumn = new ArrayList<Kolonne>();
-        Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl, true);
+        Kolonne kol = new Kolonne(treItem.getValue().toString(), tbl, Boolean.TRUE, tbl.listofColumns.size() + 1);
 
         //vi legger til den nye combinedColumn(den nye kombinerte kolonnen i combinedColumn over kombinerte kolonner
         tbl.listofColumns.add(kol);
@@ -316,17 +405,16 @@ public class MainFXMLController implements Initializable {
         System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
     }
 
-    public void createTabPaneWithTable(String whichTable,SQL_manager sql_manager) throws SQLException, ClassNotFoundException {
+    public void createTabPaneWithTable(String whichTable, SQL_manager sql_manager) throws SQLException, ClassNotFoundException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
 
         Table tabellen = new Table();
         //  String query = textField.getText();
-   
-      sql_manager.getConnection("localhost", "8889", "eskildb");
+
+        sql_manager.getConnection("localhost", "8889", "eskildb");
         //her skjer oppkoblingen
-    
 
         //laster inn dataen med en query
         tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
@@ -424,6 +512,27 @@ public class MainFXMLController implements Initializable {
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
         tableView = tbl.fillTableView(tableView, tbl);
 
+    }
+
+    protected void getPieChartData(Integer nameColumn, Integer valueColumn) {
+        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
+
+        System.out.println("Kolonne id for data er " + nameColumn + "Kolonne id for name er " + valueColumn);
+        ObservableList<PieChart.Data> pieChartData
+                = FXCollections.observableArrayList(EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
+                    String name = (String) rowData.get(nameColumn);
+                    int value = Integer.parseInt(rowData.get(valueColumn));
+                    return new PieChart.Data(name, value);
+                }));
+        System.out.println("aa " + pieChartData.get(0));
+        pieChart.setData(pieChartData);
+ 
+        for (PieChart.Data d : pieChartData) {
+            //deretter legger vi animasjon på piecharten.. Men husk, her trenger vi å bytte ut label med en ny label som lages hver gang.
+            d.getNode().setOnMouseClicked(new MouseHoverAnimation(d, pieChart, new Label()));
+            d.getNode().setUserData(d.getPieValue());
+
+        }
     }
 
 }

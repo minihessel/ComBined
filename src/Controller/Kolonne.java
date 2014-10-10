@@ -14,6 +14,7 @@ public class Kolonne {
     //Den må også tilhøre en tabell
     public final String NAVN;
     public final Table tbl;
+    public final int kolonneNummer; 
 
     //En kolonne inneholder felter(altså dataen i en kolonne
     private List<String> fields;
@@ -28,9 +29,10 @@ public class Kolonne {
         fields = new ArrayList<>();
         amICombined = false;
         listOfColumns = null;
+        kolonneNummer = kolonneIndex; 
     }
 
-    public Kolonne(String navn, Table tbl1, Boolean combined) {
+    public Kolonne(String navn, Table tbl1, Boolean combined,Integer kolonneIndex) {
         //Konstruktøren for en kombinert kolonne
         fields = new ArrayList<>();
         listOfColumns = new ArrayList<Kolonne>();
@@ -38,6 +40,7 @@ public class Kolonne {
         tbl = tbl1;
         NAVN = navn;
         amICombined = combined;
+        kolonneNummer = kolonneIndex; 
 
     }
 
