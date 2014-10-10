@@ -92,8 +92,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     private Button btnCombine;
     
-    @FXML
-    TextField filterField;
+
 
     @FXML
     Button visualizeButton;
@@ -191,11 +190,11 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    private void newConnectionButton(ActionEvent event) throws IOException, SQLException {
+    private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException {
         setVisibleView("tableView");
-
+   SQL_manager sql_manager = new SQL_manager();
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("employees");
+        createTabPaneWithTable("test",sql_manager);
 
     }
 
@@ -208,7 +207,7 @@ public class MainFXMLController implements Initializable {
 
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
-        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3,filterField);
+        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
     }
 
     @FXML
@@ -317,16 +316,17 @@ public class MainFXMLController implements Initializable {
         System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
     }
 
-    public void createTabPaneWithTable(String whichTable) throws SQLException {
+    public void createTabPaneWithTable(String whichTable,SQL_manager sql_manager) throws SQLException, ClassNotFoundException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
 
         Table tabellen = new Table();
         //  String query = textField.getText();
-        SQL_manager sql_manager = new SQL_manager();
+   
+      sql_manager.getConnection("localhost", "8889", "eskildb");
         //her skjer oppkoblingen
-        sql_manager.getConnection("localhost", 8889, "employees");
+    
 
         //laster inn dataen med en query
         tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
@@ -341,7 +341,7 @@ public class MainFXMLController implements Initializable {
 
         //legger til tableviewet i tabben
         vBox.getChildren().add(tableViewet);
-        tableViewet = tabellen.fillTableView(tableViewet, tabellen,filterField);
+        tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId("" + tabPaneCounter);
         vBox.setMinHeight(100000000);
         vBox.setPrefHeight(10000000);
@@ -422,7 +422,7 @@ public class MainFXMLController implements Initializable {
 
         //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
-        tableView = tbl.fillTableView(tableView, tbl,filterField);
+        tableView = tbl.fillTableView(tableView, tbl);
 
     }
 

@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -45,7 +46,7 @@ public class Table {
     public void loadData(String SQL, SQL_manager sql_manager, Table tbl, int tableNumb) throws SQLException {
         numberofRows = 0;
         tableNumber = tableNumb;
-        ResultSet rs = sql_manager.getDataFromSQL("localhost", 8889, "mysql", SQL);
+        ResultSet rs = sql_manager.getDataFromSQL(SQL);
         for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = rs.getMetaData().getColumnName(i);
             Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
@@ -70,7 +71,7 @@ public class Table {
 
     }
 
-    public TableView fillTableView(TableView tableView, Table tbl, TextField filterField) {
+    public TableView fillTableView(TableView tableView, Table tbl) {
         List<TextField> listOfTxtFields = new ArrayList();
 
         //Metode for å fylle tableview med kolonner og rader
@@ -82,7 +83,8 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            TableColumn col = new TableColumn(kol.NAVN);
+            TableColumn col = new TableColumn();
+
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
@@ -90,14 +92,18 @@ public class Table {
                 }
             });
 
-            //col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
+            col.setSortable(true);
+            col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
             //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
-            Label lbl = new Label(col.getText());
+            Label lbl = new Label(kol.NAVN);
+            lbl.setStyle("-fx-font-size:13px;");
             VBox vbox = new VBox();
+
             vbox.getChildren().add(lbl);
+
             vbox.getChildren().add(txtField);
 
             listOfTxtFields.add(txtField);
@@ -127,7 +133,6 @@ public class Table {
         // med andre ord: den sjekker rett og slett :
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         FilteredList<List<String>> filteredItems = new FilteredList(dataen, e -> true);
-        tableView.setItems(filteredItems);
 
         filteredItems.predicateProperty().bind(Bindings.createObjectBinding(()
                 -> li -> {
@@ -146,6 +151,13 @@ public class Table {
                 .toArray(new StringProperty[listOfTxtFields.size()])));
 
         tableView.setMinHeight(1000);
+       
+        //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
+        SortedList<List<String>> sortedData = new SortedList<>(filteredItems);
+        //å binder det til tableViewen..Da mister vi ikke sorting funksjonalitet.
+        sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+        //deretter setter vi tableView til å bruke denne nye "sorted data". 
+        tableView.setItems(sortedData);
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
