@@ -5,7 +5,6 @@
  *///
 package Controller;
 
-import View.mouseHooverAnimationPieChart.MouseHoverAnimation;
 import combined.SQL_manager;
 import java.io.IOException;
 import java.net.URL;
@@ -17,14 +16,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -54,7 +53,6 @@ import org.controlsfx.dialog.Dialogs;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.Wizard.LinearFlow;
 import org.controlsfx.validation.Validator;
-import org.fxmisc.easybind.EasyBind;
 
 /**
  *
@@ -63,10 +61,12 @@ import org.fxmisc.easybind.EasyBind;
 public class MainFXMLController implements Initializable {
 
     DragAbleTreeView dragAbleTreeView;
+    Visualize visualize;
     ArrayList<Table> tablesList;
 
     public MainFXMLController() {
         dragAbleTreeView = new DragAbleTreeView();
+        visualize = new Visualize();
         tablesList = new ArrayList<Table>();
 
     }
@@ -93,6 +93,11 @@ public class MainFXMLController implements Initializable {
     @FXML
     private Label label;
 
+    @FXML
+    private LineChart lineChart;
+    
+     @FXML
+    private BarChart barChart;
     @FXML
     private Button btnNewConnection;
     @FXML
@@ -242,12 +247,7 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    @FXML
-    private void barChartButton(ActionEvent event) {
-        showLinearWizard();
-    }
-
-    private void showLinearWizard() {
+    private void showLinearWizard(String whichVisualizationType) {
         Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
 
         ChoiceBox choiceBoxNames = new ChoiceBox();
@@ -284,24 +284,37 @@ public class MainFXMLController implements Initializable {
         wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
         page1Grid.add(choiceBoxValues, 1, row);
 
-   //     page1Grid.add(statusLabel, 1, row);
+
         Wizard.WizardPane page1 = new Wizard.WizardPane();
         page1.setHeaderText("Please Enter Your Connection Details");
         page1.setContent(page1Grid);
 
-       // page2Grid.add(new Label("Now select which table: "), 0, 0);
-        //wizard.getValidationSupport().registerValidator(cb, Validator.createEmptyValidator("The port number field is mandatory"));
-        //   page2Grid.add(cb, 1, 0);
-//
+
         wizard.setFlow(new LinearFlow(page1));
 
-       // System.out.println("page3: " + page3);
+  
         // show wizard and wait for response
         wizard.showAndWait().ifPresent(result -> {
             if (result == ButtonType.FINISH) {
                 int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
                 int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
-                getPieChartData(en, to);
+                if (whichVisualizationType == "barChart") {
+                     lineChart.setVisible(false);
+                    pieChart.setVisible(false);
+                    barChart.setVisible(true);
+                     visualize.getBarChartData(en, to, tabPane, tablesList, barChart);
+                } else if (whichVisualizationType == "pieChart") {
+                    lineChart.setVisible(false);
+                    pieChart.setVisible(true);
+                      barChart.setVisible(false);
+                    visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label);
+                } else if (whichVisualizationType == "lineChart") {
+                      lineChart.setVisible(true);
+                    pieChart.setVisible(false);
+                      barChart.setVisible(false);
+                    visualize.getLineChartData(en, to, tabPane, tablesList, lineChart);
+                }
+
             }
 
         });
@@ -309,28 +322,20 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
+    private void barChartButton(ActionEvent event) {
+        showLinearWizard("barChart");
+    }
+
+    @FXML
     private void pieChartButton(ActionEvent event) {
-        /*  Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
 
-         Tab tab = new Tab();
-         ChoiceBox choiceBoxValues = new ChoiceBox();
-
-         for (Kolonne kolonne : table.listofColumns) {
-         choiceBoxValues.getItems().add(kolonne.NAVN);
-         }
-
-         tab.setContent(choiceBoxValues);
-         tabPane.getTabs().add(tab);
-
-         */
-        showLinearWizard();
-        //  getPieChartData(tabPaneCounter, tabPaneCounter);
+        showLinearWizard("pieChart");
 
     }
 
     @FXML
     private void lineChartButton(ActionEvent event) {
-
+        showLinearWizard("lineChart");
     }
 
     @FXML
@@ -512,27 +517,6 @@ public class MainFXMLController implements Initializable {
         //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
         tableView = tbl.fillTableView(tableView, tbl);
 
-    }
-
-    protected void getPieChartData(Integer nameColumn, Integer valueColumn) {
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-
-        System.out.println("Kolonne id for data er " + nameColumn + "Kolonne id for name er " + valueColumn);
-        ObservableList<PieChart.Data> pieChartData
-                = FXCollections.observableArrayList(EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
-                    String name = (String) rowData.get(nameColumn);
-                    int value = Integer.parseInt(rowData.get(valueColumn));
-                    return new PieChart.Data(name, value);
-                }));
-        System.out.println("aa " + pieChartData.get(0));
-        pieChart.setData(pieChartData);
- 
-        for (PieChart.Data d : pieChartData) {
-            //deretter legger vi animasjon på piecharten.. Men husk, her trenger vi å bytte ut label med en ny label som lages hver gang.
-            d.getNode().setOnMouseClicked(new MouseHoverAnimation(d, pieChart, new Label()));
-            d.getNode().setUserData(d.getPieValue());
-
-        }
     }
 
 }

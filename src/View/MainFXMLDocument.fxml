@@ -56,7 +56,29 @@
                                     <Font name="Menlo Regular" size="20.0" />
                                  </font>
                               </Label>
-                              <PieChart fx:id="pieChart" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <BarChart fx:id="barChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </BarChart>
+                                    <Label fx:id="label" text="Label" />
+                                    <PieChart fx:id="pieChart" clockwise="false" layoutX="-51.0" layoutY="31.0" prefHeight="551.0" prefWidth="845.0" />
+                             
+                                    <LineChart fx:id="lineChart" prefHeight="440.0" prefWidth="1221.0" visible="false" AnchorPane.bottomAnchor="324.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </LineChart>
+                                 </children>
+                              </AnchorPane>
                               <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
                                  <items>
                                     <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">

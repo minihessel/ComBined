@@ -68,11 +68,10 @@ public abstract class mouseHooverAnimationPieChart implements Initializable {
                     na.setId(" ");
                     minX = Math.min(minX, d.getNode().getBoundsInParent().getMinX());
                     maxX = Math.max(maxX, d.getNode().getBoundsInParent().getMaxX());
-na.setBlendMode(BlendMode.SRC_OVER);
+                    na.setBlendMode(BlendMode.SRC_OVER);
                 }
                 n.setId("clicked");
-          
-     
+
                 double radius = maxX - minX;
                 TranslateTransitionBuilder.create().toX((radius * ANIMATION_DISTANCE) * cos).toY((radius * ANIMATION_DISTANCE) * sin).duration(ANIMATION_DURATION).node(n).build().play();
 
