@@ -14,9 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -36,43 +34,46 @@ public class Table {
     int numberofRows;
     ObservableList<List<String>> dataen;
     SortedList<List<String>> sortedData;
-    FilteredList<List<String>> filteredItems; 
+    FilteredList<List<String>> filteredItems;
+    SQL_manager sql_manager = new SQL_manager();
 
     public Table() {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
+        
 
     }
 
     /**
      * Laster inn data fra angitt tabell fra angitt db. Bruker har valgt hvilken tabell - vi laster inn kolonner og rader i tableview
      */
-    public void loadData(String SQL, SQL_manager sql_manager, Table tbl, int tableNumb) throws SQLException {
+    public void loadData(String SQL, Table tbl, int tableNumb) throws SQLException {
         numberofRows = 0;
         tableNumber = tableNumb;
-        ResultSet rs = sql_manager.getDataFromSQL(SQL);
-        for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-            String kolonneNavn = rs.getMetaData().getColumnName(i);
+
+        sql_manager.getDataFromSQL(SQL);
+
+        for (int i = 1; i <= sql_manager.rs.getMetaData().getColumnCount(); i++) {
+            String kolonneNavn = sql_manager.rs.getMetaData().getColumnName(i);
             Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
 
             listofColumns.add(kol);
-      
-
 
         }
 
         //deretter legges all dataen til i kolonnene ved hjelp av rader
-        while (rs.next()) {
+        while (sql_manager.rs.next()) {
             numberofRows++;
             ObservableList<String> row = FXCollections.observableArrayList();
 
             for (Kolonne k : listofColumns) {
-                k.addField(rs.getString(k.NAVN));
+                k.addField(sql_manager.rs.getString(k.NAVN));
 
             }
 
-            //deretter legger vi til alle feltene i de riktige kolonnene
         }
+        //her skal tilkoblingen lukkes, kun fjernet mens jeg tester
+        //SQL_manager.conn.close();
 
     }
 
@@ -156,7 +157,7 @@ public class Table {
                 .toArray(new StringProperty[listOfTxtFields.size()])));
 
         tableView.setMinHeight(1000);
-       
+
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
         sortedData = new SortedList<>(filteredItems);
         //å binder det til tableViewen..Da mister vi ikke sorting funksjonalitet.
@@ -165,7 +166,6 @@ public class Table {
         tableView.setItems(sortedData);
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
-   
         return tableView;
 
     }

@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -69,6 +72,7 @@ public class MainFXMLController implements Initializable {
     DragAbleTreeView dragAbleTreeView;
     Visualize visualize;
     ArrayList<Table> tablesList;
+    SQL_manager sql_manager = new SQL_manager();
 
     public MainFXMLController() {
         dragAbleTreeView = new DragAbleTreeView();
@@ -241,11 +245,10 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException {
+    private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
-        SQL_manager sql_manager = new SQL_manager();
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("test", sql_manager);
+        createTabPaneWithTable("test");
 
     }
 
@@ -450,7 +453,20 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
+        try {
+            sql_manager.getConnection("localhost", "8889", "eskildb");
+        } catch (SQLException ex) {
+            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
 
         borderPane.setLeft(sidebar);
@@ -469,7 +485,7 @@ public class MainFXMLController implements Initializable {
         System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
     }
 
-    public void createTabPaneWithTable(String whichTable, SQL_manager sql_manager) throws SQLException, ClassNotFoundException {
+    public void createTabPaneWithTable(String whichTable) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
@@ -477,11 +493,9 @@ public class MainFXMLController implements Initializable {
         Table tabellen = new Table();
         //  String query = textField.getText();
 
-        sql_manager.getConnection("localhost", "8889", "eskildb");
         //her skjer oppkoblingen
-
         //laster inn dataen med en query
-        tabellen.loadData("select * from " + whichTable + "  ", sql_manager, tabellen, tabPaneCounter);
+        tabellen.loadData("select * from " + whichTable + "  ",  tabellen, tabPaneCounter);
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabPaneCounter, tabellen);

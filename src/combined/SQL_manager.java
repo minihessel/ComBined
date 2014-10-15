@@ -5,14 +5,13 @@
  */
 package combined;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
+import javafx.concurrent.Task;
 import javafx.scene.control.ChoiceBox;
 
 /**
@@ -21,20 +20,19 @@ import javafx.scene.control.ChoiceBox;
  */
 public class SQL_manager {
 
-    static HikariDataSource ds;
-
-    static Statement st;
-
+    public static Connection conn;
+    public ResultSet rs;
     public String instanceName;
+    public Boolean connected;
+    public Task<Boolean> task;
 
     public SQL_manager() {
 
     }
 
     public void getAllTables(ChoiceBox choiceBox) throws SQLException {
-        System.out.println(ds.getConnection().toString());
         //Henter ut alle tabellene i databasen ved hjelp av metadata
-        DatabaseMetaData md = ds.getConnection().getMetaData();
+        DatabaseMetaData md = conn.getMetaData();
         ResultSet rs = md.getTables(null, null, "%", null);
 
         while (rs.next()) {
@@ -43,52 +41,53 @@ public class SQL_manager {
             choiceBox.getItems().add(rs.getString(3));
 
         }
-        ds.getConnection().close();
 
     }
 
-    public boolean getConnection(String mySqlAdress, String myPort, String sqlInstance) throws SQLException, ClassNotFoundException {
-    //metode for å etablere en tilkobling mot en database
-    //bruker Hikari som er et library for Connection Pool
-    //vi legger tilkoblingen i connection poolet. 
-        try {
-            HikariConfig config = new HikariConfig();
-            config.setMaximumPoolSize(100);
-            config.setConnectionTimeout(5000);
-            config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-            config.addDataSourceProperty("serverName", mySqlAdress);
-            config.addDataSourceProperty("port", myPort);
-            config.addDataSourceProperty("databaseName", sqlInstance);
-            config.addDataSourceProperty("user", "root");
-            config.addDataSourceProperty("password", "root");
+    public void getConnection(String mySqlAdress, String myPort, String sqlInstance) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
 
-            ds = new HikariDataSource(config);
-            ds.getConnection();
-            ds.getConnection().close();
-            System.out.println("Success, connected");
-            instanceName = sqlInstance;
-            return true;
+        task = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws Exception {
+                Boolean result = null;
+                try {
+                    instanceName = sqlInstance;
+                    Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    System.out.println("Driver Loaded.");
+                    String myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + sqlInstance + "?socketTimeout=3000&connectTimeout=3000";
+                    DriverManager.setLoginTimeout(3);
+                    conn = DriverManager.getConnection(myUrl, "root", "root");
 
-        } catch (Exception e) {
-            System.out.println("Oh noes, not connected " + e);
-            return false;
+                    System.out.println("Got Connection. " + conn);
+                    result = true;
+                } catch (SQLException e) {
+                    System.out.println("Driver Loaded FAILED.");
+                    result = false;
+                }
+                return result;
+            }
 
-        }
+        };
+
+        new Thread(task).start();
+
+        //Thread completed, end main thread
+        System.out.println("End");
 
     }
 
-    public ResultSet getDataFromSQL(String SQL) throws SQLException {
+    public void getDataFromSQL(String SQL) throws SQLException {
 
         try {
+            System.out.println(conn+"blabla");
+            rs = conn.createStatement().executeQuery(SQL);
 
-            ResultSet rs = ds.getConnection().createStatement().executeQuery(SQL);
-            return rs;
         } catch (Exception e) {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
+
         }
-        ds.getConnection().close();
-        return null;
+
 
     }
 }
