@@ -10,9 +10,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
@@ -24,8 +22,12 @@ import org.fxmisc.easybind.EasyBind;
  * @author Eskil Hesselroth
  */
 public class Visualize {
+    //klassen for å lage dataen for visualiseringer
 
-    protected void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, PieChart pieChart, Label lbl) {
+    protected void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, PieChart pieChart, Label lbl, Boolean newSeries) {
+        if (!newSeries) {
+            pieChart.getData().clear();
+        }
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
 
         System.out.println("Kolonne id for data er " + nameColumn + "Kolonne id for name er " + valueColumn);
@@ -36,7 +38,7 @@ public class Visualize {
                     return new PieChart.Data(name, value);
                 }));
         System.out.println("aa " + pieChartData.get(0));
-        pieChart.setData(pieChartData);
+        pieChart.getData().addAll(pieChartData);
 
         for (PieChart.Data d : pieChartData) {
             //deretter legger vi animasjon på piecharten.. Men husk, her trenger vi å bytte ut label med en ny label som lages hver gang.
@@ -46,7 +48,11 @@ public class Visualize {
         }
     }
 
-    protected void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart) {
+    protected void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart, Boolean newSeries) {
+        if (!newSeries) {
+            lineChart.getData().clear();
+        }
+        lineChart.setAnimated(false);
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
         XYChart.Series series1 = new XYChart.Series();
 
@@ -62,7 +68,11 @@ public class Visualize {
 
     }
 
-    protected void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart) {
+    protected void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart, Boolean newSeries) {
+        if (!newSeries) {
+            barChart.getData().clear();
+        }
+        barChart.setAnimated(false);//bug fix
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
         ObservableList<XYChart.Data<String, Number>> barChartData = EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
             String name = (String) rowData.get(nameColumn);
@@ -73,13 +83,7 @@ public class Visualize {
 
         XYChart.Series series1 = new XYChart.Series();
         series1.getData().addAll(barChartData);
-       barChart.getData().addAll(barChartData);
+        barChart.getData().addAll(series1);
 
-
-        
-   for (Object s : barChart.getData())
-       {
-           System.out.println(s.toString());
-       }
     }
 }

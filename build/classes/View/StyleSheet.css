@@ -20,6 +20,11 @@
 
 }
 
+#exportToPNGbutton{
+    -fx-graphic:url('/Icons/exportToPNG.png');
+    -fx-background-color: transparent;
+
+}
 #barChartButton{
     -fx-graphic:url('/Icons/bar_chart_icon.png');
     -fx-background-color: transparent;

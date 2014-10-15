@@ -6,6 +6,7 @@
 package Controller;
 
 import combined.SQL_manager;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -16,12 +17,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -41,12 +44,15 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
@@ -95,8 +101,8 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private LineChart lineChart;
-    
-     @FXML
+
+    @FXML
     private BarChart barChart;
     @FXML
     private Button btnNewConnection;
@@ -166,6 +172,34 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void visualizeButton(ActionEvent event) {
         setVisibleView("visualizeView");
+
+    }
+
+    @FXML
+    private void btnNewChart(ActionEvent event) {
+        if (pieChart.visibleProperty().get()) {
+            showLinearWizard("pieChart", false);
+        }
+        if (lineChart.visibleProperty().get()) {
+            showLinearWizard("lineChart", false);
+        }
+        if (barChart.visibleProperty().get()) {
+            showLinearWizard("barChart", false);
+        }
+
+    }
+
+    @FXML
+    private void btnNewSeries(ActionEvent event) {
+        if (pieChart.visibleProperty().get()) {
+            showLinearWizard("pieChart", true);
+        }
+        if (lineChart.visibleProperty().get()) {
+            showLinearWizard("lineChart", true);
+        }
+        if (barChart.visibleProperty().get()) {
+            showLinearWizard("barChart", true);
+        }
 
     }
 
@@ -247,7 +281,7 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    private void showLinearWizard(String whichVisualizationType) {
+    private void showLinearWizard(String whichVisualizationType, Boolean newSeries) {
         Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
 
         ChoiceBox choiceBoxNames = new ChoiceBox();
@@ -284,35 +318,26 @@ public class MainFXMLController implements Initializable {
         wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
         page1Grid.add(choiceBoxValues, 1, row);
 
-
         Wizard.WizardPane page1 = new Wizard.WizardPane();
         page1.setHeaderText("Please Enter Your Connection Details");
         page1.setContent(page1Grid);
 
-
         wizard.setFlow(new LinearFlow(page1));
 
-  
         // show wizard and wait for response
         wizard.showAndWait().ifPresent(result -> {
             if (result == ButtonType.FINISH) {
                 int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
                 int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
                 if (whichVisualizationType == "barChart") {
-                     lineChart.setVisible(false);
-                    pieChart.setVisible(false);
-                    barChart.setVisible(true);
-                     visualize.getBarChartData(en, to, tabPane, tablesList, barChart);
+
+                    visualize.getBarChartData(en, to, tabPane, tablesList, barChart, newSeries);
                 } else if (whichVisualizationType == "pieChart") {
-                    lineChart.setVisible(false);
-                    pieChart.setVisible(true);
-                      barChart.setVisible(false);
-                    visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label);
+
+                    visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label, newSeries);
                 } else if (whichVisualizationType == "lineChart") {
-                      lineChart.setVisible(true);
-                    pieChart.setVisible(false);
-                      barChart.setVisible(false);
-                    visualize.getLineChartData(en, to, tabPane, tablesList, lineChart);
+
+                    visualize.getLineChartData(en, to, tabPane, tablesList, lineChart, newSeries);
                 }
 
             }
@@ -322,20 +347,53 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
+    private void btnExportChartToPNG(ActionEvent event) throws IOException {
+        if (barChart.visibleProperty().get()) {
+            ChartToPng chartToPNG = new ChartToPng();
+            WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
+
+            chartToPNG.saveChartToPNG(image);
+
+        }
+        if (pieChart.visibleProperty().get()) {
+            ChartToPng chartToPNG = new ChartToPng();
+            WritableImage image = pieChart.snapshot(new SnapshotParameters(), null);
+
+            chartToPNG.saveChartToPNG(image);
+
+        }
+
+        if (lineChart.visibleProperty().get()) {
+            ChartToPng chartToPNG = new ChartToPng();
+            WritableImage image = lineChart.snapshot(new SnapshotParameters(), null);
+
+            chartToPNG.saveChartToPNG(image);
+
+        }
+
+    }
+
+    @FXML
     private void barChartButton(ActionEvent event) {
-        showLinearWizard("barChart");
+        lineChart.setVisible(false);
+        pieChart.setVisible(false);
+        barChart.setVisible(true);
     }
 
     @FXML
     private void pieChartButton(ActionEvent event) {
 
-        showLinearWizard("pieChart");
+        lineChart.setVisible(false);
+        pieChart.setVisible(true);
+        barChart.setVisible(false);
 
     }
 
     @FXML
     private void lineChartButton(ActionEvent event) {
-        showLinearWizard("lineChart");
+        lineChart.setVisible(true);
+        pieChart.setVisible(false);
+        barChart.setVisible(false);
     }
 
     @FXML
@@ -392,6 +450,7 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
 
         borderPane.setLeft(sidebar);

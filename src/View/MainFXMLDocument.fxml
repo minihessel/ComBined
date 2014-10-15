@@ -58,7 +58,7 @@
                               </Label>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <BarChart fx:id="barChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <BarChart fx:id="barChart" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                       <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
@@ -67,9 +67,9 @@
                                       </yAxis>
                                     </BarChart>
                                     <Label fx:id="label" text="Label" />
-                                    <PieChart fx:id="pieChart" clockwise="false" layoutX="-51.0" layoutY="31.0" prefHeight="551.0" prefWidth="845.0" />
+                                    <PieChart fx:id="pieChart" clockwise="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                              
-                                    <LineChart fx:id="lineChart" prefHeight="440.0" prefWidth="1221.0" visible="false" AnchorPane.bottomAnchor="324.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <LineChart fx:id="lineChart" layoutY="32.0" prefHeight="732.0" prefWidth="1221.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                       <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
@@ -77,6 +77,8 @@
                                         <NumberAxis side="LEFT" />
                                       </yAxis>
                                     </LineChart>
+                                    <Button mnemonicParsing="false" onAction="#btnNewSeries" text="New series from tableview" />
+                                    <Button mnemonicParsing="false" onAction="#btnNewChart" text="New chart from tableview" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
                                  </children>
                               </AnchorPane>
                               <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
@@ -94,6 +96,11 @@
                                     <Button id="lineChartButton" fx:id="handleLineChartButton" onAction="#lineChartButton">
                                        <tooltip>
                                           <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                       </tooltip>
+                                    </Button>
+                                    <Button id="exportToPNGbutton" fx:id="printScreenButton" onAction="#btnExportChartToPNG">
+                                       <tooltip>
+                                          <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
                                        </tooltip>
                                     </Button>
                                  </items>
