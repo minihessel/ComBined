@@ -38,7 +38,7 @@ public class DragAbleTreeView {
     private static TreeItem DRAGGEDTARGET;
     private static int DRAGGEDINDEX;
 
-    Map<TreeItem, TreeItem> source_and_target_treeitem = new HashMap<TreeItem, TreeItem>();
+    Map<TreeCell, TreeCell> source_and_target_treeitem = new HashMap<TreeCell, TreeCell>();
 
     private void addDragAndDrop(TreeCell<String> treeCell, MainFXMLController mainFXMLController) {
         //denne metoden legger til mulighet for drag and drop på treeviews.
@@ -103,6 +103,8 @@ public class DragAbleTreeView {
                         /* data dropped */
                         DRAGGEDSOURCE.setGraphic(new ImageView(new Image(
                                 getClass().getResourceAsStream("/Icons/check.png"))));
+                    
+                                System.out.println(treeCell);
 
                     } else {
                         Dialogs.create()
@@ -174,8 +176,8 @@ public class DragAbleTreeView {
         item2.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
 
-                System.out.println("qq + " + source_and_target_treeitem.get(treeCell.getTreeItem()));
-                source_and_target_treeitem.get(treeCell.getTreeItem())
+                System.out.println("qq + " + source_and_target_treeitem.get(treeCell));
+               treeCell.getTreeItem()
                         .setGraphic(new ImageView(new Image(
                                                 getClass().getResourceAsStream("/Icons/column_icon.png"))));
                 mainFXMLController.removeColumnToCombinedColumn(treeCell);

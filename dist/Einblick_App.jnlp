@@ -11,9 +11,9 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Einblick_App.jar" size="268562" download="eager" />
+    <jar href="Einblick_App.jar" size="271901" download="eager" />
     <jar href="lib/HikariCP-2.0.1.jar" size="70623" download="eager" />
-    <jar href="lib/controlsfx-8.20.7_DENNE.jar" size="936168" download="eager" />
+    <jar href="lib/controlsfx-8.20.8.jar" size="957666" download="eager" />
     <jar href="lib/easybind-1.0.3.jar" size="44787" download="eager" />
     <jar href="lib/javassist.jar" size="710746" download="eager" />
     <jar href="lib/mysql-connector-java-5.1.23-bin.jar" size="834091" download="eager" />

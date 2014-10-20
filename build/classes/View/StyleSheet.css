@@ -84,7 +84,9 @@
 }
 
 
-
+.tooltip {
+   -fx-font: 22 arial;
+}
 
 
 .tree-view .tree-cell:filled{

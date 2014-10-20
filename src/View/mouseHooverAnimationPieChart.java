@@ -26,9 +26,9 @@ public abstract class mouseHooverAnimationPieChart implements Initializable {
         private PieChart chart;
         private Label label;
 
-        public MouseHoverAnimation(PieChart.Data d, PieChart chart, Label caption) {
+        public MouseHoverAnimation(PieChart.Data d, PieChart chart) {
             MainFXMLController fx = new MainFXMLController();
-            this.label = caption;
+        
             this.chart = chart;
             double start = 0;
             double angle = calcAngle(d);
@@ -51,7 +51,7 @@ public abstract class mouseHooverAnimationPieChart implements Initializable {
         @Override
         public void handle(MouseEvent arg0) {
             Node n = (Node) arg0.getSource();
-            label.setText(n.getUserData().toString());
+       
             if ("clicked".equals(n.getId())) {
                 TranslateTransitionBuilder.create().toX(0).toY(0).duration(new Duration(500)).node(n).build().play();
                 n.setId(null);

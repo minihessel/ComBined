@@ -6,7 +6,6 @@
 package Controller;
 
 import combined.SQL_manager;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -20,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +29,8 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -52,10 +52,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.imageio.ImageIO;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
@@ -120,6 +118,11 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     PieChart pieChart;
+
+      @FXML
+    StackedAreaChart areaChart;
+            @FXML
+    ScatterChart scatterChart;
 
     @FXML
     Button visualizeButton;
@@ -190,7 +193,12 @@ public class MainFXMLController implements Initializable {
         if (barChart.visibleProperty().get()) {
             showLinearWizard("barChart", false);
         }
-
+ if (areaChart.visibleProperty().get()) {
+            showLinearWizard("areaChart", false);
+        }
+  if (scatterChart.visibleProperty().get()) {
+            showLinearWizard("scatterChart", false);
+        }
     }
 
     @FXML
@@ -204,7 +212,12 @@ public class MainFXMLController implements Initializable {
         if (barChart.visibleProperty().get()) {
             showLinearWizard("barChart", true);
         }
-
+ if (areaChart.visibleProperty().get()) {
+            showLinearWizard("areaChart", true);
+        }
+ if (scatterChart.visibleProperty().get()) {
+            showLinearWizard("scatterChart", true);
+        }
     }
 
     @FXML
@@ -228,18 +241,22 @@ public class MainFXMLController implements Initializable {
             anchorPaneVisualize.setVisible(true);
             anchorPaneTables.setVisible(false);
             anchorPaneCombine.setVisible(false);
+               
         }
+
 
         if (whichView == "tableView") {
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(true);
             anchorPaneCombine.setVisible(false);
+        
         }
 
         if (whichView == "combineView") {
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(false);
             anchorPaneCombine.setVisible(true);
+                
         }
 
     }
@@ -311,7 +328,7 @@ public class MainFXMLController implements Initializable {
         page1Grid.setVgap(10);
         page1Grid.setHgap(30);
 
-        page1Grid.add(new Label("Check which field that represent the names: "), 0, row);
+        page1Grid.add(new Label("Check which field that represent the categories: "), 0, row);
 
         wizard.getValidationSupport().registerValidator(choiceBoxNames, Validator.createEmptyValidator("You must select what represents names"));
         page1Grid.add(choiceBoxNames, 1, row++);
@@ -322,7 +339,7 @@ public class MainFXMLController implements Initializable {
         page1Grid.add(choiceBoxValues, 1, row);
 
         Wizard.WizardPane page1 = new Wizard.WizardPane();
-        page1.setHeaderText("Please Enter Your Connection Details");
+        page1.setHeaderText("Please select your columns for visualizing");
         page1.setContent(page1Grid);
 
         wizard.setFlow(new LinearFlow(page1));
@@ -332,15 +349,34 @@ public class MainFXMLController implements Initializable {
             if (result == ButtonType.FINISH) {
                 int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
                 int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
-                if (whichVisualizationType == "barChart") {
+                try {
 
-                    visualize.getBarChartData(en, to, tabPane, tablesList, barChart, newSeries);
-                } else if (whichVisualizationType == "pieChart") {
+                    if (whichVisualizationType == "barChart") {
 
-                    visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label, newSeries);
-                } else if (whichVisualizationType == "lineChart") {
+                        visualize.getBarChartData(en, to, tabPane, tablesList, barChart, newSeries);
+                    } else if (whichVisualizationType == "pieChart") {
 
-                    visualize.getLineChartData(en, to, tabPane, tablesList, lineChart, newSeries);
+                        visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label, newSeries);
+                    } else if (whichVisualizationType == "lineChart") {
+
+                        visualize.getLineChartData(en, to, tabPane, tablesList, lineChart, newSeries);
+                    }
+                     else if (whichVisualizationType == "areaChart") {
+
+                        visualize.getAreaChartData(en, to, tabPane, tablesList, areaChart, newSeries);
+                    }
+                     else if (whichVisualizationType == "scatterChart") {
+
+                        visualize.getScatterChartData(en, to, tabPane, tablesList, scatterChart, newSeries);
+                    }
+
+
+                } catch (Exception e) {
+                    Dialogs.create()
+                            .owner(stage)
+                            .title("Invalid columns detected")
+                            .message("The first column has to be a text column, and the second one has to contain numbers")
+                            .showError();
                 }
 
             }
@@ -381,6 +417,8 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(false);
         pieChart.setVisible(false);
         barChart.setVisible(true);
+          areaChart.setVisible(false);
+          scatterChart.setVisible(false);
     }
 
     @FXML
@@ -389,6 +427,18 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(false);
         pieChart.setVisible(true);
         barChart.setVisible(false);
+  areaChart.setVisible(false);
+  scatterChart.setVisible(false);
+    }
+    
+        @FXML
+    private void areaChartButton(ActionEvent event) {
+
+        lineChart.setVisible(false);
+        pieChart.setVisible(false);
+        barChart.setVisible(false);
+          areaChart.setVisible(true);
+          scatterChart.setVisible(false);
 
     }
 
@@ -397,6 +447,16 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(true);
         pieChart.setVisible(false);
         barChart.setVisible(false);
+          areaChart.setVisible(false);
+          scatterChart.setVisible(false);
+    }
+        @FXML
+    private void scatterChartButton(ActionEvent event) {
+        lineChart.setVisible(false);
+        pieChart.setVisible(false);
+        barChart.setVisible(false);
+          areaChart.setVisible(false);
+             scatterChart.setVisible(true);
     }
 
     @FXML
@@ -495,7 +555,7 @@ public class MainFXMLController implements Initializable {
 
         //her skjer oppkoblingen
         //laster inn dataen med en query
-        tabellen.loadData("select * from " + whichTable + "  ",  tabellen, tabPaneCounter);
+        tabellen.loadData("select * from " + whichTable + "  ", tabellen, tabPaneCounter);
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabPaneCounter, tabellen);
