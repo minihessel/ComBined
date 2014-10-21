@@ -5,11 +5,7 @@
         <group name="Testing">
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Visualize.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/combined/SQL_manager.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/ChartToPng.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Table.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/DragAbleTreeView.java</file>
         </group>
     </open-files>
 </project-private>

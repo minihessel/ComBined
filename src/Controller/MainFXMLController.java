@@ -19,6 +19,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -100,6 +102,10 @@ public class MainFXMLController implements Initializable {
     static Stage stage;
     @FXML
     private Label label;
+    @FXML
+    private Button btnNewSeries;
+    @FXML
+    private Button btnNewChart;
 
     @FXML
     private LineChart lineChart;
@@ -119,9 +125,9 @@ public class MainFXMLController implements Initializable {
     @FXML
     PieChart pieChart;
 
-      @FXML
+    @FXML
     StackedAreaChart areaChart;
-            @FXML
+    @FXML
     ScatterChart scatterChart;
 
     @FXML
@@ -193,10 +199,10 @@ public class MainFXMLController implements Initializable {
         if (barChart.visibleProperty().get()) {
             showLinearWizard("barChart", false);
         }
- if (areaChart.visibleProperty().get()) {
+        if (areaChart.visibleProperty().get()) {
             showLinearWizard("areaChart", false);
         }
-  if (scatterChart.visibleProperty().get()) {
+        if (scatterChart.visibleProperty().get()) {
             showLinearWizard("scatterChart", false);
         }
     }
@@ -212,10 +218,10 @@ public class MainFXMLController implements Initializable {
         if (barChart.visibleProperty().get()) {
             showLinearWizard("barChart", true);
         }
- if (areaChart.visibleProperty().get()) {
+        if (areaChart.visibleProperty().get()) {
             showLinearWizard("areaChart", true);
         }
- if (scatterChart.visibleProperty().get()) {
+        if (scatterChart.visibleProperty().get()) {
             showLinearWizard("scatterChart", true);
         }
     }
@@ -241,22 +247,21 @@ public class MainFXMLController implements Initializable {
             anchorPaneVisualize.setVisible(true);
             anchorPaneTables.setVisible(false);
             anchorPaneCombine.setVisible(false);
-               
-        }
 
+        }
 
         if (whichView == "tableView") {
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(true);
             anchorPaneCombine.setVisible(false);
-        
+
         }
 
         if (whichView == "combineView") {
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(false);
             anchorPaneCombine.setVisible(true);
-                
+
         }
 
     }
@@ -265,7 +270,7 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("test");
+        createTabPaneWithTable("employees");
 
     }
 
@@ -360,16 +365,13 @@ public class MainFXMLController implements Initializable {
                     } else if (whichVisualizationType == "lineChart") {
 
                         visualize.getLineChartData(en, to, tabPane, tablesList, lineChart, newSeries);
-                    }
-                     else if (whichVisualizationType == "areaChart") {
+                    } else if (whichVisualizationType == "areaChart") {
 
                         visualize.getAreaChartData(en, to, tabPane, tablesList, areaChart, newSeries);
-                    }
-                     else if (whichVisualizationType == "scatterChart") {
+                    } else if (whichVisualizationType == "scatterChart") {
 
                         visualize.getScatterChartData(en, to, tabPane, tablesList, scatterChart, newSeries);
                     }
-
 
                 } catch (Exception e) {
                     Dialogs.create()
@@ -417,8 +419,8 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(false);
         pieChart.setVisible(false);
         barChart.setVisible(true);
-          areaChart.setVisible(false);
-          scatterChart.setVisible(false);
+        areaChart.setVisible(false);
+        scatterChart.setVisible(false);
     }
 
     @FXML
@@ -427,18 +429,18 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(false);
         pieChart.setVisible(true);
         barChart.setVisible(false);
-  areaChart.setVisible(false);
-  scatterChart.setVisible(false);
+        areaChart.setVisible(false);
+        scatterChart.setVisible(false);
     }
-    
-        @FXML
+
+    @FXML
     private void areaChartButton(ActionEvent event) {
 
         lineChart.setVisible(false);
         pieChart.setVisible(false);
         barChart.setVisible(false);
-          areaChart.setVisible(true);
-          scatterChart.setVisible(false);
+        areaChart.setVisible(true);
+        scatterChart.setVisible(false);
 
     }
 
@@ -447,16 +449,17 @@ public class MainFXMLController implements Initializable {
         lineChart.setVisible(true);
         pieChart.setVisible(false);
         barChart.setVisible(false);
-          areaChart.setVisible(false);
-          scatterChart.setVisible(false);
+        areaChart.setVisible(false);
+        scatterChart.setVisible(false);
     }
-        @FXML
+
+    @FXML
     private void scatterChartButton(ActionEvent event) {
         lineChart.setVisible(false);
         pieChart.setVisible(false);
         barChart.setVisible(false);
-          areaChart.setVisible(false);
-             scatterChart.setVisible(true);
+        areaChart.setVisible(false);
+        scatterChart.setVisible(true);
     }
 
     @FXML
@@ -515,7 +518,7 @@ public class MainFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            sql_manager.getConnection("localhost", "8889", "eskildb");
+            sql_manager.getConnection("localhost", "8889", "employees");
         } catch (SQLException ex) {
             Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -527,6 +530,9 @@ public class MainFXMLController implements Initializable {
         }
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
+        btnNewSeries.setVisible(true);
+        btnNewChart.setVisible(true);
+
         SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
 
         borderPane.setLeft(sidebar);

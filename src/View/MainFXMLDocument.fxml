@@ -66,7 +66,7 @@
                                                         <NumberAxis side="LEFT" />
                                                     </yAxis>
                                                 </BarChart>
-                                                <StackedAreaChart fx:id="areaChart">
+                                                <StackedAreaChart fx:id="areaChart" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                                     <xAxis>
                                                         <CategoryAxis animated="false" side="BOTTOM" />
                                                     </xAxis>
@@ -74,7 +74,7 @@
                                                         <NumberAxis animated="false" side="LEFT" />
                                                     </yAxis>
                                                 </StackedAreaChart>
-                                    <ScatterChart fx:id="scatterChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                    <ScatterChart fx:id="scatterChart" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                       <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
@@ -83,7 +83,7 @@
                                       </yAxis>
                                     </ScatterChart>
                                                 <Label fx:id="label" text="Label" />
-                                                <PieChart fx:id="pieChart" clockwise="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <PieChart fx:id="pieChart" clockwise="false" visible="false" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="32.0" />
                              
                                                 <LineChart fx:id="lineChart" layoutY="32.0" prefHeight="732.0" prefWidth="1221.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                                     <xAxis>
@@ -93,8 +93,8 @@
                                                         <NumberAxis side="LEFT" />
                                                     </yAxis>
                                                 </LineChart>
-                                                <Button mnemonicParsing="false" onAction="#btnNewSeries" text="New series from tableview" />
-                                                <Button mnemonicParsing="false" onAction="#btnNewChart" text="New chart from tableview" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
+                                                <Button fx:id="btnNewSeries" mnemonicParsing="false" onAction="#btnNewSeries" text="New series from tableview" visible="false" />
+                                                <Button fx:id="btnNewChart" mnemonicParsing="false" onAction="#btnNewChart" text="New chart from tableview" visible="false" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
                                             </children>
                                         </AnchorPane>
                                         <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
@@ -114,21 +114,21 @@
                                                         <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
                                                     </tooltip>
                                                 </Button>
+                                    <Button id="scatterChartButton" fx:id="handleLineChartButton11" onAction="#scatterChartButton">
+                                       <tooltip>
+                                          <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                       </tooltip>
+                                    </Button>
+                                                <Button id="areaChartButton" fx:id="handleLineChartButton1" onAction="#areaChartButton">
+                                                    <tooltip>
+                                                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                                    </tooltip>
+                                                </Button>
                                                 <Button id="exportToPNGbutton" fx:id="printScreenButton" onAction="#btnExportChartToPNG">
                                                     <tooltip>
                                                         <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
                                                     </tooltip>
                                                 </Button>
-                                                <Button id="lineChartButton" fx:id="handleLineChartButton1" onAction="#areaChartButton">
-                                                    <tooltip>
-                                                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
-                                                    </tooltip>
-                                                </Button>
-                                    <Button id="lineChartButton" fx:id="handleLineChartButton11" onAction="#scatterChartButton">
-                                       <tooltip>
-                                          <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
-                                       </tooltip>
-                                    </Button>
                                             </items>
                                             <opaqueInsets>
                                                 <Insets />

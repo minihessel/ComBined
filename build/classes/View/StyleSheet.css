@@ -19,6 +19,15 @@
     -fx-background-color: transparent;
 
 }
+#areaChartButton{
+    -fx-graphic:url('/Icons/area_chart_icon.png');
+    -fx-background-color: transparent;
+}
+#scatterChartButton{
+    -fx-graphic:url('/Icons/scatter_chart_icon.png');
+    -fx-background-color: transparent;
+
+}
 
 #exportToPNGbutton{
     -fx-graphic:url('/Icons/exportToPNG.png');
