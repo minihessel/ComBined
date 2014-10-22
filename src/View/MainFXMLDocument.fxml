@@ -147,7 +147,7 @@
                                                 <Font name="Menlo Regular" size="20.0" />
                                             </font>
                                         </Label>
-                                        <TabPane id="tabPane" fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                        <TabPane id="tabPane" fx:id="tabPane" maxHeight="700.0" prefHeight="300.0" prefWidth="1219.0">
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>

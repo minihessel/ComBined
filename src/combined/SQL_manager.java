@@ -53,10 +53,11 @@ public class SQL_manager {
                 try {
                     instanceName = sqlInstance;
                     Class.forName("com.mysql.jdbc.Driver").newInstance();
+                             
                     System.out.println("Driver Loaded.");
                     String myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + sqlInstance + "?socketTimeout=3000&connectTimeout=3000";
                     DriverManager.setLoginTimeout(3);
-                    conn = DriverManager.getConnection(myUrl, "root", "root");
+                    conn = DriverManager.getConnection(myUrl, "admin", "admin");
 
                     System.out.println("Got Connection. " + conn);
                     result = true;

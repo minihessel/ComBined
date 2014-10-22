@@ -6,7 +6,10 @@
 package Controller;
 
 import View.mouseHooverAnimationPieChart;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -32,6 +35,15 @@ public class Visualize {
 
     private final Glow glow = new Glow(.8);
     //klassen for å lage dataen for visualiseringer
+    private Map<String, Double> data = new HashMap<>();
+
+    void getPieChartD() {
+
+    }
+
+    void addNewDataPoint(String name, double value) {
+        data.merge(name, value, Double::sum);
+    }
 
     protected void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, PieChart pieChart, Label lbl, Boolean newSeries) {
         if (!newSeries) {
@@ -43,18 +55,19 @@ public class Visualize {
         ObservableList<PieChart.Data> pieChartData
                 = FXCollections.observableArrayList(EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
                     String name = (String) rowData.get(nameColumn);
-                    int value = Integer.parseInt(rowData.get(valueColumn));
+
+                    Double value = Double.parseDouble(rowData.get(valueColumn));
                     return new PieChart.Data(name, value);
                 }));
         System.out.println("aa " + pieChartData.get(0));
         pieChart.getData().addAll(pieChartData);
 
-        for (PieChart.Data d : pieChart.getData()) {
-            //deretter legger vi animasjon på piecharten.. Men husk, her trenger vi å bytte ut label med en ny label som lages hver gang.
-            d.getNode().setOnMouseClicked(new mouseHooverAnimationPieChart.MouseHoverAnimation(d, pieChart));
-            final Node n = d.getNode();
+        for (PieChart.Data data : pieChart.getData()) {
+            addNewDataPoint(data.getName(), data.getPieValue());
+             data.getNode().setOnMouseClicked(new mouseHooverAnimationPieChart.MouseHoverAnimation(data, pieChart));
+            final Node n = data.getNode();
             Tooltip tooltip = new Tooltip();
-            String toolTipText = "Value : " + d.getPieValue();
+            String toolTipText = "Value : " + data.getPieValue();
             tooltip.setText(toolTipText);
             Tooltip.install(n, tooltip);
             n.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -69,8 +82,14 @@ public class Visualize {
                     n.setEffect(null);
                 }
             });
-
         }
+
+        ObservableList<PieChart.Data> pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new PieChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        pieChart.getData().clear();
+        pieChart.setData(pieChartData2);
 
     }
 
@@ -87,7 +106,7 @@ public class Visualize {
 
                     String name = rowData.get(nameColumn);
 
-                    Number value = Integer.parseInt(rowData.get(valueColumn));
+                    Double value = Double.parseDouble(rowData.get(valueColumn));
 
                     return new XYChart.Data(name, value);
                 }));
@@ -108,7 +127,7 @@ public class Visualize {
 
             String name = rowData.get(nameColumn);
 
-            Number value = Integer.parseInt(rowData.get(valueColumn));
+            Double value = Double.parseDouble(rowData.get(valueColumn));
             System.out.println(name);
 
             return new XYChart.Data(name, value);
@@ -132,7 +151,7 @@ public class Visualize {
         ObservableList<XYChart.Data> areaChartData = EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
             String name = rowData.get(nameColumn);
 
-            Number value = Integer.parseInt(rowData.get(valueColumn));
+            Double value = Double.parseDouble(rowData.get(valueColumn));
             return new XYChart.Data(name, value);
         });
 
@@ -152,7 +171,7 @@ public class Visualize {
 
             String name = rowData.get(nameColumn);
 
-            Number value = Integer.parseInt(rowData.get(valueColumn));
+            Double value = Double.parseDouble(rowData.get(valueColumn));
             System.out.println(name);
 
             return new XYChart.Data(name, value);

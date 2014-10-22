@@ -19,8 +19,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,6 +51,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -270,7 +269,7 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("employees");
+        createTabPaneWithTable("Transactions");
 
     }
 
@@ -518,7 +517,7 @@ public class MainFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            sql_manager.getConnection("localhost", "8889", "employees");
+            sql_manager.getConnection("eskil-server-pc", "8889", "advaniatestdata");
         } catch (SQLException ex) {
             Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -567,17 +566,17 @@ public class MainFXMLController implements Initializable {
         tablesList.add(tabPaneCounter, tabellen);
 
         TableView tableViewet = new TableView();
-        System.out.println("vBOX HEIGHT : " + vBox.getHeight());
-        System.out.println("TABPANE HEIGHT : " + tabPane.getHeight());
-        System.out.println("TABLEVIEW HEIGHT : " + tableViewet.getHeight());
+        
 
         //legger til tableviewet i tabben
-        vBox.getChildren().add(tableViewet);
+      
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
+    
+        
+          vBox.getChildren().add(tableViewet);
         vBox.setId("" + tabPaneCounter);
-        vBox.setMinHeight(100000000);
-        vBox.setPrefHeight(10000000);
-        vBox.setMaxHeight(100000000);
+     
+    
 
         //lager en ny treeview med en liste over alle kolonnene i tabellen
         TreeView treeView = new TreeView();
