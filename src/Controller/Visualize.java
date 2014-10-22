@@ -46,28 +46,29 @@ public class Visualize {
     }
 
     protected void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, PieChart pieChart, Label lbl, Boolean newSeries) {
+        data.clear();
+
         if (!newSeries) {
             pieChart.getData().clear();
         }
+
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
+        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+        }
 
-        System.out.println("Kolonne id for data er " + nameColumn + "Kolonne id for name er " + valueColumn);
-        ObservableList<PieChart.Data> pieChartData
-                = FXCollections.observableArrayList(EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
-                    String name = (String) rowData.get(nameColumn);
+        ObservableList<PieChart.Data> pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new PieChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        pieChart.getData().addAll(pieChartData2);
 
-                    Double value = Double.parseDouble(rowData.get(valueColumn));
-                    return new PieChart.Data(name, value);
-                }));
-        System.out.println("aa " + pieChartData.get(0));
-        pieChart.getData().addAll(pieChartData);
-
-        for (PieChart.Data data : pieChart.getData()) {
-            addNewDataPoint(data.getName(), data.getPieValue());
-             data.getNode().setOnMouseClicked(new mouseHooverAnimationPieChart.MouseHoverAnimation(data, pieChart));
-            final Node n = data.getNode();
+        for (PieChart.Data d : pieChart.getData()) {
+            //deretter legger vi animasjon på piecharten.. 
+            d.getNode().setOnMouseClicked(new mouseHooverAnimationPieChart.MouseHoverAnimation(d, pieChart));
+            final Node n = d.getNode();
             Tooltip tooltip = new Tooltip();
-            String toolTipText = "Value : " + data.getPieValue();
+            String toolTipText = "Value : " + d.getPieValue();
             tooltip.setText(toolTipText);
             Tooltip.install(n, tooltip);
             n.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -82,59 +83,58 @@ public class Visualize {
                     n.setEffect(null);
                 }
             });
+
         }
-
-        ObservableList<PieChart.Data> pieChartData2
-                = data.entrySet().stream()
-                .map(entry -> new PieChart.Data(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
-        pieChart.getData().clear();
-        pieChart.setData(pieChartData2);
-
     }
 
     protected void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart, Boolean newSeries) {
-        if (!newSeries) {
-            lineChart.getData().clear();
-        }
-        lineChart.setAnimated(false);
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
+        data.clear();
+        ObservableList<XYChart.Data> pieChartData2;
         XYChart.Series series1 = new XYChart.Series();
+        if (!newSeries) {
+            series1.getData().clear();
+            lineChart.getData().clear();
 
-        ObservableList<XYChart.Data> lineChartData
-                = FXCollections.observableArrayList(EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
+        }
+        lineChart.setAnimated(false);//bug fix
+        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
+        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+        }
 
-                    String name = rowData.get(nameColumn);
+        pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-                    Double value = Double.parseDouble(rowData.get(valueColumn));
+        series1.getData().addAll(pieChartData2);
+        lineChart.getData().addAll(series1);
 
-                    return new XYChart.Data(name, value);
-                }));
-
-        series1.setData(lineChartData);
-        lineChart.getData().add(series1);
         setupHover(series1);
 
     }
 
     protected void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart, Boolean newSeries) {
+        data.clear();
+        ObservableList<XYChart.Data> pieChartData2;
+        XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
+            series1.getData().clear();
             barChart.getData().clear();
+
         }
         barChart.setAnimated(false);//bug fix
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        ObservableList<XYChart.Data> barChartData = EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
+        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+        }
 
-            String name = rowData.get(nameColumn);
+        pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-            Double value = Double.parseDouble(rowData.get(valueColumn));
-            System.out.println(name);
-
-            return new XYChart.Data(name, value);
-        });
-
-        XYChart.Series series1 = new XYChart.Series();
-        series1.getData().addAll(barChartData);
+        series1.getData().addAll(pieChartData2);
         barChart.getData().addAll(series1);
 
         setupHover(series1);
@@ -142,43 +142,53 @@ public class Visualize {
     }
 
     protected void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, StackedAreaChart areaChart, Boolean newSeries) {
+        data.clear();
+        ObservableList<XYChart.Data> pieChartData2;
+        XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
+            series1.getData().clear();
             areaChart.getData().clear();
-        }
 
+        }
         areaChart.setAnimated(false);//bug fix
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        ObservableList<XYChart.Data> areaChartData = EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
-            String name = rowData.get(nameColumn);
+        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+        }
 
-            Double value = Double.parseDouble(rowData.get(valueColumn));
-            return new XYChart.Data(name, value);
-        });
+        pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        XYChart.Series series1 = new XYChart.Series(areaChartData);
-
+        series1.getData().addAll(pieChartData2);
         areaChart.getData().addAll(series1);
-        //setupHover(series1);
+
+        setupHover(series1);
+
     }
 
     protected void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, ScatterChart scatterChart, Boolean newSeries) {
+        data.clear();
+        ObservableList<XYChart.Data> pieChartData2;
+        XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
+            series1.getData().clear();
             scatterChart.getData().clear();
+
         }
         scatterChart.setAnimated(false);//bug fix
         int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        ObservableList<XYChart.Data> scatterChartData = EasyBind.map(tablesList.get(selectedTable).sortedData, rowData -> {
+        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+        }
 
-            String name = rowData.get(nameColumn);
+        pieChartData2
+                = data.entrySet().stream()
+                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-            Double value = Double.parseDouble(rowData.get(valueColumn));
-            System.out.println(name);
-
-            return new XYChart.Data(name, value);
-        });
-
-        XYChart.Series series1 = new XYChart.Series();
-        series1.getData().addAll(scatterChartData);
+        series1.getData().addAll(pieChartData2);
         scatterChart.getData().addAll(series1);
 
         setupHover(series1);

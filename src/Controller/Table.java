@@ -14,6 +14,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -36,11 +39,11 @@ public class Table {
     SortedList<List<String>> sortedData;
     FilteredList<List<String>> filteredItems;
     SQL_manager sql_manager = new SQL_manager();
+    List<TextField> listOfTxtFields;
 
     public Table() {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
-        
 
     }
 
@@ -53,10 +56,10 @@ public class Table {
 
         sql_manager.getDataFromSQL(SQL);
 
+
         for (int i = 1; i <= sql_manager.rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = sql_manager.rs.getMetaData().getColumnName(i);
             Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
-
             listofColumns.add(kol);
 
         }
@@ -78,7 +81,7 @@ public class Table {
     }
 
     public TableView fillTableView(TableView tableView, Table tbl) {
-        List<TextField> listOfTxtFields = new ArrayList();
+        listOfTxtFields = new ArrayList();
 
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
@@ -107,7 +110,9 @@ public class Table {
             Label lbl = new Label(kol.NAVN);
             lbl.setStyle("-fx-font-size:13px;");
             VBox vbox = new VBox();
+         
 
+     
             vbox.getChildren().add(lbl);
 
             vbox.getChildren().add(txtField);
@@ -167,6 +172,13 @@ public class Table {
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
+
+    }
+
+    void removeFilters() {
+        for (TextField txtField : listOfTxtFields) {
+            txtField.setText("");
+        }
 
     }
 

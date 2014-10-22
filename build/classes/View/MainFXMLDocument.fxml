@@ -138,7 +138,7 @@
                                 </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <SplitPane fx:id="splitPaneTables" dividerPositions="0.12008733624454149" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
@@ -146,8 +146,11 @@
                                             <font>
                                                 <Font name="Menlo Regular" size="20.0" />
                                             </font>
+                                 <graphic>
+                                    <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" />
+                                 </graphic>
                                         </Label>
-                                        <TabPane id="tabPane" fx:id="tabPane" maxHeight="700.0" prefHeight="300.0" prefWidth="1219.0">
+                                        <TabPane id="tabPane" fx:id="tabPane">
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>

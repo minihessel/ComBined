@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -51,7 +52,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -182,6 +182,15 @@ public class MainFXMLController implements Initializable {
     Button btnMenu;
 
     @FXML
+    private void btnRemoveFilters(ActionEvent event) {
+
+        if (tabPane.getSelectionModel().getSelectedItem() != null) {
+            tablesList.get(tabPane.getSelectionModel().getSelectedIndex()).removeFilters();
+        }
+
+    }
+
+    @FXML
     private void visualizeButton(ActionEvent event) {
         setVisibleView("visualizeView");
 
@@ -269,7 +278,7 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("Transactions");
+        createTabPaneWithTable("transactions");
 
     }
 
@@ -566,17 +575,12 @@ public class MainFXMLController implements Initializable {
         tablesList.add(tabPaneCounter, tabellen);
 
         TableView tableViewet = new TableView();
-        
 
         //legger til tableviewet i tabben
-      
+        vBox.getChildren().addAll(tableViewet);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
-    
-        
-          vBox.getChildren().add(tableViewet);
+
         vBox.setId("" + tabPaneCounter);
-     
-    
 
         //lager en ny treeview med en liste over alle kolonnene i tabellen
         TreeView treeView = new TreeView();

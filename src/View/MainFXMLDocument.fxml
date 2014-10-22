@@ -146,8 +146,11 @@
                                             <font>
                                                 <Font name="Menlo Regular" size="20.0" />
                                             </font>
+                                 <graphic>
+                                    <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" />
+                                 </graphic>
                                         </Label>
-                                        <TabPane id="tabPane" fx:id="tabPane" maxHeight="700.0" prefHeight="300.0" prefWidth="1219.0">
+                                        <TabPane id="tabPane" fx:id="tabPane">
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>
