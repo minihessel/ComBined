@@ -11,8 +11,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.control.ChoiceBox;
+import org.controlsfx.dialog.Dialogs;
 
 /**
  *
@@ -25,6 +27,7 @@ public class SQL_manager {
     public String instanceName;
     public Boolean connected;
     public Task<Boolean> task;
+    public Task<Boolean> service;
 
     public SQL_manager() {
 
@@ -53,7 +56,7 @@ public class SQL_manager {
                 try {
                     instanceName = sqlInstance;
                     Class.forName("com.mysql.jdbc.Driver").newInstance();
-                             
+
                     System.out.println("Driver Loaded.");
                     String myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + sqlInstance + "?socketTimeout=3000&connectTimeout=3000";
                     DriverManager.setLoginTimeout(3);

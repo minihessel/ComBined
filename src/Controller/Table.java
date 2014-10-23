@@ -1,26 +1,27 @@
 package Controller;
 
 import combined.SQL_manager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import javafx.beans.binding.Bindings;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -55,7 +56,6 @@ public class Table {
         tableNumber = tableNumb;
 
         sql_manager.getDataFromSQL(SQL);
-
 
         for (int i = 1; i <= sql_manager.rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = sql_manager.rs.getMetaData().getColumnName(i);
@@ -110,14 +110,22 @@ public class Table {
             Label lbl = new Label(kol.NAVN);
             lbl.setStyle("-fx-font-size:13px;");
             VBox vbox = new VBox();
-         
 
-     
             vbox.getChildren().add(lbl);
 
             vbox.getChildren().add(txtField);
 
             listOfTxtFields.add(txtField);
+
+            txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent ke) {
+                    if (ke.getCode().equals(KeyCode.ENTER)) {
+                        filter();
+                    }
+                }
+            });
+
             col.setGraphic(vbox);
 
             tableView.getColumns().add(col);
@@ -145,22 +153,6 @@ public class Table {
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
 
-        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(()
-                -> li -> {
-                    for (int i = 0; i < li.size(); i++) {
-                        if (!li.get(i).toLowerCase().
-                        contains(
-                                listOfTxtFields.get(i).getText().toLowerCase()
-                        )) {
-                            return false;
-                        }
-                    }
-                    return true;
-                },
-                listOfTxtFields.stream().map(TextField::textProperty)
-                .collect(Collectors.toList())
-                .toArray(new StringProperty[listOfTxtFields.size()])));
-
         tableView.setMinHeight(1000);
 
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
@@ -172,6 +164,55 @@ public class Table {
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
+
+    }
+
+    void filter() {
+
+        DateTest dateTest = new DateTest();
+        filteredItems.setPredicate(li -> {
+
+            for (int i = 0; i < li.size(); i++) {
+                if (dateTest.isValidDate(listOfTxtFields.get(i).getText().replace("a", "").replace("b", ""))) {
+
+                    try {
+                        dateTest.isValidDate(li.get(i));
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date1 = sdf.parse(li.get(i));
+                        Date date2 = sdf.parse(listOfTxtFields.get(i).getText().replace("a", "").replace("b", ""));
+                        if (listOfTxtFields.get(i).getText().contains("a")) {
+                            if (date1.after(date2)) {
+                                return true;
+
+                            }
+                        }
+                        if (listOfTxtFields.get(i).getText().contains("b")) {
+                            if (!date1.before(date2)) {
+                                return false;
+                            }
+                        } else {
+                            if (!date1.equals(date2)) {
+                                return false;
+                            }
+                        }
+                    } catch (ParseException ex) {
+                        Logger.getLogger(Table.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    if (!li.get(i).toLowerCase().
+                            contains(
+                                    listOfTxtFields.get(i).getText().toLowerCase()
+                            )) {
+
+                        return false;
+
+                    }
+                }
+            }
+
+            return true;
+        });
 
     }
 
