@@ -1,6 +1,7 @@
 package Controller;
 
 import combined.SQL_manager;
+import combined.checkForInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -199,6 +200,14 @@ public class Table {
                         Logger.getLogger(Table.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
+                } else if (listOfTxtFields.get(i).getText().contains("<") && checkForInteger.isInteger(li.get(i))) {
+                    if (Integer.parseInt(li.get(i)) > Integer.parseInt(listOfTxtFields.get(i).getText().replace("<", ""))) {
+                        return false;
+                    }
+                } else if (listOfTxtFields.get(i).getText().contains(">") && checkForInteger.isInteger(li.get(i))) {
+                    if (Integer.parseInt(li.get(i)) < Integer.parseInt(listOfTxtFields.get(i).getText().replace(">", ""))) {
+                        return false;
+                    }
                 } else {
                     if (!li.get(i).toLowerCase().
                             contains(
@@ -208,7 +217,9 @@ public class Table {
                         return false;
 
                     }
+
                 }
+
             }
 
             return true;

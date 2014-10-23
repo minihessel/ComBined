@@ -301,7 +301,7 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("transactions");
+        createTabPaneWithTable("transbig");
 
     }
 
