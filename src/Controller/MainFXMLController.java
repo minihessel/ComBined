@@ -27,7 +27,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
@@ -55,6 +54,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
@@ -72,6 +72,7 @@ public class MainFXMLController implements Initializable {
     Visualize visualize;
     ArrayList<Table> tablesList;
     SQL_manager sql_manager = new SQL_manager();
+      Parent root ;
 
     public MainFXMLController() {
         dragAbleTreeView = new DragAbleTreeView();
@@ -172,7 +173,7 @@ public class MainFXMLController implements Initializable {
 
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
 
-    IntroController introController;
+    HelpScreenController helpScreenController;
 
     @FXML
     BorderPane borderPane;
@@ -192,9 +193,9 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    private void visualizeButton(ActionEvent event
-    ) {
+    private void visualizeButton(ActionEvent event) {
         setVisibleView("visualizeView");
+              whichHelpView = "visualizeView";
 
     }
 
@@ -317,15 +318,13 @@ public class MainFXMLController implements Initializable {
     }
 
     void loadHelpScreen() throws IOException {
-        Parent root = fxmlLoader.load();
-        stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setOpacity(1);
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root));
-        introController = fxmlLoader.getController();
-        introController.setValue(whichHelpView);
+      
+      
+        helpScreenController = fxmlLoader.getController();
+        helpScreenController.setValue(whichHelpView);
+
         stage.showAndWait();
+       
 
     }
 
@@ -543,6 +542,18 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        try {
+            root = fxmlLoader.load();
+              stage = new Stage();
+                       stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("My New Stage Title");
+        stage.setScene(new Scene(root));
+        } catch (IOException ex) {
+            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
             sql_manager.getConnection("eskil-server-pc", "8889", "advaniatestdata");

@@ -23,6 +23,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -154,7 +155,7 @@ public class Table {
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
 
-        tableView.setMinHeight(1000);
+        tableView.setMinHeight(800);
 
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
         sortedData = new SortedList<>(filteredItems);

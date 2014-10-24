@@ -101,32 +101,32 @@
                                             <items>
                                                 <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">
                                                     <tooltip>
-                                                        <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+                                                        <Tooltip text="Click here to make a pie chart" />
                                                     </tooltip>
                                                 </Button>
                                                 <Button id="barChartButton" fx:id="handleBarChartButton" onAction="#barChartButton">
                                                     <tooltip>
-                                                        <Tooltip text="This button opens up the visualize pane" />
+                                                        <Tooltip text="Click here to make a bar chart" />
                                                     </tooltip>
                                                 </Button>
                                                 <Button id="lineChartButton" fx:id="handleLineChartButton" onAction="#lineChartButton">
                                                     <tooltip>
-                                                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                                        <Tooltip text="Click here to make a line chart" />
                                                     </tooltip>
                                                 </Button>
                                     <Button id="scatterChartButton" fx:id="handleLineChartButton11" onAction="#scatterChartButton">
                                        <tooltip>
-                                          <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                          <Tooltip text="Click here to make a scatter chart" />
                                        </tooltip>
                                     </Button>
                                                 <Button id="areaChartButton" fx:id="handleLineChartButton1" onAction="#areaChartButton">
                                                     <tooltip>
-                                                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                                                        <Tooltip text="Click here to make a area chart" />
                                                     </tooltip>
                                                 </Button>
                                                 <Button id="exportToPNGbutton" fx:id="printScreenButton" onAction="#btnExportChartToPNG">
                                                     <tooltip>
-                                                        <Tooltip text="This button opens the wizard for connecting to a new table in a database" />
+                                                        <Tooltip text="Click here to save your chart as PNG" />
                                                     </tooltip>
                                                 </Button>
                                             </items>
