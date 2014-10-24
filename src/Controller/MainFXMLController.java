@@ -27,6 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
@@ -83,7 +84,7 @@ public class MainFXMLController implements Initializable {
         return this.tablesList;
     }
 
-    Table tbl3 = new Table();
+    Table combinedTable = new Table();
 
     ArrayList<TreeView> listemedView = new ArrayList<TreeView>();
 
@@ -180,98 +181,82 @@ public class MainFXMLController implements Initializable {
     @FXML
     Button btnMenu;
 
-  
-
-        
-
-        @FXML
-        private void btnRemoveFilters
-        (ActionEvent event
-        
-            ) {
+    @FXML
+    private void btnRemoveFilters(ActionEvent event
+    ) {
 
         if (tabPane.getSelectionModel().getSelectedItem() != null) {
-                tablesList.get(tabPane.getSelectionModel().getSelectedIndex()).removeFilters();
-            }
-
+            tablesList.get(tabPane.getSelectionModel().getSelectedIndex()).removeFilters();
         }
 
-        @FXML
-        private void visualizeButton
-        (ActionEvent event
-        
-            ) {
+    }
+
+    @FXML
+    private void visualizeButton(ActionEvent event
+    ) {
         setVisibleView("visualizeView");
 
-        }
+    }
 
-        @FXML
-        private void btnNewChart
-        (ActionEvent event
-        
-            ) {
+    @FXML
+    private void btnNewChart(ActionEvent event
+    ) {
         if (pieChart.visibleProperty().get()) {
-                showLinearWizard("pieChart", false);
-            }
-            if (lineChart.visibleProperty().get()) {
-                showLinearWizard("lineChart", false);
-            }
-            if (barChart.visibleProperty().get()) {
-                showLinearWizard("barChart", false);
-            }
-            if (areaChart.visibleProperty().get()) {
-                showLinearWizard("areaChart", false);
-            }
-            if (scatterChart.visibleProperty().get()) {
-                showLinearWizard("scatterChart", false);
-            }
+            showLinearWizard("pieChart", false);
+        }
+        if (lineChart.visibleProperty().get()) {
+            showLinearWizard("lineChart", false);
+        }
+        if (barChart.visibleProperty().get()) {
+            showLinearWizard("barChart", false);
+        }
+        if (areaChart.visibleProperty().get()) {
+            showLinearWizard("areaChart", false);
+        }
+        if (scatterChart.visibleProperty().get()) {
+            showLinearWizard("scatterChart", false);
         }
 
-        @FXML
-        private void btnNewSeries
-        (ActionEvent event
-        
-            ) {
+    }
+
+    @FXML
+    private void btnNewSeries(ActionEvent event
+    ) {
         if (pieChart.visibleProperty().get()) {
-                showLinearWizard("pieChart", true);
-            }
-            if (lineChart.visibleProperty().get()) {
-                showLinearWizard("lineChart", true);
-            }
-            if (barChart.visibleProperty().get()) {
-                showLinearWizard("barChart", true);
-            }
-            if (areaChart.visibleProperty().get()) {
-                showLinearWizard("areaChart", true);
-            }
-            if (scatterChart.visibleProperty().get()) {
-                showLinearWizard("scatterChart", true);
-            }
+            showLinearWizard("pieChart", true);
+        }
+        if (lineChart.visibleProperty().get()) {
+            showLinearWizard("lineChart", true);
+        }
+        if (barChart.visibleProperty().get()) {
+            showLinearWizard("barChart", true);
+        }
+        if (areaChart.visibleProperty().get()) {
+            showLinearWizard("areaChart", true);
+        }
+        if (scatterChart.visibleProperty().get()) {
+            showLinearWizard("scatterChart", true);
         }
 
-        @FXML
-        private void handleDataButton
-        (ActionEvent event
-        
-            ) {
+    }
+
+    @FXML
+    private void handleDataButton(ActionEvent event
+    ) {
         setVisibleView("tableView");
-            whichHelpView = "tableView";
-        }
+        whichHelpView = "tableView";
+    }
 
-        @FXML
-        private void combineButton
-        (ActionEvent event
-        
-            ) {
+    @FXML
+    private void combineButton(ActionEvent event
+    ) {
         setVisibleView("combineView");
-            whichHelpView = "combineView";
-            System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
-            for (String k : treeViewCombinedColumns.getStyleClass()) {
-                System.out.println(k);
-            }
+        whichHelpView = "combineView";
+        System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
+        for (String k : treeViewCombinedColumns.getStyleClass()) {
+            System.out.println(k);
         }
-
-    
+    }
 
     public void setVisibleView(String whichView) {
         if (whichView == "visualizeView") {
@@ -301,7 +286,8 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("transbig");
+        // createTabPaneWithTable("transbig");
+        createTabPaneWithTable("transactions");
 
     }
 
@@ -310,11 +296,17 @@ public class MainFXMLController implements Initializable {
 
         TableView tableViewCombined = new TableView();
 
-        Tab tab = new Tab();
+        tablesList.add(combinedTable);
+        Tab tab = new Tab("combinedTable");
+        tab.setId("" + tabPaneCounter);
 
         tab.setContent(tableViewCombined);
         tabPane.getTabs().add(tab);
-        tableViewCombined = tbl3.fillTableView(tableViewCombined, tbl3);
+        tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
+        setVisibleView("tableView");
+        //to select the last tab that has been selected
+
+        tabPane.getSelectionModel().select(tab);
     }
 
     @FXML
@@ -452,6 +444,7 @@ public class MainFXMLController implements Initializable {
         barChart.setVisible(true);
         areaChart.setVisible(false);
         scatterChart.setVisible(false);
+
     }
 
     @FXML
@@ -462,6 +455,7 @@ public class MainFXMLController implements Initializable {
         barChart.setVisible(false);
         areaChart.setVisible(false);
         scatterChart.setVisible(false);
+
     }
 
     @FXML
@@ -482,6 +476,7 @@ public class MainFXMLController implements Initializable {
         barChart.setVisible(false);
         areaChart.setVisible(false);
         scatterChart.setVisible(false);
+
     }
 
     @FXML
@@ -491,6 +486,7 @@ public class MainFXMLController implements Initializable {
         barChart.setVisible(false);
         areaChart.setVisible(false);
         scatterChart.setVisible(true);
+
     }
 
     @FXML
@@ -500,7 +496,7 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void createNewCombinedColumnButton(ActionEvent event) {
-        createNewCombinedColumn(tbl3);
+        createNewCombinedColumn(combinedTable);
     }
 
     private void createNewCombinedColumn(Table tbl) {
@@ -671,17 +667,6 @@ public class MainFXMLController implements Initializable {
         //    System.out.println(parentColumn);
 
         parentColumn.listOfColumns.remove(targetForDelete);
-    }
-
-    private void makeTableViewWithCombinedColumns(Table tbl, TableView tableView) {
-        tbl.listofColumns.clear();
-        tableView.getItems().clear();
-        tableView.getColumns().clear();
-
-        //Først looper vi igjennom combinedColumn av lister med kolonner(med andre ord er en liste i denne combinedColumn en kombinert kolonne)
-        //deretter lager vi tableviewet med alle de kombinerte kolonnene. 
-        tableView = tbl.fillTableView(tableView, tbl);
-
     }
 
 }

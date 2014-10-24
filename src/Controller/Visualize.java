@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
@@ -25,7 +26,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
-import org.fxmisc.easybind.EasyBind;
 
 /**
  *
@@ -194,6 +194,8 @@ public class Visualize {
         setupHover(series1);
 
     }
+    
+ 
 
     private void setupHover(XYChart.Series<String, Number> series) {
         for (final XYChart.Data dt : series.getData()) {
