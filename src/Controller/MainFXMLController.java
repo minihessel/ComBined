@@ -556,7 +556,7 @@ public class MainFXMLController implements Initializable {
         }
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            sql_manager.getConnection("eskil-server-pc", "8889", "advaniatestdata");
+            sql_manager.getConnection("localhost", "8889", "test");
         } catch (SQLException ex) {
             Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

@@ -5,11 +5,10 @@
         <group name="Testing">
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/combined/SQL_manager.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Visualize.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/HelpScreenController.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Table.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/MainFXMLDocument.fxml</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/combined/ComBined.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/helpme.fxml</file>
         </group>
     </open-files>
 </project-private>
