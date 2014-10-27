@@ -72,7 +72,7 @@ public class MainFXMLController implements Initializable {
     Visualize visualize;
     ArrayList<Table> tablesList;
     SQL_manager sql_manager = new SQL_manager();
-      Parent root ;
+    Parent root;
 
     public MainFXMLController() {
         dragAbleTreeView = new DragAbleTreeView();
@@ -195,7 +195,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void visualizeButton(ActionEvent event) {
         setVisibleView("visualizeView");
-              whichHelpView = "visualizeView";
+        whichHelpView = "visualizeView";
 
     }
 
@@ -254,9 +254,7 @@ public class MainFXMLController implements Initializable {
         setVisibleView("combineView");
         whichHelpView = "combineView";
         System.out.println("BEFORE + " + treeViewCombinedColumns.getStyleClass());
-        for (String k : treeViewCombinedColumns.getStyleClass()) {
-            System.out.println(k);
-        }
+
     }
 
     public void setVisibleView(String whichView) {
@@ -308,6 +306,7 @@ public class MainFXMLController implements Initializable {
         //to select the last tab that has been selected
 
         tabPane.getSelectionModel().select(tab);
+
     }
 
     @FXML
@@ -318,13 +317,11 @@ public class MainFXMLController implements Initializable {
     }
 
     void loadHelpScreen() throws IOException {
-      
-      
+
         helpScreenController = fxmlLoader.getController();
         helpScreenController.setValue(whichHelpView);
 
         stage.showAndWait();
-       
 
     }
 
@@ -542,15 +539,15 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         try {
             root = fxmlLoader.load();
-              stage = new Stage();
-                       stage.initStyle(StageStyle.UNDECORATED);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setOpacity(1);
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root));
+            stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOpacity(1);
+            stage.setTitle("My New Stage Title");
+            stage.setScene(new Scene(root));
         } catch (IOException ex) {
             Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -673,11 +670,11 @@ public class MainFXMLController implements Initializable {
 
     public void removeColumnToCombinedColumn(TreeCell treeCell) {
         Kolonne parentColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem().getParent());
-        // Kolonne targetCombinedColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
-        Kolonne targetForDelete = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
-        //    System.out.println(parentColumn);
+        Kolonne targetColumn = mapOverKolonnerOgTreItems.get(treeCell.getTreeItem());
 
-        parentColumn.listOfColumns.remove(targetForDelete);
+        //    System.out.println(parentColumn);
+        parentColumn.listOfColumns.remove(targetColumn);
+        System.out.println(parentColumn.NAVN);
     }
 
 }

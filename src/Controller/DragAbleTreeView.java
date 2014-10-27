@@ -8,11 +8,9 @@ package Controller;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -21,8 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
@@ -103,8 +99,8 @@ public class DragAbleTreeView {
                         /* data dropped */
                         DRAGGEDSOURCE.setGraphic(new ImageView(new Image(
                                 getClass().getResourceAsStream("/Icons/check.png"))));
-                    
-                                System.out.println(treeCell);
+
+                        System.out.println(treeCell);
 
                     } else {
                         Dialogs.create()
@@ -177,7 +173,7 @@ public class DragAbleTreeView {
             public void handle(ActionEvent e) {
 
                 System.out.println("qq + " + source_and_target_treeitem.get(treeCell));
-               treeCell.getTreeItem()
+                treeCell.getTreeItem()
                         .setGraphic(new ImageView(new Image(
                                                 getClass().getResourceAsStream("/Icons/column_icon.png"))));
                 mainFXMLController.removeColumnToCombinedColumn(treeCell);

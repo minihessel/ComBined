@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -31,6 +32,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -42,7 +44,7 @@ public class Visualize {
     //klassen for å lage dataen for visualiseringer
     private Map<String, Double> data = new HashMap<>();
     List<XYChart.Series> areaChartSeries = new ArrayList<>();
-    List<XYChart.Series> barChartSeries = new ArrayList<>();
+    List<XYChart.Series> lineChartSeries = new ArrayList<>();
 
     void getPieChartD() {
 
@@ -90,13 +92,47 @@ public class Visualize {
                     n.setEffect(null);
                 }
             });
+            final ContextMenu contextMenu = new ContextMenu();
+            MenuItem changeColor = new MenuItem("Change Color");
+            MenuItem delete = new MenuItem("Standard color");
+            ColorPicker cp = new ColorPicker();
+            changeColor.setGraphic(cp);
+            contextMenu.getItems().addAll(changeColor, delete);
+
+            d.getNode().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent t) {
+                    if (t.getButton() == MouseButton.SECONDARY) {
+                        delete.setOnAction(new EventHandler() {
+                            public void handle(Event t) {
+                                d.getNode().setStyle("");
+                            }
+
+                        });
+
+                        cp.setValue(null);
+                        cp.setOnAction(new EventHandler() {
+                            public void handle(Event t) {
+                                String hex1 = "#" + Integer.toHexString(cp.getValue().hashCode());
+
+                                d.getNode().setStyle("-fx-background-color: " + hex1 + ";");
+                            }
+                        });
+
+                        contextMenu.show(d.getNode(), t.getScreenX(), t.getScreenY());
+                    }
+                }
+
+            });
 
         }
+
     }
 
     protected void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> pieChartData2;
+        ObservableList<XYChart.Data> lineChartData;
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -109,26 +145,27 @@ public class Visualize {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
-        pieChartData2
+        lineChartData
                 = data.entrySet().stream()
                 .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        series1.getData().addAll(pieChartData2);
+        series1.getData().addAll(lineChartData);
         lineChart.getData().addAll(series1);
-
+        lineChartSeries.add(series1);
+        series1.getNode().setUserData(lineChartSeries.size() - 1);
+        addColorChangeOnSeries(series1);
         setupHover(series1);
 
     }
 
     protected void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> pieChartData2;
+        ObservableList<XYChart.Data> barChartData;
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
             barChart.getData().clear();
-            barChartSeries.clear();
 
         }
         barChart.setAnimated(false);//bug fix
@@ -137,24 +174,22 @@ public class Visualize {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
-        pieChartData2
+        barChartData
                 = data.entrySet().stream()
                 .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        series1.getData().addAll(pieChartData2);
+        series1.getData().addAll(barChartData);
         barChart.getData().addAll(series1);
 
         setupHover(series1);
-        setOnMouseEventsOnSeries(series1);
-        barChartSeries.add(series1);
-        series1.getNode().setUserData(barChartSeries.size() - 1);
+        addColorChangeOnIndividual(barChartData);
 
     }
 
     protected void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, StackedAreaChart areaChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> pieChartData2;
+        ObservableList<XYChart.Data> areaChartData;
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -168,24 +203,25 @@ public class Visualize {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
-        pieChartData2
+        areaChartData
                 = data.entrySet().stream()
                 .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        series1.getData().addAll(pieChartData2);
+        series1.getData().addAll(areaChartData);
         areaChart.getData().addAll(series1);
 
-        setupHover(series1);
-        setOnMouseEventsOnSeries(series1);
         areaChartSeries.add(series1);
         series1.getNode().setUserData(areaChartSeries.size() - 1);
+        setupHover(series1);
+        // addColorChangeOnIndividual(lineChartData);
+        addColorChangeOnSeries(series1);
 
     }
 
     protected void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, ScatterChart scatterChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> pieChartData2;
+        ObservableList<XYChart.Data> scatterChartData;
 
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
@@ -199,74 +235,109 @@ public class Visualize {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
-        pieChartData2
+        scatterChartData
                 = data.entrySet().stream()
                 .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        series1.getData().addAll(pieChartData2);
+        series1.getData().addAll(scatterChartData);
         scatterChart.getData().addAll(series1);
-        setOnMouseEventsOnSeries(series1);
-        series1.getNode().setUserData("");
-
         setupHover(series1);
+        addColorChangeOnIndividual(scatterChartData);
 
     }
 
-    private void setOnMouseEventsOnSeries(XYChart.Series series
+    private void addColorChangeOnIndividual(ObservableList<XYChart.Data> data
     ) {
 
-        series.getNode().setOnMouseClicked(new EventHandler<MouseEvent>() {
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem changeColor = new MenuItem("Change Color");
+        MenuItem delete = new MenuItem("Standard color");
+
+        ColorPicker cp = new ColorPicker();
+        changeColor.setGraphic(cp);
+        contextMenu.getItems().addAll(changeColor, delete);
+
+        for (XYChart.Data d : data) {
+
+            d.getNode().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent t) {
+                    if (t.getButton() == MouseButton.SECONDARY) {
+                        delete.setOnAction(new EventHandler() {
+                            public void handle(Event t) {
+                                d.getNode().setStyle("");
+                            }
+
+                        });
+
+                        cp.setValue(null);
+                        cp.setOnAction(new EventHandler() {
+                            public void handle(Event t) {
+                                String hex1 = "#" + Integer.toHexString(cp.getValue().hashCode());
+
+                                d.getNode().setStyle("-fx-background-color: " + hex1 + ";");
+                            }
+                        });
+
+                        contextMenu.show(d.getNode(), t.getScreenX(), t.getScreenY());
+                    }
+                }
+
+            });
+        }
+
+    }
+
+    private void addColorChangeOnSeries(XYChart.Series series
+    ) {
+
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem changeColor = new MenuItem("Change color");
+        MenuItem delete = new MenuItem("Standard color");
+        ColorPicker cp = new ColorPicker();
+        changeColor.setGraphic(cp);
+        contextMenu.getItems().addAll(changeColor, delete);
+
+        Node d = series.getNode();
+
+        d.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent t) {
-                  if (t.getButton() == MouseButton.SECONDARY) {
-                final ContextMenu contextMenu = new ContextMenu();
-                MenuItem paste = new MenuItem("Paste");
-                ColorPicker cp = new ColorPicker();
-                cp.setOnAction(new EventHandler() {
-                    public void handle(Event t) {
-                        String hex1 = "#" + Integer.toHexString(cp.getValue().hashCode());
+                if (t.getButton() == MouseButton.SECONDARY) {
+                    delete.setOnAction(new EventHandler() {
+                        public void handle(Event t) {
+                            if (series.getChart() instanceof StackedAreaChart) {
+                                series.getChart().lookup(".default-color" + series.getNode().getUserData() + ".chart-series-area-fill").setStyle("");
+                            }
+                            if (series.getChart() instanceof LineChart) {
+                                series.getChart().lookup(".default-color" + series.getNode().getUserData() + ".chart-series-line").setStyle("");
+                            }
+                        }
 
-                        XYChart areaChart = series.getChart();
+                    });
+                    cp.setValue(null);
+                    cp.setOnAction(new EventHandler() {
+                        public void handle(Event t) {
+                            String hex1 = "#" + Integer.toHexString(cp.getValue().hashCode());
 
-                        Node node = areaChart.lookup(".default-color" + series.getNode().getUserData() + ".chart-series-area-fill");
-                        // Set the first area fill to translucent pale green
-                        node.setStyle(
-                                "-fx-fill:" + hex1 + ";");
-                    }
-                });
-                paste.setGraphic(cp);
-                contextMenu.getItems().add(paste);
+                            if (series.getChart() instanceof StackedAreaChart) {
+                                series.getChart().lookup(".default-color" + series.getNode().getUserData() + ".chart-series-area-fill").setStyle("-fx-fill:" + hex1 + ";");
+                            }
+                            if (series.getChart() instanceof LineChart) {
+                                series.getChart().lookup(".default-color" + series.getNode().getUserData() + ".chart-series-line").setStyle("-fx-stroke:" + hex1 + ";");
+                            }
 
-                contextMenu.show(series.getNode(), t.getScreenX(), t.getScreenY());
-                  }
+                        }
+                    });
 
-                /*
-                 VBox box = new VBox();
-                 ColorPicker cp = new ColorPicker();
-                 box.getChildren().add(cp);
-                 cp.opacityProperty().set(50);
-           
-                 Scene scene = new Scene(box, 300, 200);
-                 Stage stage = new Stage();
-                 stage.setScene(scene);
-                 stage.showAndWait();
-                
-                 System.out.println(cp.getValue().hashCode());
-                 String hex1 = "#" + Integer.toHexString(cp.getValue().hashCode());
-
-                 XYChart areaChart = series.getChart();
-
-                 Node node = areaChart.lookup(".default-color" + series.getNode().getUserData() + ".chart-series-area-fill");
-                 // Set the first area fill to translucent pale green
-                 node.setStyle(
-                 "-fx-fill:" + hex1 + ";");
-
-                 System.out.println("qq");*/
+                    contextMenu.show(d, t.getScreenX(), t.getScreenY());
+                }
             }
-        });
 
+        });
     }
 
     private void setupHover(XYChart.Series<String, Number> series) {
