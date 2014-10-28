@@ -206,6 +206,27 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
+    private void btnSort(ActionEvent event
+    ) {
+        if (pieChart.visibleProperty().get()) {
+
+        }
+        if (lineChart.visibleProperty().get()) {
+            //visualize.sortData(lineChart.getData());
+        }
+        if (barChart.visibleProperty().get()) {
+            visualize.sortData(barChart);
+        }
+        if (areaChart.visibleProperty().get()) {
+            visualize.sortData(barChart);
+        }
+        if (scatterChart.visibleProperty().get()) {
+            showLinearWizard("scatterChart", true);
+        }
+
+    }
+
+    @FXML
     private void btnNewSeries(ActionEvent event
     ) {
         if (pieChart.visibleProperty().get()) {

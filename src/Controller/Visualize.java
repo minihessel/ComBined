@@ -7,6 +7,7 @@ package Controller;
 
 import View.mouseHooverAnimationPieChart;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -32,7 +32,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 /**
  *
@@ -132,7 +131,7 @@ public class Visualize {
 
     protected void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> lineChartData;
+        ObservableList<XYChart.Data<String, Double>> lineChartData;
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -147,12 +146,13 @@ public class Visualize {
 
         lineChartData
                 = data.entrySet().stream()
-                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
         series1.getData().addAll(lineChartData);
         lineChart.getData().addAll(series1);
         lineChartSeries.add(series1);
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
         series1.getNode().setUserData(lineChartSeries.size() - 1);
         addColorChangeOnSeries(series1);
         setupHover(series1);
@@ -161,8 +161,9 @@ public class Visualize {
 
     protected void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> barChartData;
+        ObservableList<XYChart.Data<String, Double>> barChartData;
         XYChart.Series series1 = new XYChart.Series();
+
         if (!newSeries) {
             series1.getData().clear();
             barChart.getData().clear();
@@ -176,11 +177,12 @@ public class Visualize {
 
         barChartData
                 = data.entrySet().stream()
-                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
-        series1.getData().addAll(barChartData);
         barChart.getData().addAll(series1);
+        series1.getData().addAll(barChartData);
+        series1.getData().sort(Comparator.comparing(XYChart.Data<String, Double>::getYValue));
 
         setupHover(series1);
         addColorChangeOnIndividual(barChartData);
@@ -189,7 +191,7 @@ public class Visualize {
 
     protected void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, StackedAreaChart areaChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> areaChartData;
+        ObservableList<XYChart.Data<String, Double>> areaChartData;
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -205,23 +207,25 @@ public class Visualize {
 
         areaChartData
                 = data.entrySet().stream()
-                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
         series1.getData().addAll(areaChartData);
+
         areaChart.getData().addAll(series1);
 
         areaChartSeries.add(series1);
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
         series1.getNode().setUserData(areaChartSeries.size() - 1);
         setupHover(series1);
-        // addColorChangeOnIndividual(lineChartData);
+
         addColorChangeOnSeries(series1);
 
     }
 
     protected void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, ScatterChart scatterChart, Boolean newSeries) {
         data.clear();
-        ObservableList<XYChart.Data> scatterChartData;
+        ObservableList<XYChart.Data<String, Double>> scatterChartData;
 
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
@@ -237,17 +241,18 @@ public class Visualize {
 
         scatterChartData
                 = data.entrySet().stream()
-                .map(entry -> new XYChart.Data(entry.getKey(), entry.getValue()))
+                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
 
         series1.getData().addAll(scatterChartData);
         scatterChart.getData().addAll(series1);
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
         setupHover(series1);
         addColorChangeOnIndividual(scatterChartData);
 
     }
 
-    private void addColorChangeOnIndividual(ObservableList<XYChart.Data> data
+    private void addColorChangeOnIndividual(ObservableList<XYChart.Data<String, Double>> data
     ) {
 
         final ContextMenu contextMenu = new ContextMenu();
@@ -366,4 +371,5 @@ public class Visualize {
 
         }
     }
+
 }
