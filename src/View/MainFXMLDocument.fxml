@@ -159,62 +159,6 @@
                                 </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneCombine" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
-                                <SplitPane fx:id="splitPaneTables1" dividerPositions="0.5" layoutX="2.0" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <items>
-                                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="47.0" prefWidth="408.0" text="Combine Columns" textAlignment="CENTER">
-                                            <font>
-                                                <Font name="Menlo Regular" size="20.0" />
-                                            </font>
-                                        </Label>
-                                        <AnchorPane>
-                                            <children>
-                                                <SplitPane dividerPositions="0.5" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <items>
-                                                        <AnchorPane snapToPixel="false">
-                                                            <children>
-                                                                <Label layoutX="150.0" layoutY="4.0" text="Your new table with combined columns">
-                                                                    <font>
-                                                                        <Font size="16.0" />
-                                                                    </font>
-                                                                </Label>
-                                                                <TabPane fx:id="hBoxWithTreeViews" layoutX="72.0" layoutY="138.0" tabClosingPolicy="UNAVAILABLE" />
-                                                            </children>
-                                                        </AnchorPane>
-                                                        <AnchorPane>
-                                                            <children>
-                                                                <TabPane layoutX="231.0" layoutY="118.0" tabClosingPolicy="UNAVAILABLE">
-                                                                    <tabs>
-                                                                        <Tab closable="false" text="Combined Table">
-                                                                            <content>
-                                                                                <AnchorPane id="anchorPane" blendMode="SRC_ATOP" minWidth="0.0" pickOnBounds="false">
-                                                                                    <children>
-                                                                                        <TreeView id="treeViewCombined" fx:id="treeViewCombinedColumns" />
-                                                                                    </children>
-                                                                                </AnchorPane>
-                                                                            </content>
-                                                                        </Tab>
-                                                                    </tabs>
-                                                                </TabPane>
-                                                                <Button id="btnNewCombinedColumn" fx:id="btnNewCombinedColumn" layoutX="401.0" layoutY="92.0" mnemonicParsing="false" onAction="#createNewCombinedColumnButton" />
-                                                                <Label layoutX="216.0" layoutY="3.0" text="Your connected tables">
-                                                                    <font>
-                                                                        <Font size="16.0" />
-                                                                    </font>
-                                                                </Label>
-                                                                <AnchorPane layoutX="6.0" layoutY="147.0" prefHeight="200.0" prefWidth="200.0" />
-                                                            </children>
-                                                        </AnchorPane>
-                                                    </items>
-                                                </SplitPane>
-                                                <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#btnMakeTreeViewWithCombined" text="Finish" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                                            </children>
-                                        </AnchorPane>
-                                    </items>
-                                </SplitPane>
-                            </children>
-                        </AnchorPane>
                     </children>
                 </AnchorPane>
             </center>

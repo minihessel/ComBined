@@ -43,12 +43,16 @@ public class Table {
     FilteredList<List<String>> filteredItems;
     SQL_manager sql_manager = new SQL_manager();
     List<TextField> listOfTxtFields;
+    final String NAVN;
 
-    public Table() {
+    public Table(String name) {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
+         NAVN = name;
 
     }
+
+
 
     /**
      * Laster inn data fra angitt tabell fra angitt db. Bruker har valgt hvilken tabell - vi laster inn kolonner og rader i tableview
