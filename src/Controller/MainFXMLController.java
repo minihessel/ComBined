@@ -521,6 +521,7 @@ public class MainFXMLController implements Initializable {
 
         tab.setContent(vBox);
         tab.setId("" + tabPaneCounter);
+        System.out.println(tabPaneCounter);
 
         tabPaneCounter++;
 
@@ -533,13 +534,15 @@ public class MainFXMLController implements Initializable {
 
     private void openNew() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("CombineColumnsController.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("CombineColumns.fxml"));
         Parent root = fxmlLoader.load();
         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
         Stage stage = new Stage();
         ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList);
         c.myTabPane = tabPane;
-
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
         stage.setScene(new Scene(root));
         stage.show();
 

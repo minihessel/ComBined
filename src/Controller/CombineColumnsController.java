@@ -16,6 +16,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -85,8 +86,26 @@ public class CombineColumnsController implements Initializable {
         TableView tableViewCombined = new TableView();
         tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
         Tab tab = new Tab("combined table");
+
         tab.setContent(tableViewCombined);
+        System.out.println(myTabPane.getTabs().size());
+        tab.setId("" + (myTabPane.getTabs().size()));
+        myList.add(combinedTable);
         myTabPane.getTabs().add(tab);
+        myTabPane.getSelectionModel().select(tab);
+        System.out.println(myTabPane.getTabs().size() + " && " + tab.getId());
+
+        Stage stage = (Stage) btnFinish.getScene().getWindow();
+        // do what you have to do
+        stage.close();
+
+        //to select the last tab that has been selected
+    }
+
+    @FXML
+    private void btnCancel(ActionEvent event
+    ) {
+
         Stage stage = (Stage) btnFinish.getScene().getWindow();
         // do what you have to do
         stage.close();
@@ -99,8 +118,8 @@ public class CombineColumnsController implements Initializable {
 
         for (Table tbl : myList) {
             FlowPane pane = new FlowPane();
-ImageView imageView = new ImageView(new Image(
-                getClass().getResourceAsStream("/Icons/arrow_down.png")));
+            ImageView imageView = new ImageView(new Image(
+                    getClass().getResourceAsStream("/Icons/arrow_down.png")));
             // pane.setPrefSize(20, 40);
             pane.setStyle("-fx-border-color: black;-fx-border-width:0.1px;");
             Label lbl = new Label("Table : " + tbl.NAVN);
@@ -111,8 +130,11 @@ ImageView imageView = new ImageView(new Image(
             for (Kolonne kol : tbl.listofColumns) {
                 cb.getItems().add(kol.NAVN);
             }
+            pane.setOrientation(Orientation.VERTICAL);
+            pane.setHgap(2);
 
-            pane.getChildren().addAll(lbl, cb,imageView);
+            pane.getChildren().addAll(lbl, cb);
+            pane.getChildren().add(imageView);
 
             vBox.getChildren().add(pane);
         }

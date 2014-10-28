@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Testing">
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Visualize.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Kolonne.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumnsController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/Table.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumns.fxml</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
         </group>
     </open-files>
