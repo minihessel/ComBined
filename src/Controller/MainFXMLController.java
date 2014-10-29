@@ -39,7 +39,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 
 import javafx.scene.image.Image;
@@ -206,27 +205,6 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    private void btnSort(ActionEvent event
-    ) {
-        if (pieChart.visibleProperty().get()) {
-
-        }
-        if (lineChart.visibleProperty().get()) {
-            //visualize.sortData(lineChart.getData());
-        }
-        if (barChart.visibleProperty().get()) {
-            visualize.sortData(barChart);
-        }
-        if (areaChart.visibleProperty().get()) {
-            visualize.sortData(barChart);
-        }
-        if (scatterChart.visibleProperty().get()) {
-            showLinearWizard("scatterChart", true);
-        }
-
-    }
-
-    @FXML
     private void btnNewSeries(ActionEvent event
     ) {
         if (pieChart.visibleProperty().get()) {
@@ -281,7 +259,7 @@ public class MainFXMLController implements Initializable {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
         // createTabPaneWithTable("transbig");
-        createTabPaneWithTable("transactions");
+        createTabPaneWithTable("transbig");
 
     }
 
@@ -354,6 +332,9 @@ public class MainFXMLController implements Initializable {
                     if (whichVisualizationType == "barChart") {
 
                         visualize.getBarChartData(en, to, tabPane, tablesList, barChart, newSeries);
+
+                        System.out.println("true");
+
                     } else if (whichVisualizationType == "pieChart") {
 
                         visualize.getPieChartData(en, to, tabPane, tablesList, pieChart, label, newSeries);
@@ -378,7 +359,8 @@ public class MainFXMLController implements Initializable {
 
             }
 
-        });
+        }
+        );
 
     }
 
@@ -477,20 +459,27 @@ public class MainFXMLController implements Initializable {
             stage.setOpacity(1);
             stage.setTitle("My New Stage Title");
             stage.setScene(new Scene(root));
+
         } catch (IOException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            sql_manager.getConnection("localhost", "8889", "test");
+            sql_manager.getConnection("eskil-server-pc", "8889", "advaniatestdata");
+
         } catch (SQLException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
@@ -516,7 +505,7 @@ public class MainFXMLController implements Initializable {
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
 
-        Table tabellen = new Table(whichTable);
+        Table tabellen = new Table(whichTable + "@" + sql_manager.instanceName);
 
         //  String query = textField.getText();
         //her skjer oppkoblingen
@@ -528,8 +517,11 @@ public class MainFXMLController implements Initializable {
 
         TableView tableViewet = new TableView();
 
+        Label lbl = new Label("Number of rows : " + tabellen.numberofRows);
+        AnchorPane anchorPane = new AnchorPane(lbl);
+        anchorPane.setRightAnchor(lbl, 5.0);
         //legger til tableviewet i tabben
-        vBox.getChildren().addAll(tableViewet);
+        vBox.getChildren().addAll(tableViewet, anchorPane);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
 
         vBox.setId("" + tabPaneCounter);

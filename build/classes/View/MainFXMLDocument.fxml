@@ -93,7 +93,6 @@
                                                         <NumberAxis side="LEFT" />
                                                     </yAxis>
                                                 </LineChart>
-                                    <Button layoutX="191.0" layoutY="3.0" mnemonicParsing="false" onAction="#btnSort" text="Sort" />
                                                 <Button fx:id="btnNewSeries" layoutY="3.0" mnemonicParsing="false" onAction="#btnNewSeries" text="New series from tableview" visible="false" />
                                                 <Button fx:id="btnNewChart" mnemonicParsing="false" onAction="#btnNewChart" text="New chart from tableview" visible="false" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
                                             </children>

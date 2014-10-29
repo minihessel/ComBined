@@ -152,7 +152,7 @@ public class Visualize {
         series1.getData().addAll(lineChartData);
         lineChart.getData().addAll(series1);
         lineChartSeries.add(series1);
-        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue).reversed());
         series1.getNode().setUserData(lineChartSeries.size() - 1);
         addColorChangeOnSeries(series1);
         setupHover(series1);
@@ -182,7 +182,8 @@ public class Visualize {
 
         barChart.getData().addAll(series1);
         series1.getData().addAll(barChartData);
-        series1.getData().sort(Comparator.comparing(XYChart.Data<String, Double>::getYValue));
+
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue).reversed());
 
         setupHover(series1);
         addColorChangeOnIndividual(barChartData);
@@ -215,7 +216,9 @@ public class Visualize {
         areaChart.getData().addAll(series1);
 
         areaChartSeries.add(series1);
-        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
+
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue).reversed());
+
         series1.getNode().setUserData(areaChartSeries.size() - 1);
         setupHover(series1);
 
@@ -246,7 +249,7 @@ public class Visualize {
 
         series1.getData().addAll(scatterChartData);
         scatterChart.getData().addAll(series1);
-        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue));
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue).reversed());
         setupHover(series1);
         addColorChangeOnIndividual(scatterChartData);
 

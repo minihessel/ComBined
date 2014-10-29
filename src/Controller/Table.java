@@ -48,11 +48,9 @@ public class Table {
     public Table(String name) {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
-         NAVN = name;
+        NAVN = name;
 
     }
-
-
 
     /**
      * Laster inn data fra angitt tabell fra angitt db. Bruker har valgt hvilken tabell - vi laster inn kolonner og rader i tableview
@@ -235,7 +233,9 @@ public class Table {
     void removeFilters() {
         for (TextField txtField : listOfTxtFields) {
             txtField.setText("");
+
         }
+        filter();
 
     }
 
