@@ -5,6 +5,12 @@
  *///
 package Controller;
 
+import static Model.ErrorDialog.ErrorDialog;
+import View.ChartToPng;
+import View.SideBar;
+import View.Visualize;
+import Model.Kolonne;
+import Model.Table;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -30,6 +36,7 @@ import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
@@ -51,7 +58,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
 
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.Wizard.LinearFlow;
@@ -281,13 +287,15 @@ public class MainFXMLController implements Initializable {
     private void showLinearWizard(String whichVisualizationType, Boolean newSeries) {
         Table table = tablesList.get(Integer.parseInt(tabPane.getSelectionModel().getSelectedItem().getId()));
 
-        ChoiceBox choiceBoxNames = new ChoiceBox();
+        ComboBox choiceBoxNames = new ComboBox();
+        new SelectKeyComboBoxListener(choiceBoxNames);
 
         for (Kolonne kolonne : table.listofColumns) {
             choiceBoxNames.getItems().add(kolonne.NAVN);
         }
 
-        ChoiceBox choiceBoxValues = new ChoiceBox();
+        ComboBox choiceBoxValues = new ComboBox();
+        new SelectKeyComboBoxListener(choiceBoxValues);
 
         for (Kolonne kolonne : table.listofColumns) {
             choiceBoxValues.getItems().add(kolonne.NAVN);
@@ -349,11 +357,8 @@ public class MainFXMLController implements Initializable {
                     }
 
                 } catch (Exception e) {
-                    Dialogs.create()
-                            .owner(stage)
-                            .title("Invalid columns detected")
-                            .message("The first column has to be a text column, and the second one has to contain numbers")
-                            .showError();
+                    ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
+
                 }
 
             }
@@ -369,14 +374,14 @@ public class MainFXMLController implements Initializable {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image);
+            chartToPNG.saveChartToPNG(image, stage);
 
         }
         if (pieChart.visibleProperty().get()) {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = pieChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image);
+            chartToPNG.saveChartToPNG(image, stage);
 
         }
 
@@ -384,7 +389,7 @@ public class MainFXMLController implements Initializable {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = lineChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image);
+            chartToPNG.saveChartToPNG(image, stage);
 
         }
 
@@ -465,7 +470,7 @@ public class MainFXMLController implements Initializable {
         }
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            sql_manager.getConnection("eskil-server-pc", "8889", "advaniatestdata");
+            sql_manager.getConnection("localhost", "8889", "test");
 
         } catch (SQLException ex) {
             Logger.getLogger(MainFXMLController.class
@@ -546,7 +551,7 @@ public class MainFXMLController implements Initializable {
 
     private void openNew() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("CombineColumns.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
         Parent root = fxmlLoader.load();
         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
         Stage stage = new Stage();

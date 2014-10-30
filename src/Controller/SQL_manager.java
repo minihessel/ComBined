@@ -11,10 +11,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
-import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.control.ChoiceBox;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  *
@@ -60,7 +58,7 @@ public class SQL_manager {
                     System.out.println("Driver Loaded.");
                     String myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + sqlInstance + "?socketTimeout=3000&connectTimeout=3000";
                     DriverManager.setLoginTimeout(3);
-                    conn = DriverManager.getConnection(myUrl, "admin", "admin");
+                    conn = DriverManager.getConnection(myUrl, "root", "root");
 
                     System.out.println("Got Connection. " + conn);
                     result = true;

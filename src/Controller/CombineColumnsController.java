@@ -5,6 +5,9 @@
  */
 package Controller;
 
+import static Model.ErrorDialog.ErrorDialog;
+import Model.Kolonne;
+import Model.Table;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +21,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -55,7 +57,7 @@ public class CombineColumnsController implements Initializable {
     Table combinedTable = new Table("combined table");
     final ObservableList<Kolonne> data = FXCollections.observableArrayList();
     List<Table> myList;
-    List<ChoiceBox> choiceBoxList = new ArrayList();
+    List<ComboBox> choiceBoxList = new ArrayList();
 
     @FXML
     VBox vBox;
@@ -71,7 +73,7 @@ public class CombineColumnsController implements Initializable {
     ) {
         int atLeastTwoTablesSelected = 0;
 
-        for (ChoiceBox cb : choiceBoxList) {
+        for (ComboBox cb : choiceBoxList) {
             if (!cb.getSelectionModel().isEmpty()) {
                 atLeastTwoTablesSelected++;
             }
@@ -79,7 +81,7 @@ public class CombineColumnsController implements Initializable {
         if (atLeastTwoTablesSelected > 1 && !textField.getText().isEmpty()) {
             Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
-            for (ChoiceBox cb : choiceBoxList) {
+            for (ComboBox cb : choiceBoxList) {
 
                 Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
                 kol.listOfColumns.add(addCol);
@@ -89,19 +91,12 @@ public class CombineColumnsController implements Initializable {
 
             listView.setItems(FXCollections.observableArrayList(combinedTable.listofColumns));
         } else if (textField.getText().isEmpty()) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Dialog");
-            alert.setHeaderText("Your new column need a new name");
-            alert.setContentText("Please fill in the name of your new column in the textfield");
+            ErrorDialog("Your new column need a new name", "Please fill in the name of your new column in the textfield");
 
-            alert.showAndWait();
         } else {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Dialog");
-            alert.setHeaderText("Not enough columns selected");
-            alert.setContentText("You haven't selected enough columns. A combined column got to contain at least two columns ");
 
-            alert.showAndWait();
+            ErrorDialog("Not enough columns selected", "You haven't selected enough columns. A combined column got to contain at least two columns ");
+
         }
 
     }
@@ -129,12 +124,7 @@ public class CombineColumnsController implements Initializable {
 
             //to select the last tab that has been selected
         } else {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Dialog");
-            alert.setHeaderText("No columns created");
-            alert.setContentText("There are no columns created, can not continue. Please create atleast one combined column");
-
-            alert.showAndWait();
+            ErrorDialog("No columns created", "There are no columns created, can not continue. Please create atleast one combined column");
         }
 
     }
@@ -161,7 +151,8 @@ public class CombineColumnsController implements Initializable {
             pane.setStyle("-fx-border-color: black;-fx-border-width:0.1px;");
             Label lbl = new Label("Table : " + tbl.NAVN);
 
-            ChoiceBox cb = new ChoiceBox();
+            ComboBox cb = new ComboBox();
+            new SelectKeyComboBoxListener(cb);
             cb.setUserData(tbl.tableNumber);
             choiceBoxList.add(cb);
             for (Kolonne kol : tbl.listofColumns) {

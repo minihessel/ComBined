@@ -97,10 +97,10 @@ public class HelpScreenController implements Initializable {
                         getClass().getResourceAsStream("/Icons/tableView/1.jpg"));
                 Image image2 = new Image(
                         getClass().getResourceAsStream("/Icons/tableView/2.jpg"));
-                
+
                 Image image3 = new Image(
                         getClass().getResourceAsStream("/Icons/tableView/3.jpg"));
-                
+
                 listofImages.add(image1);
                 listofImages.add(image2);
                 listofImages.add(image3);
@@ -128,13 +128,11 @@ public class HelpScreenController implements Initializable {
         } else {
             listofImages.clear();
             MainFXMLController.stage.close();
-             btnNext.setGraphic(null);
-             btnNext.setText("Got it!");
-        counter=0;
+            btnNext.setGraphic(null);
+            btnNext.setText("Got it!");
+            counter = 0;
         }
 
     }
-
-   
 
 }

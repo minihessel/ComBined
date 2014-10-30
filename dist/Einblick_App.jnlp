@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Einblick_App.jar" size="873887" download="eager" />
+    <jar href="Einblick_App.jar" size="878752" download="eager" />
     <jar href="lib/HikariCP-2.0.1.jar" size="70623" download="eager" />
     <jar href="lib/controlsfx-8.20.8.jar" size="957666" download="eager" />
     <jar href="lib/easybind-1.0.3.jar" size="44787" download="eager" />
@@ -24,6 +24,6 @@
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Einblick_App" >
     <param name="requiredFXVersion" value="8.0+"/>
   </applet-desc>
-  <jfx:javafx-desc  width="800" height="600" main-class="combined.ComBined"  name="Einblick_App" />
+  <jfx:javafx-desc  width="800" height="600" main-class="EInblick_App"  name="Einblick_App" />
   <update check="always"/>
 </jnlp>
