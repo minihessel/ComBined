@@ -70,7 +70,7 @@ public class Kolonne {
     //Overkjører toString for å isteden returnere kolonnenavn og felter
     @Override
     public String toString() {
-        return NAVN + fields.toString();
+        return NAVN ;
     }
 
 }

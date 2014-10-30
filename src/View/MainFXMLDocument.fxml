@@ -138,18 +138,21 @@
                                 </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <SplitPane fx:id="splitPaneTables" dividerPositions="0.12008733624454149" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <SplitPane fx:id="splitPaneTables" dividerPositions="0.06098964326812428" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
-                                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="Your connected tables" textAlignment="CENTER">
-                                            <font>
-                                                <Font name="Menlo Regular" size="20.0" />
-                                            </font>
-                                 <graphic>
-                                    <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" />
-                                 </graphic>
-                                        </Label>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                              <Label id="lblYourConnectedTables" alignment="TOP_RIGHT" contentDisplay="TOP" layoutX="483.0" layoutY="2.0" text="Your connected tables" textAlignment="CENTER" AnchorPane.leftAnchor="483.0" AnchorPane.rightAnchor="483.0" AnchorPane.topAnchor="2.0">
+                                                  <font>
+                                                      <Font name="Menlo Regular" size="20.0" />
+                                                  </font>
+                                              </Label>
+                                    <Button alignment="BASELINE_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                    <ComboBox fx:id="comboBox" layoutX="99.0" layoutY="22.0" onKeyPressed="#goToColumn" prefWidth="150.0" promptText="Jump to column" />
+                                 </children>
+                              </AnchorPane>
                                         <TabPane id="tabPane" fx:id="tabPane">
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />

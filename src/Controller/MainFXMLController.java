@@ -6,21 +6,25 @@
 package Controller;
 
 import static Model.ErrorDialog.ErrorDialog;
-import View.ChartToPng;
-import View.SideBar;
 import View.Visualize;
 import Model.Kolonne;
 import Model.Table;
+import View.ChartToPng;
+import View.SideBar;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,10 +50,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
-
 import javafx.scene.image.Image;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -57,8 +63,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.controlsfx.dialog.Dialog;
 
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.Wizard.LinearFlow;
 import org.controlsfx.validation.Validator;
@@ -73,6 +79,9 @@ public class MainFXMLController implements Initializable {
     ArrayList<Table> tablesList;
     SQL_manager sql_manager = new SQL_manager();
     Parent root;
+    List<TableView> listOfTableViews = new ArrayList();
+
+    final Map<Tab, TableView> mapOverTabAndTableView = new HashMap();
 
     public MainFXMLController() {
 
@@ -155,6 +164,8 @@ public class MainFXMLController implements Initializable {
     @FXML
     ImageView imageView;
 
+    @FXML
+    ComboBox<Column> comboBox;
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
 
@@ -179,6 +190,18 @@ public class MainFXMLController implements Initializable {
             tablesList.get(tabPane.getSelectionModel().getSelectedIndex()).removeFilters();
         }
 
+    }
+
+    @FXML
+    public void goToColumn(KeyEvent event) {
+        System.out.println("feil");
+        if (event.getCode() == KeyCode.ENTER) {
+
+            System.out.println(comboBox.getSelectionModel().getSelectedItem());
+            System.out.println(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()));
+            listOfTableViews.get(tabPane.getSelectionModel().getSelectedIndex()).scrollToColumn(comboBox.getSelectionModel().getSelectedItem());
+
+        }
     }
 
     @FXML
@@ -454,6 +477,16 @@ public class MainFXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        new SelectKeyComboBoxListener(comboBox);
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+                        System.out.println(mapOverTabAndTableView.get(t1));
+                        comboBox.setItems(listOfTableViews.get(tabPane.getSelectionModel().getSelectedIndex()).getColumns());
+                    }
+                }
+        );
 
         try {
             root = fxmlLoader.load();
@@ -520,33 +553,48 @@ public class MainFXMLController implements Initializable {
         tablesList.add(tabPaneCounter, tabellen);
 
         TableView tableViewet = new TableView();
+        listOfTableViews.add(tableViewet);
 
         Label lbl = new Label("Number of rows : " + tabellen.numberofRows);
         AnchorPane anchorPane = new AnchorPane(lbl);
-        anchorPane.setRightAnchor(lbl, 5.0);
+
+        anchorPane.setRightAnchor(lbl,
+                5.0);
         //legger til tableviewet i tabben
-        vBox.getChildren().addAll(tableViewet, anchorPane);
+        vBox.getChildren()
+                .addAll(tableViewet, anchorPane);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
 
-        vBox.setId("" + tabPaneCounter);
+        vBox.setId(
+                "" + tabPaneCounter);
 
-        Tab tab = new Tab();
+        Tab tab = new Tab(whichTable
+                + "@" + sql_manager.instanceName);
 
-        tab.setText(whichTable + "@" + sql_manager.instanceName);
-
-        tabPane.getTabs().add(tab);
+        tabPane.getTabs()
+                .add(tab);
 
         tab.setContent(vBox);
-        tab.setId("" + tabPaneCounter);
+
+        tab.setId(
+                "" + tabPaneCounter);
         System.out.println(tabPaneCounter);
 
         tabPaneCounter++;
 
-        tabPane.getSelectionModel().select(tabPaneCounter);
+        tabPane.getSelectionModel()
+                .select(tab);
 
         for (Table tbl : tablesList) {
             System.out.println(tbl);
         }
+        mapOverTabAndTableView.put(tab, tableViewet);
+
+    }
+
+    final void aaddButton(TableView tableViewet
+    ) {
+
     }
 
     private void openNew() throws IOException {

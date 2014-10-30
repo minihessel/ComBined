@@ -1,12 +1,15 @@
 package Model;
 
+import Controller.Column;
 import Controller.SQL_manager;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
@@ -42,7 +45,8 @@ public class Table {
     SQL_manager sql_manager = new SQL_manager();
     List<TextField> listOfTxtFields;
     public final String NAVN;
-
+    
+    public Map<Kolonne,TableColumn> mapKolonneTableColumn = new HashMap();
     public Table(String name) {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
@@ -94,7 +98,8 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            TableColumn col = new TableColumn();
+            Column col = new Column(kol.toString());
+            mapKolonneTableColumn.put(kol,col);
 
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
