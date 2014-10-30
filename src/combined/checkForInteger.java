@@ -36,4 +36,5 @@ public class checkForInteger {
 	}
 	return true;
 }
+
 }

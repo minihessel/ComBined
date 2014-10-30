@@ -18,6 +18,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
@@ -67,39 +69,74 @@ public class CombineColumnsController implements Initializable {
     @FXML
     private void btnAdd(ActionEvent event
     ) {
-        Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
+        int atLeastTwoTablesSelected = 0;
+
         for (ChoiceBox cb : choiceBoxList) {
-
-            Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
-            kol.listOfColumns.add(addCol);
+            if (!cb.getSelectionModel().isEmpty()) {
+                atLeastTwoTablesSelected++;
+            }
         }
+        if (atLeastTwoTablesSelected > 1 && !textField.getText().isEmpty()) {
+            Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
+            kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
+            for (ChoiceBox cb : choiceBoxList) {
 
-        combinedTable.listofColumns.add(kol);
+                Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
+                kol.listOfColumns.add(addCol);
+            }
 
-        listView.setItems(FXCollections.observableArrayList(combinedTable.listofColumns));
+            combinedTable.listofColumns.add(kol);
+
+            listView.setItems(FXCollections.observableArrayList(combinedTable.listofColumns));
+        } else if (textField.getText().isEmpty()) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("Your new column need a new name");
+            alert.setContentText("Please fill in the name of your new column in the textfield");
+
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("Not enough columns selected");
+            alert.setContentText("You haven't selected enough columns. A combined column got to contain at least two columns ");
+
+            alert.showAndWait();
+        }
 
     }
 
     @FXML
     private void btnFinish(ActionEvent event
     ) {
-        TableView tableViewCombined = new TableView();
-        tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
-        Tab tab = new Tab("combined table");
 
-        tab.setContent(tableViewCombined);
-        System.out.println(myTabPane.getTabs().size());
-        tab.setId("" + (myTabPane.getTabs().size()));
-        myList.add(combinedTable);
-        myTabPane.getTabs().add(tab);
-        myTabPane.getSelectionModel().select(tab);
-        System.out.println(myTabPane.getTabs().size() + " && " + tab.getId());
+        if (!combinedTable.listofColumns.isEmpty()) {
+            TableView tableViewCombined = new TableView();
+            tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
+            Tab tab = new Tab("combined table");
 
-        Stage stage = (Stage) btnFinish.getScene().getWindow();
-        // do what you have to do
-        stage.close();
+            tab.setContent(tableViewCombined);
+            System.out.println(myTabPane.getTabs().size());
+            tab.setId("" + (myTabPane.getTabs().size()));
+            myList.add(combinedTable);
+            myTabPane.getTabs().add(tab);
+            myTabPane.getSelectionModel().select(tab);
+            System.out.println(myTabPane.getTabs().size() + " && " + tab.getId());
 
-        //to select the last tab that has been selected
+            Stage stage = (Stage) btnFinish.getScene().getWindow();
+            // do what you have to do
+            stage.close();
+
+            //to select the last tab that has been selected
+        } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("No columns created");
+            alert.setContentText("There are no columns created, can not continue. Please create atleast one combined column");
+
+            alert.showAndWait();
+        }
+
     }
 
     @FXML

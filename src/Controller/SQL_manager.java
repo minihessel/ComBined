@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package combined;
+package Controller;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -83,7 +83,7 @@ public class SQL_manager {
     public void getDataFromSQL(String SQL) throws SQLException {
 
         try {
-            System.out.println(conn+"blabla");
+            System.out.println(conn + "blabla");
             rs = conn.createStatement().executeQuery(SQL);
 
         } catch (Exception e) {
@@ -91,7 +91,6 @@ public class SQL_manager {
             System.err.println(e.getMessage());
 
         }
-
 
     }
 }

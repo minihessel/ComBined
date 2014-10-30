@@ -1,6 +1,5 @@
 package Controller;
 
-import combined.SQL_manager;
 import combined.checkForInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -242,8 +241,6 @@ public class Table {
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {
         ObservableList<List<String>> ret
                 = FXCollections.observableArrayList();
-
-        // = <List<String>>();
         final int N = table.get(0).size();
         for (int i = 0; i < N; i++) {
             ObservableList<String> col = FXCollections.observableArrayList();

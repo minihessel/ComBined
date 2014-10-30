@@ -5,7 +5,6 @@
  *///
 package Controller;
 
-import combined.SQL_manager;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -259,7 +258,7 @@ public class MainFXMLController implements Initializable {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
         // createTabPaneWithTable("transbig");
-        createTabPaneWithTable("transbig");
+        createTabPaneWithTable("transactions");
 
     }
 
