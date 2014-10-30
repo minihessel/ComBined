@@ -194,14 +194,12 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     public void goToColumn(KeyEvent event) {
-        System.out.println("feil");
-        if (event.getCode() == KeyCode.ENTER) {
-
+   
             System.out.println(comboBox.getSelectionModel().getSelectedItem());
             System.out.println(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()));
             listOfTableViews.get(tabPane.getSelectionModel().getSelectedIndex()).scrollToColumn(comboBox.getSelectionModel().getSelectedItem());
 
-        }
+        
     }
 
     @FXML
