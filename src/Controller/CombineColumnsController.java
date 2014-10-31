@@ -11,6 +11,7 @@ import Model.Table;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -57,6 +57,8 @@ public class CombineColumnsController implements Initializable {
     Table combinedTable = new Table("combined table");
     final ObservableList<Kolonne> data = FXCollections.observableArrayList();
     List<Table> myList;
+    Map<Tab, TableView> mapOverTabAndTableViews;
+    Map<Tab, Table> mapOverTabAndTable;
     List<ComboBox> choiceBoxList = new ArrayList();
 
     @FXML
@@ -65,9 +67,6 @@ public class CombineColumnsController implements Initializable {
     @FXML
     Button btnFinish;
 
-    /**
-     * Initializes the controller class.
-     */
     @FXML
     private void btnAdd(ActionEvent event
     ) {
@@ -82,9 +81,10 @@ public class CombineColumnsController implements Initializable {
             Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             for (ComboBox cb : choiceBoxList) {
-
-                Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
-                kol.listOfColumns.add(addCol);
+                if (!cb.getSelectionModel().isEmpty()) {
+                    Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
+                    kol.listOfColumns.add(addCol);
+                }
             }
 
             combinedTable.listofColumns.add(kol);
@@ -107,17 +107,24 @@ public class CombineColumnsController implements Initializable {
 
         if (!combinedTable.listofColumns.isEmpty()) {
             TableView tableViewCombined = new TableView();
+
             tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
             Tab tab = new Tab("combined table");
-
+            tab.setOnClosed(new EventHandler<javafx.event.Event>() {
+                @Override
+                public void handle(javafx.event.Event e) {
+                    myList.remove(combinedTable);
+                    myTabPane.getTabs().remove(tab);
+                }
+            });
             tab.setContent(tableViewCombined);
             System.out.println(myTabPane.getTabs().size());
-            tab.setId("" + (myTabPane.getTabs().size()));
             myList.add(combinedTable);
             myTabPane.getTabs().add(tab);
-            myTabPane.getSelectionModel().select(tab);
-            System.out.println(myTabPane.getTabs().size() + " && " + tab.getId());
-
+            // myTabPane.getSelectionModel().selectLast();
+            tab.setId("" + myTabPane.getTabs().size() + 1);
+            mapOverTabAndTableViews.put(tab, tableViewCombined);
+            mapOverTabAndTable.put(tab, combinedTable);
             Stage stage = (Stage) btnFinish.getScene().getWindow();
             // do what you have to do
             stage.close();
@@ -140,8 +147,10 @@ public class CombineColumnsController implements Initializable {
         //to select the last tab that has been selected
     }
 
-    public void setContext(List<Table> tablesList) {
+    public void setContext(List<Table> tablesList, Map mapOverTabAndTableViews, Map mapOverTabAndTables) {
         this.myList = tablesList;
+        this.mapOverTabAndTable = mapOverTabAndTables;
+        this.mapOverTabAndTableViews = mapOverTabAndTableViews;
 
         for (Table tbl : myList) {
             FlowPane pane = new FlowPane();

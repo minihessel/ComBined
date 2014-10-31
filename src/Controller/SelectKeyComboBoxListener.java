@@ -67,6 +67,7 @@ public class SelectKeyComboBoxListener implements EventHandler<KeyEvent> {
 
                 } else {
                     tooltip.hide();
+                    sb.delete(0, sb.length());
                 }
 
                 if (newValue instanceof Boolean && !((Boolean) newValue).booleanValue()) {

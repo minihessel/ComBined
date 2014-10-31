@@ -28,7 +28,9 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
@@ -54,15 +56,15 @@ public class Visualize {
         data.merge(name, value, Double::sum);
     }
 
-    public void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, PieChart pieChart, Label lbl, Boolean newSeries) {
+    public void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries) {
         data.clear();
 
         if (!newSeries) {
             pieChart.getData().clear();
         }
 
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+        for (List<String> a : selectedTable.sortedData) {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
@@ -130,7 +132,7 @@ public class Visualize {
 
     }
 
-    public void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, LineChart lineChart, Boolean newSeries) {
+    public void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> lineChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -140,8 +142,8 @@ public class Visualize {
 
         }
         lineChart.setAnimated(false);//bug fix
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+        for (List<String> a : selectedTable.sortedData) {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
@@ -160,7 +162,7 @@ public class Visualize {
 
     }
 
-    public void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, BarChart barChart, Boolean newSeries) {
+    public void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> barChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -171,8 +173,8 @@ public class Visualize {
 
         }
         barChart.setAnimated(false);//bug fix
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+        for (List<String> a : selectedTable.sortedData) {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
@@ -191,7 +193,7 @@ public class Visualize {
 
     }
 
-    public void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, StackedAreaChart areaChart, Boolean newSeries) {
+    public void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> areaChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -202,8 +204,8 @@ public class Visualize {
 
         }
         areaChart.setAnimated(false);//bug fix
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+        for (List<String> a : selectedTable.sortedData) {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 
@@ -227,7 +229,7 @@ public class Visualize {
 
     }
 
-    public void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, List<Table> tablesList, ScatterChart scatterChart, Boolean newSeries) {
+    public void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> scatterChartData;
 
@@ -238,8 +240,8 @@ public class Visualize {
 
         }
         scatterChart.setAnimated(false);//bug fix
-        int selectedTable = Integer.parseInt(tabPane.selectionModelProperty().getValue().getSelectedItem().getId());
-        for (List<String> a : tablesList.get(selectedTable).sortedData) {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+        for (List<String> a : selectedTable.sortedData) {
             addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
         }
 

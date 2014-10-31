@@ -51,7 +51,7 @@
                             <children>
                                 <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.5, 0.5" layoutX="21.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
-                                        <Label id="lblYourConnectedTables" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="VISUALIZE" textAlignment="CENTER">
+                                        <Label id="lblYourConnectedTables" fx:id="visualizeLabel" alignment="CENTER" prefHeight="51.0" prefWidth="408.0" text="VISUALIZE" textAlignment="CENTER">
                                             <font>
                                                 <Font name="Menlo Regular" size="20.0" />
                                             </font>
@@ -93,8 +93,8 @@
                                                         <NumberAxis side="LEFT" />
                                                     </yAxis>
                                                 </LineChart>
-                                                <Button fx:id="btnNewSeries" layoutY="3.0" mnemonicParsing="false" onAction="#btnNewSeries" text="New series from tableview" visible="false" />
-                                                <Button fx:id="btnNewChart" mnemonicParsing="false" onAction="#btnNewChart" text="New chart from tableview" visible="false" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
+                                                <Button fx:id="btnNewSeries" layoutY="3.0" mnemonicParsing="false" onAction="#btnNewSeries" text="Add new series to chart" visible="false" />
+                                                <Button fx:id="btnNewChart" mnemonicParsing="false" onAction="#btnNewChart" text="Create new chart" visible="false" AnchorPane.bottomAnchor="738.0" AnchorPane.rightAnchor="10.0" />
                                             </children>
                                         </AnchorPane>
                                         <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
@@ -138,7 +138,7 @@
                                 </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <SplitPane fx:id="splitPaneTables" dividerPositions="0.06098964326812428" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
@@ -154,9 +154,7 @@
                                  </children>
                               </AnchorPane>
                                         <TabPane id="tabPane" fx:id="tabPane">
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
+                                          
                                         </TabPane>
                                     </items>
                                 </SplitPane>
