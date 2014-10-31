@@ -150,7 +150,7 @@
                                                   </font>
                                               </Label>
                                     <Button alignment="BASELINE_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                                    <ComboBox fx:id="comboBox" layoutX="99.0" layoutY="22.0" onKeyPressed="#goToColumn" prefWidth="150.0" promptText="Jump to column" />
+                                    <ComboBox fx:id="comboBox" layoutX="99.0" layoutY="22.0" onAction="#goToColumn" prefWidth="150.0" promptText="Jump to column" />
                                  </children>
                               </AnchorPane>
                                         <TabPane id="tabPane" fx:id="tabPane">

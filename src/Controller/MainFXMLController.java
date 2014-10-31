@@ -22,10 +22,13 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -54,8 +57,6 @@ import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -63,6 +64,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Wizard;
@@ -80,6 +82,7 @@ public class MainFXMLController implements Initializable {
     SQL_manager sql_manager = new SQL_manager();
     Parent root;
     List<TableView> listOfTableViews = new ArrayList();
+    boolean toggle = true;
 
     final Map<Tab, TableView> mapOverTabAndTableView = new HashMap();
 
@@ -193,13 +196,21 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    public void goToColumn(KeyEvent event) {
-   
-            System.out.println(comboBox.getSelectionModel().getSelectedItem());
-            System.out.println(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()));
-            listOfTableViews.get(tabPane.getSelectionModel().getSelectedIndex()).scrollToColumn(comboBox.getSelectionModel().getSelectedItem());
+    public void goToColumn(ActionEvent event) {
+        if (!comboBox.getSelectionModel().isEmpty()) {
+            Column selectedColumn = comboBox.getSelectionModel().getSelectedItem();
 
-        
+            FadeTransition ft = new FadeTransition(Duration.millis(300), selectedColumn.getGraphic());
+            ft.setFromValue(10.0);
+            ft.setToValue(0.0);
+            ft.setCycleCount(6);
+            ft.setAutoReverse(true);
+
+            ft.play();
+
+            // 
+            listOfTableViews.get(tabPane.getSelectionModel().getSelectedIndex()).scrollToColumn(selectedColumn);
+        }
     }
 
     @FXML
@@ -568,6 +579,14 @@ public class MainFXMLController implements Initializable {
 
         Tab tab = new Tab(whichTable
                 + "@" + sql_manager.instanceName);
+
+        tab.setOnClosed(new EventHandler<javafx.event.Event>() {
+            @Override
+            public void handle(javafx.event.Event e) {
+                tablesList.remove(tabellen);
+                tabPane.getTabs().remove(tab);
+            }
+        });
 
         tabPane.getTabs()
                 .add(tab);
