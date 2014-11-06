@@ -45,8 +45,9 @@ public class Table {
     SQL_manager sql_manager = new SQL_manager();
     List<TextField> listOfTxtFields;
     public final String NAVN;
-    
-    public Map<Kolonne,TableColumn> mapKolonneTableColumn = new HashMap();
+
+    public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
+
     public Table(String name) {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
@@ -99,7 +100,7 @@ public class Table {
 
             final int j = counter;
             Column col = new Column(kol.toString());
-            mapKolonneTableColumn.put(kol,col);
+            mapKolonneTableColumn.put(kol, col);
 
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
@@ -207,11 +208,11 @@ public class Table {
                     }
 
                 } else if (listOfTxtFields.get(i).getText().contains("<") && checkForInteger.isInteger(li.get(i))) {
-                    if (Integer.parseInt(li.get(i)) > Integer.parseInt(listOfTxtFields.get(i).getText().replace("<", ""))) {
+                    if (Float.parseFloat(li.get(i)) > Float.parseFloat(listOfTxtFields.get(i).getText().replace("<", ""))) {
                         return false;
                     }
                 } else if (listOfTxtFields.get(i).getText().contains(">") && checkForInteger.isInteger(li.get(i))) {
-                    if (Integer.parseInt(li.get(i)) < Integer.parseInt(listOfTxtFields.get(i).getText().replace(">", ""))) {
+                    if (Float.parseFloat(li.get(i)) < Float.parseFloat(listOfTxtFields.get(i).getText().replace(">", ""))) {
                         return false;
                     }
                 } else {

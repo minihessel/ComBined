@@ -63,14 +63,14 @@ public class Kolonne {
 
     }
 
-    List<String> allFields() {
+    public List<String> allFields() {
         return new ArrayList<>(fields);
     }
 
     //Overkjører toString for å isteden returnere kolonnenavn og felter
     @Override
     public String toString() {
-        return NAVN ;
+        return NAVN;
     }
 
 }

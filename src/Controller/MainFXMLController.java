@@ -44,6 +44,7 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -382,6 +383,7 @@ public class MainFXMLController implements Initializable {
             choiceBoxNames.getItems().add(kolonne.NAVN);
         }
 
+        CheckBox checkBox = new CheckBox("Check here if you want to just count the rows, instead of using their actual value");
         ComboBox choiceBoxValues = new ComboBox();
         new SelectKeyComboBoxListener(choiceBoxValues);
 
@@ -409,7 +411,8 @@ public class MainFXMLController implements Initializable {
         page1Grid.add(new Label("Check which field that represent the values: "), 0, row);
 
         wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
-        page1Grid.add(choiceBoxValues, 1, row);
+        page1Grid.add(choiceBoxValues, 1, row++);
+        page1Grid.add(checkBox, 2, row);
 
         Wizard.WizardPane page1 = new Wizard.WizardPane();
         page1.setHeaderText("Please select your columns for visualizing");
@@ -422,15 +425,16 @@ public class MainFXMLController implements Initializable {
             if (result == ButtonType.FINISH) {
                 int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
                 int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
+                Boolean rowCount = checkBox.selectedProperty().getValue();
                 try {
                     Tab tab;
                     if (whichSelectedView.equals("insightView")) {
                         tab = tabPaneInsight.getSelectionModel().getSelectedItem();
-                        createChart(whichVisualizationType, en, to, tab, newSeries);
+                        createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
 
                     } else if (whichSelectedView.equals("tableView")) {
                         tab = tabPane.getSelectionModel().getSelectedItem();
-                        createChart(whichVisualizationType, en, to, tab, newSeries);
+                        createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
                     }
 
                 } catch (Exception e) {
@@ -446,25 +450,25 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries) {
+    private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries, Boolean rowCount) {
         if (whichVisualizationType == "barChart") {
 
-            visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries);
+            visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries, rowCount);
 
             System.out.println("true");
 
         } else if (whichVisualizationType == "pieChart") {
 
-            visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries);
+            visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries, rowCount);
         } else if (whichVisualizationType == "lineChart") {
 
-            visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries);
+            visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries, rowCount);
         } else if (whichVisualizationType == "areaChart") {
 
-            visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries);
+            visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries, rowCount);
         } else if (whichVisualizationType == "scatterChart") {
 
-            visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries);
+            visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries, rowCount);
         }
     }
 

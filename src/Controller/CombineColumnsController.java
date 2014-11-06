@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -107,7 +108,7 @@ public class CombineColumnsController implements Initializable {
 
         if (!combinedTable.listofColumns.isEmpty()) {
             TableView tableViewCombined = new TableView();
-
+            VBox tabPaneVBox = new VBox();
             tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
             Tab tab = new Tab("combined table");
             tab.setOnClosed(new EventHandler<javafx.event.Event>() {
@@ -117,7 +118,16 @@ public class CombineColumnsController implements Initializable {
                     myTabPane.getTabs().remove(tab);
                 }
             });
-            tab.setContent(tableViewCombined);
+            combinedTable.numberofRows = combinedTable.listofColumns.get(0).allFields().size();
+            Label lbl = new Label("Number of rows : " + combinedTable.numberofRows);
+            AnchorPane anchorPane = new AnchorPane(lbl);
+
+            anchorPane.setRightAnchor(lbl,
+                    5.0);
+            //legger til tableviewet i tabben
+            tabPaneVBox.getChildren()
+                    .addAll(tableViewCombined, anchorPane);
+            tab.setContent(tabPaneVBox);
             System.out.println(myTabPane.getTabs().size());
             myList.add(combinedTable);
             myTabPane.getTabs().add(tab);
@@ -125,6 +135,7 @@ public class CombineColumnsController implements Initializable {
             tab.setId("" + myTabPane.getTabs().size() + 1);
             mapOverTabAndTableViews.put(tab, tableViewCombined);
             mapOverTabAndTable.put(tab, combinedTable);
+
             Stage stage = (Stage) btnFinish.getScene().getWindow();
             // do what you have to do
             stage.close();

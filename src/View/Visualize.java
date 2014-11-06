@@ -28,7 +28,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
@@ -54,20 +53,21 @@ public class Visualize {
         data.merge(name, value, Double::sum);
     }
 
-    public void getPieChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries) {
+    void addNewDataPoint2(String name, double value) {
+        data.merge(name, value, Double::sum);
+
+    }
+
+    public void getPieChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries, Boolean rowCounter) {
         data.clear();
 
         if (!newSeries) {
             pieChart.getData().clear();
         }
 
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
-        ObservableList<PieChart.Data> pieChartData2
-                = data.entrySet().stream()
-                .map(entry -> new PieChart.Data(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
-        pieChart.getData().addAll(pieChartData2);
+        data.entrySet().stream().map(entry -> new PieChart.Data(entry.getKey(), entry.getValue())).forEach(pieChart.getData()::add);
 
         for (PieChart.Data d : pieChart.getData()) {
             //deretter legger vi animasjon på piecharten.. 
@@ -127,7 +127,7 @@ public class Visualize {
 
     }
 
-    public void getLineChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries) {
+    public void getLineChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> lineChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -137,7 +137,7 @@ public class Visualize {
 
         }
         lineChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
         lineChartData
                 = data.entrySet().stream()
@@ -154,7 +154,7 @@ public class Visualize {
 
     }
 
-    public void getBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries) {
+    public void getBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> barChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -165,7 +165,7 @@ public class Visualize {
 
         }
         barChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
         barChartData
                 = data.entrySet().stream()
@@ -182,7 +182,7 @@ public class Visualize {
 
     }
 
-    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries) {
+    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> areaChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -193,7 +193,7 @@ public class Visualize {
 
         }
         areaChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
         areaChartData
                 = data.entrySet().stream()
@@ -215,7 +215,7 @@ public class Visualize {
 
     }
 
-    public void getScatterChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries) {
+    public void getScatterChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> scatterChartData;
 
@@ -226,7 +226,7 @@ public class Visualize {
 
         }
         scatterChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
         scatterChartData
                 = data.entrySet().stream()
@@ -284,11 +284,20 @@ public class Visualize {
 
     }
 
-    private void addDataFromTable(Map mapOverTabsAndTables, Tab tab, Integer valueColumn, Integer nameColumn) throws NumberFormatException {
+    private void addDataFromTable(Map mapOverTabsAndTables, Tab tab, Integer valueColumn, Integer nameColumn, Boolean rowCount) throws NumberFormatException {
         Table selectedTable = (Table) mapOverTabsAndTables.get(tab);
+
         for (List<String> a : selectedTable.sortedData) {
             if (!a.get(valueColumn).isEmpty() && !a.get(valueColumn).isEmpty()) {
-                addNewDataPoint(a.get(nameColumn).toString(), Double.parseDouble(a.get(valueColumn)));
+                //hvis brukeren ønsker å telle hvor mange rader en kategori har, bruker vi bare 1
+                //for eksempel, hvor mange produkter har varegruppe Vifte, legg til 1 for hver vare
+                if (rowCount) {
+                    addNewDataPoint(a.get(nameColumn).toString(), 1);
+                } //hvis ikke, bruker vi bare verdien fra kolonnen
+                else {
+                    addNewDataPoint(a.get(nameColumn).toString(), Double.parseDouble(a.get(valueColumn)));
+                }
+
             } else {
 
             }
