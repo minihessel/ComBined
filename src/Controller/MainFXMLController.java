@@ -5,13 +5,16 @@
  *///
 package Controller;
 
+import Model.DataInsight;
 import static Model.ErrorDialog.ErrorDialog;
 import View.Visualize;
 import Model.Kolonne;
 import Model.Table;
 import View.ChartToPng;
 import View.SideBar;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +30,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -86,6 +88,7 @@ public class MainFXMLController implements Initializable {
 
     Map<Tab, TableView> mapOverTabAndTableView = new HashMap<>();
     Map<Tab, Table> mapOverTabAndTable = new HashMap<>();
+    static String whichSelectedView;
 
     public MainFXMLController() {
 
@@ -157,6 +160,8 @@ public class MainFXMLController implements Initializable {
     AnchorPane anchorPaneVisualize;
 
     @FXML
+    AnchorPane anchorPaneInsight;
+    @FXML
     AnchorPane anchorPaneCombine;
 
     @FXML
@@ -164,6 +169,9 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     TabPane tabPane;
+
+    @FXML
+    TabPane tabPaneInsight;
 
     @FXML
     Separator separator;
@@ -192,8 +200,14 @@ public class MainFXMLController implements Initializable {
     private void btnRemoveFilters(ActionEvent event
     ) {
 
-        if (tabPane.getSelectionModel().getSelectedItem() != null) {
-            mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()).removeFilters();
+        if (anchorPaneTables.visibleProperty().get()) {
+            if (tabPane.getSelectionModel().getSelectedItem() != null) {
+                mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()).removeFilters();
+            }
+        } else if (anchorPaneInsight.visibleProperty().get()) {
+            if (!tabPaneInsight.getSelectionModel().isEmpty()) {
+                mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem()).removeFilters();
+            }
         }
 
     }
@@ -216,13 +230,6 @@ public class MainFXMLController implements Initializable {
             mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()).scrollToColumn(selectedColumn);
 
         }
-    }
-
-    @FXML
-    private void visualizeButton(ActionEvent event) {
-        setVisibleView("visualizeView");
-        whichHelpView = "visualizeView";
-
     }
 
     @FXML
@@ -282,16 +289,28 @@ public class MainFXMLController implements Initializable {
     }
 
     public void setVisibleView(String whichView) {
-        if (whichView == "visualizeView") {
+
+        if ("visualizeView".equals(whichView)) {
 
             anchorPaneVisualize.setVisible(true);
             anchorPaneTables.setVisible(false);
+            anchorPaneInsight.setVisible(false);
 
         }
 
-        if (whichView == "tableView") {
+        if ("tableView".equals(whichView)) {
+            whichSelectedView = whichView;
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(true);
+            anchorPaneInsight.setVisible(false);
+
+        }
+
+        if ("insightView".equals(whichView)) {
+            whichSelectedView = whichView;
+            anchorPaneVisualize.setVisible(false);
+            anchorPaneTables.setVisible(false);
+            anchorPaneInsight.setVisible(true);
 
         }
 
@@ -301,8 +320,22 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
-        createTabPaneWithTable("test");
-        createTabPaneWithTable("transactions");
+        createTabPaneWithTable("G_salesline3");
+
+    }
+
+    @FXML
+    private void visualizeButton(ActionEvent event) {
+        setVisibleView("visualizeView");
+        whichHelpView = "visualizeView";
+
+    }
+
+    @FXML
+    private void insightButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+        createTabPaneWithDataInsight();
+        setVisibleView("insightView");
+        // whichHelpView = "insightView";
 
     }
 
@@ -322,8 +355,25 @@ public class MainFXMLController implements Initializable {
 
     }
 
+    public Table getSelectedTable() {
+        if (whichSelectedView.equals("insightView")) {
+            Table table = mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem());
+            return table;
+        }
+        if (whichSelectedView.equals("tableView")) {
+            Table table = mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem());
+            System.out.println(table.listofColumns.size());
+            return table;
+        } else {
+            return null;
+        }
+
+    }
+
     private void showLinearWizard(String whichVisualizationType, Boolean newSeries) {
-        Table table = mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem());
+
+        Table table = getSelectedTable();
+        System.out.println(table.listofColumns.size());
 
         ComboBox choiceBoxNames = new ComboBox();
         new SelectKeyComboBoxListener(choiceBoxNames);
@@ -373,29 +423,19 @@ public class MainFXMLController implements Initializable {
                 int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
                 int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
                 try {
+                    Tab tab;
+                    if (whichSelectedView.equals("insightView")) {
+                        tab = tabPaneInsight.getSelectionModel().getSelectedItem();
+                        createChart(whichVisualizationType, en, to, tab, newSeries);
 
-                    if (whichVisualizationType == "barChart") {
-
-                        visualize.getBarChartData(en, to, tabPane, mapOverTabAndTable, barChart, newSeries);
-
-                        System.out.println("true");
-
-                    } else if (whichVisualizationType == "pieChart") {
-
-                        visualize.getPieChartData(en, to, tabPane, mapOverTabAndTable, pieChart, label, newSeries);
-                    } else if (whichVisualizationType == "lineChart") {
-
-                        visualize.getLineChartData(en, to, tabPane, mapOverTabAndTable, lineChart, newSeries);
-                    } else if (whichVisualizationType == "areaChart") {
-
-                        visualize.getAreaChartData(en, to, tabPane, mapOverTabAndTable, areaChart, newSeries);
-                    } else if (whichVisualizationType == "scatterChart") {
-
-                        visualize.getScatterChartData(en, to, tabPane, mapOverTabAndTable, scatterChart, newSeries);
+                    } else if (whichSelectedView.equals("tableView")) {
+                        tab = tabPane.getSelectionModel().getSelectedItem();
+                        createChart(whichVisualizationType, en, to, tab, newSeries);
                     }
 
                 } catch (Exception e) {
                     ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
+                    System.out.println(e);
 
                 }
 
@@ -404,6 +444,28 @@ public class MainFXMLController implements Initializable {
         }
         );
 
+    }
+
+    private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries) {
+        if (whichVisualizationType == "barChart") {
+
+            visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries);
+
+            System.out.println("true");
+
+        } else if (whichVisualizationType == "pieChart") {
+
+            visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries);
+        } else if (whichVisualizationType == "lineChart") {
+
+            visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries);
+        } else if (whichVisualizationType == "areaChart") {
+
+            visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries);
+        } else if (whichVisualizationType == "scatterChart") {
+
+            visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries);
+        }
     }
 
     @FXML
@@ -541,6 +603,42 @@ public class MainFXMLController implements Initializable {
 
     }
 
+    public void createTabPaneWithDataInsight() throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+        DataInsight datainsight = new DataInsight();
+
+        Table tabellen = datainsight.getInsight(0, 1, tabPane, mapOverTabAndTable);
+
+        VBox vBox = new VBox();
+
+        TableView tableViewet = new TableView();
+
+        Label lbl = new Label("Number of rows : " + tabellen.numberofRows);
+        AnchorPane anchorPane = new AnchorPane(lbl);
+
+        anchorPane.setRightAnchor(lbl,
+                5.0);
+        //legger til tableviewet i tabben
+        vBox.getChildren()
+                .addAll(tableViewet, anchorPane);
+        tableViewet = tabellen.fillTableView(tableViewet, tabellen);
+
+        vBox.setId(
+                "" + tabPaneCounter);
+
+        Tab tab = new Tab("qq"
+                + "@");
+
+        tab.setContent(vBox);
+
+        tabPaneInsight.getTabs()
+                .add(tab);
+        mapOverTabAndTable.put(tab, tabellen);
+
+        tabPaneInsight.getSelectionModel()
+                .select(tab);
+
+    }
+
     public void createTabPaneWithTable(String whichTable) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
@@ -592,17 +690,16 @@ public class MainFXMLController implements Initializable {
         System.out.println(tab);
         System.out.println(tabPane.getTabs().get(tabPaneCounter));
         tabPaneCounter++;
-        
-        
+
         tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
 
                 if (new_val.equals(Boolean.TRUE)) {
-                    
+
                     comboBox.getItems().clear();
                     comboBox.getItems().addAll(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()).getColumns());
-                       comboBox.setValue(null);
-                       System.out.println("true");
+                    comboBox.setValue(null);
+                    System.out.println("true");
 
                 }
 

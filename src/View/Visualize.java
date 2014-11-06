@@ -6,7 +6,6 @@
 package View;
 
 import Model.Table;
-import View.mouseHooverAnimationPieChart;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
@@ -56,17 +54,14 @@ public class Visualize {
         data.merge(name, value, Double::sum);
     }
 
-    public void getPieChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries) {
+    public void getPieChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries) {
         data.clear();
 
         if (!newSeries) {
             pieChart.getData().clear();
         }
 
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
-        for (List<String> a : selectedTable.sortedData) {
-            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
-        }
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
 
         ObservableList<PieChart.Data> pieChartData2
                 = data.entrySet().stream()
@@ -132,7 +127,7 @@ public class Visualize {
 
     }
 
-    public void getLineChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries) {
+    public void getLineChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> lineChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -142,10 +137,7 @@ public class Visualize {
 
         }
         lineChart.setAnimated(false);//bug fix
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
-        for (List<String> a : selectedTable.sortedData) {
-            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
-        }
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
 
         lineChartData
                 = data.entrySet().stream()
@@ -162,7 +154,7 @@ public class Visualize {
 
     }
 
-    public void getBarChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries) {
+    public void getBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> barChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -173,10 +165,7 @@ public class Visualize {
 
         }
         barChart.setAnimated(false);//bug fix
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
-        for (List<String> a : selectedTable.sortedData) {
-            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
-        }
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
 
         barChartData
                 = data.entrySet().stream()
@@ -193,7 +182,7 @@ public class Visualize {
 
     }
 
-    public void getAreaChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries) {
+    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> areaChartData;
         XYChart.Series series1 = new XYChart.Series();
@@ -204,10 +193,7 @@ public class Visualize {
 
         }
         areaChart.setAnimated(false);//bug fix
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
-        for (List<String> a : selectedTable.sortedData) {
-            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
-        }
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
 
         areaChartData
                 = data.entrySet().stream()
@@ -229,7 +215,7 @@ public class Visualize {
 
     }
 
-    public void getScatterChartData(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries) {
+    public void getScatterChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries) {
         data.clear();
         ObservableList<XYChart.Data<String, Double>> scatterChartData;
 
@@ -240,10 +226,7 @@ public class Visualize {
 
         }
         scatterChart.setAnimated(false);//bug fix
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
-        for (List<String> a : selectedTable.sortedData) {
-            addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
-        }
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn);
 
         scatterChartData
                 = data.entrySet().stream()
@@ -299,6 +282,17 @@ public class Visualize {
             });
         }
 
+    }
+
+    private void addDataFromTable(Map mapOverTabsAndTables, Tab tab, Integer valueColumn, Integer nameColumn) throws NumberFormatException {
+        Table selectedTable = (Table) mapOverTabsAndTables.get(tab);
+        for (List<String> a : selectedTable.sortedData) {
+            if (!a.get(valueColumn).isEmpty() && !a.get(valueColumn).isEmpty()) {
+                addNewDataPoint(a.get(nameColumn).toString(), Double.parseDouble(a.get(valueColumn)));
+            } else {
+
+            }
+        }
     }
 
     private void addColorChangeOnSeries(XYChart.Series series

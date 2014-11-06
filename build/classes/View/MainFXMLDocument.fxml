@@ -38,6 +38,11 @@
                                 <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
                             </tooltip>
                         </Button>
+                  <Button id="combineButton" fx:id="btnInsight" onAction="#insightButton">
+                     <tooltip>
+                        <Tooltip text="This button opens op the pane for combining data. If you have connected to different tables, this option gives you the possibility of combining columns." />
+                     </tooltip>
+                  </Button>
                     </items>
                 </ToolBar>
             </children>
@@ -160,6 +165,25 @@
                                 </SplitPane>
                             </children>
                         </AnchorPane>
+                  <AnchorPane fx:id="anchorPaneInsight" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false">
+                     <children>
+                        <SplitPane fx:id="splitPaneTables1" dividerPositions="0.06098964326812428" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <items>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Label id="lblYourConnectedTables" alignment="TOP_RIGHT" contentDisplay="TOP" layoutX="483.0" layoutY="2.0" text="Data insight" textAlignment="CENTER" AnchorPane.leftAnchor="483.0" AnchorPane.rightAnchor="483.0" AnchorPane.topAnchor="2.0">
+                                       <font>
+                                          <Font name="Menlo Regular" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Button alignment="BASELINE_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#btnRemoveFilters" text="Remove filters" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <TabPane id="tabPane" fx:id="tabPaneInsight" />
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
                     </children>
                 </AnchorPane>
             </center>
