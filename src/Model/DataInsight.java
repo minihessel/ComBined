@@ -5,9 +5,9 @@
  */
 package Model;
 
-import apriori.AlgoFPGrowth;
-import apriori.Itemset;
-import apriori.Itemsets;
+import DataInsight.AlgoFPGrowth;
+import DataInsight.Itemset;
+import DataInsight.Itemsets;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -30,6 +30,7 @@ public class DataInsight {
     Map<String, Item> itemMap = new HashMap<>();
     Map<Integer, String> invertedItemMap = new HashMap();
     Integer createdProductNumber = 1;
+    AlgoFPGrowth fpGrowth = new AlgoFPGrowth();
 
     void addNewDataToMap(String key, String name) {
         //Metode for å legge til nye transaksjoner i transdata mappet
@@ -68,22 +69,19 @@ public class DataInsight {
     //Dette er en del av data mining og pattern recognition 
     //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
     // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
-    public Table getInsight(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+    public Table getInsight(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
         //deretter looper vi igjennom dataen og legger den til i transdata mappet.
         Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
         for (List<String> a : selectedTable.sortedData) {
-            addNewDataToMap(a.get(1), a.get(0));
+            addNewDataToMap(a.get(transactionColumn), a.get(itmeColumn));
         }
 
         //minsup betyr minimum support..Alså, hva er minste grensen i % for itemsets vi skal se etter.
         double minsup = 0.004;
 
-        AlgoFPGrowth fpGrowth = new AlgoFPGrowth();
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         Itemsets result = fpGrowth.runAlgorithm(transdata, null, minsup);
-
-        fpGrowth.printStats();
 
         //Deretter lager vi en tabell vi skal putte alle de nye itemsetsene inn i for å vise det til brukeren
         Table table = new Table("Data insight");
@@ -92,9 +90,9 @@ public class DataInsight {
         // Support er hvor stor andel av alle transaksjonene som har dette itemsettet
         // Level er hvor mange produkter det er i itemsettet
         Kolonne itemSetKolonne = new Kolonne("itemset", 0, table);
-        Kolonne supportKolonne = new Kolonne("Support", 1, table);
+        Kolonne supportKolonne = new Kolonne("Support ", 1, table);
         Kolonne supporNormalizedColumn = new Kolonne("Support normalized", 2, table);
-        Kolonne Level = new Kolonne("Level in percentage", 3, table);
+        Kolonne Level = new Kolonne("Number of items", 3, table);
 
         int levelCount = 0;
 
@@ -131,12 +129,17 @@ public class DataInsight {
         }
         //legger til de nye kolonnene med all dataen i tabellen
         table.listofColumns.add(itemSetKolonne);
-        table.listofColumns.add(supportKolonne);
         table.listofColumns.add(Level);
+        table.listofColumns.add(supportKolonne);
         table.listofColumns.add(supporNormalizedColumn);
         table.numberofRows = fpGrowth.getDatabaseSize();
         return table;
 
+    }
+
+  public  String getStats() {
+
+        return fpGrowth.printStats();
     }
 
     //metode for å inverte ett map

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- *///
 package Controller;
 
 import Model.DataInsight;
@@ -34,6 +29,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -53,22 +49,22 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
-
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.Wizard.LinearFlow;
@@ -81,126 +77,101 @@ import org.controlsfx.validation.Validator;
 public class MainFXMLController implements Initializable {
 
     Visualize visualize;
+    HelpScreenController helpScreenController;
+    DataInsight datainsight = new DataInsight();
     ArrayList<Table> tablesList;
     SQL_manager sql_manager = new SQL_manager();
     Parent root;
     List<TableView> listOfTableViews = new ArrayList();
-    boolean toggle = true;
-
     Map<Tab, TableView> mapOverTabAndTableView = new HashMap<>();
     Map<Tab, Table> mapOverTabAndTable = new HashMap<>();
     static String whichSelectedView;
-
-    public MainFXMLController() {
-
-        visualize = new Visualize();
-        tablesList = new ArrayList<Table>();
-
-    }
-
-    public ArrayList<Table> getTablesList() {
-        return this.tablesList;
-    }
-
-    TextField txtIP = new TextField();
-    TextField txtPort = new TextField();
-    TextField txtInstance = new TextField();
-    ChoiceBox choiceBoxTables = new ChoiceBox();
-    int userSelectedTableInTabPane;
-
+    public int tabPaneCounter = 0;
     String whichHelpView;
     Dialog dlg;
-    public int tabPaneCounter = 0;
     static Stage stage;
-    @FXML
-    private Label label;
-    @FXML
-    private Button btnNewSeries;
-    @FXML
-    private Button btnNewChart;
+    List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
+    List<String> listOfColumnNames = new ArrayList<String>();
+    TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
+    ChoiceBox choiceBoxTables = new ChoiceBox();
+    String whichVisualizationType;
 
-    @FXML
-    Label visualizeLabel;
+    public MainFXMLController() {
+        visualize = new Visualize();
+        tablesList = new ArrayList<>();
+    }
+
+    //////////FXML elements/////////
+    //Charts fra FXML view filen
     @FXML
     private LineChart lineChart;
-
     @FXML
     private BarChart barChart;
-    @FXML
-    private Button btnNewConnection;
-    @FXML
-    private Button btnConnectedTables;
-    @FXML
-    private Button btnVisualize;
-
-    @FXML
-    private Button btnCombine;
-
-    @FXML
-    PieChart pieChart;
-
     @FXML
     StackedAreaChart areaChart;
     @FXML
     ScatterChart scatterChart;
+    @FXML
+    PieChart pieChart;
+    //////////////////////////////
 
+    //Knapper fra FXML view filen
+    @FXML
+    private Button btnNewSeries;
+    @FXML
+    private Button btnNewChart;
+    @FXML
+    private Button btnConnectedTables;
+    @FXML
+    private Button btnVisualize;
+    @FXML
+    private Button btnCombine;
     @FXML
     Button visualizeButton;
-
     @FXML
     Button newConnectionButton;
-
     @FXML
     Button combineButton;
-    final Tooltip tooltip = new Tooltip();
+    @FXML
+    Button btnMenu;
+    //////////////////////////////
 
+    //Panes fra FXML view filen
     @FXML
     AnchorPane anchorPaneTables;
-
     @FXML
     AnchorPane anchorPaneVisualize;
-
     @FXML
     AnchorPane anchorPaneInsight;
     @FXML
     AnchorPane anchorPaneCombine;
-
     @FXML
     SplitPane splitPane;
-
     @FXML
     TabPane tabPane;
-
     @FXML
     TabPane tabPaneInsight;
+    @FXML
+    BorderPane borderPane;
+    //////////////////////////////
 
+    @FXML
+    private Label label;
+    @FXML
+    Label visualizeLabel;
+    final Tooltip tooltip = new Tooltip();
     @FXML
     Separator separator;
     @FXML
     ImageView imageView;
-
     @FXML
     ComboBox<Column> comboBox;
-    List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
-    List<String> listOfColumnNames = new ArrayList<String>();
-
-    TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
-
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
-
-    HelpScreenController helpScreenController;
-
-    @FXML
-    BorderPane borderPane;
     @FXML
     VBox vBoxMenu;
-    @FXML
-    Button btnMenu;
 
     @FXML
-    private void btnRemoveFilters(ActionEvent event
-    ) {
-
+    private void removeFiltersButton(ActionEvent event) {
         if (anchorPaneTables.visibleProperty().get()) {
             if (tabPane.getSelectionModel().getSelectedItem() != null) {
                 mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()).removeFilters();
@@ -210,6 +181,65 @@ public class MainFXMLController implements Initializable {
                 mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem()).removeFilters();
             }
         }
+
+    }
+
+    @FXML
+    private void barChartButton(ActionEvent event) {
+        showHideCharts(false, false, true, false, false, "Bar Chart");
+        whichVisualizationType = "barChart";
+
+    }
+
+    @FXML
+    private void pieChartButton(ActionEvent event) {
+        showHideCharts(false, true, false, false, false, "Pie Chart");
+        whichVisualizationType = "pieChart";
+
+    }
+
+    @FXML
+    private void areaChartButton(ActionEvent event) {
+        showHideCharts(false, false, false, true, false, "Area Chart");
+        whichVisualizationType = "areaChart";
+
+    }
+
+    @FXML
+    private void lineChartButton(ActionEvent event) {
+        showHideCharts(true, false, false, false, false, "Line Chart");
+        whichVisualizationType = "lineChart";
+    }
+
+    @FXML
+    private void scatterChartButton(ActionEvent event) {
+        showHideCharts(false, false, false, false, true, "Scatter Chart");
+        whichVisualizationType = "scatterChart";
+
+    }
+
+    @FXML
+    private void btnNewChart(ActionEvent event
+    ) {
+        showLinearWizard(Boolean.FALSE);
+    }
+
+    @FXML
+    private void btnNewSeries(ActionEvent event) {
+        showLinearWizard(Boolean.TRUE);
+    }
+
+    @FXML
+    private void handleDataButton(ActionEvent event
+    ) {
+        setVisibleView("tableView");
+        whichHelpView = "tableView";
+    }
+
+    @FXML
+    private void combineButton(ActionEvent event
+    ) throws IOException {
+        openCombineColumnWizard();
 
     }
 
@@ -234,90 +264,6 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
-    private void btnNewChart(ActionEvent event
-    ) {
-        if (pieChart.visibleProperty().get()) {
-            showLinearWizard("pieChart", false);
-        }
-        if (lineChart.visibleProperty().get()) {
-            showLinearWizard("lineChart", false);
-        }
-        if (barChart.visibleProperty().get()) {
-            showLinearWizard("barChart", false);
-        }
-        if (areaChart.visibleProperty().get()) {
-            showLinearWizard("areaChart", false);
-        }
-        if (scatterChart.visibleProperty().get()) {
-            showLinearWizard("scatterChart", false);
-        }
-
-    }
-
-    @FXML
-    private void btnNewSeries(ActionEvent event
-    ) {
-        if (pieChart.visibleProperty().get()) {
-            showLinearWizard("pieChart", true);
-        }
-        if (lineChart.visibleProperty().get()) {
-            showLinearWizard("lineChart", true);
-        }
-        if (barChart.visibleProperty().get()) {
-            showLinearWizard("barChart", true);
-        }
-        if (areaChart.visibleProperty().get()) {
-            showLinearWizard("areaChart", true);
-        }
-        if (scatterChart.visibleProperty().get()) {
-            showLinearWizard("scatterChart", true);
-        }
-
-    }
-
-    @FXML
-    private void handleDataButton(ActionEvent event
-    ) {
-        setVisibleView("tableView");
-        whichHelpView = "tableView";
-    }
-
-    @FXML
-    private void combineButton(ActionEvent event
-    ) throws IOException {
-        openNew();
-
-    }
-
-    public void setVisibleView(String whichView) {
-
-        if ("visualizeView".equals(whichView)) {
-
-            anchorPaneVisualize.setVisible(true);
-            anchorPaneTables.setVisible(false);
-            anchorPaneInsight.setVisible(false);
-
-        }
-
-        if ("tableView".equals(whichView)) {
-            whichSelectedView = whichView;
-            anchorPaneVisualize.setVisible(false);
-            anchorPaneTables.setVisible(true);
-            anchorPaneInsight.setVisible(false);
-
-        }
-
-        if ("insightView".equals(whichView)) {
-            whichSelectedView = whichView;
-            anchorPaneVisualize.setVisible(false);
-            anchorPaneTables.setVisible(false);
-            anchorPaneInsight.setVisible(true);
-
-        }
-
-    }
-
-    @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
@@ -334,9 +280,15 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void insightButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
-        createTabPaneWithDataInsight();
+
         setVisibleView("insightView");
-        // whichHelpView = "insightView";
+
+    }
+
+    @FXML
+    private void runNewAnalysisButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+
+        showInsightWizard();
 
     }
 
@@ -345,131 +297,6 @@ public class MainFXMLController implements Initializable {
 
         loadHelpScreen();
 
-    }
-
-    void loadHelpScreen() throws IOException {
-
-        helpScreenController = fxmlLoader.getController();
-        helpScreenController.setValue(whichHelpView);
-
-        stage.showAndWait();
-
-    }
-
-    public Table getSelectedTable() {
-        if (whichSelectedView.equals("insightView")) {
-            Table table = mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem());
-            return table;
-        }
-        if (whichSelectedView.equals("tableView")) {
-            Table table = mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem());
-            System.out.println(table.listofColumns.size());
-            return table;
-        } else {
-            return null;
-        }
-
-    }
-
-    private void showLinearWizard(String whichVisualizationType, Boolean newSeries) {
-
-        Table table = getSelectedTable();
-        System.out.println(table.listofColumns.size());
-
-        ComboBox choiceBoxNames = new ComboBox();
-        new SelectKeyComboBoxListener(choiceBoxNames);
-
-        for (Kolonne kolonne : table.listofColumns) {
-            choiceBoxNames.getItems().add(kolonne.NAVN);
-        }
-
-        CheckBox checkBox = new CheckBox("Check here if you want to just count the rows, instead of using their actual value");
-        ComboBox choiceBoxValues = new ComboBox();
-        new SelectKeyComboBoxListener(choiceBoxValues);
-
-        for (Kolonne kolonne : table.listofColumns) {
-            choiceBoxValues.getItems().add(kolonne.NAVN);
-
-        }
-
-        Wizard wizard = new Wizard();
-
-        wizard.setTitle("Connection Wizard");
-
-        // --- page 1
-        int row = 0;
-
-        GridPane page1Grid = new GridPane();
-        page1Grid.setVgap(10);
-        page1Grid.setHgap(30);
-
-        page1Grid.add(new Label("Check which field that represent the categories: "), 0, row);
-
-        wizard.getValidationSupport().registerValidator(choiceBoxNames, Validator.createEmptyValidator("You must select what represents names"));
-        page1Grid.add(choiceBoxNames, 1, row++);
-
-        page1Grid.add(new Label("Check which field that represent the values: "), 0, row);
-
-        wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
-        page1Grid.add(choiceBoxValues, 1, row++);
-        page1Grid.add(checkBox, 2, row);
-
-        Wizard.WizardPane page1 = new Wizard.WizardPane();
-        page1.setHeaderText("Please select your columns for visualizing");
-        page1.setContent(page1Grid);
-
-        wizard.setFlow(new LinearFlow(page1));
-
-        // show wizard and wait for response
-        wizard.showAndWait().ifPresent(result -> {
-            if (result == ButtonType.FINISH) {
-                int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
-                int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
-                Boolean rowCount = checkBox.selectedProperty().getValue();
-                try {
-                    Tab tab;
-                    if (whichSelectedView.equals("insightView")) {
-                        tab = tabPaneInsight.getSelectionModel().getSelectedItem();
-                        createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
-
-                    } else if (whichSelectedView.equals("tableView")) {
-                        tab = tabPane.getSelectionModel().getSelectedItem();
-                        createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
-                    }
-
-                } catch (Exception e) {
-                    ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
-                    System.out.println(e);
-
-                }
-
-            }
-
-        }
-        );
-
-    }
-
-    private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries, Boolean rowCount) {
-        if (whichVisualizationType == "barChart") {
-
-            visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries, rowCount);
-
-            System.out.println("true");
-
-        } else if (whichVisualizationType == "pieChart") {
-
-            visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries, rowCount);
-        } else if (whichVisualizationType == "lineChart") {
-
-            visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries, rowCount);
-        } else if (whichVisualizationType == "areaChart") {
-
-            visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries, rowCount);
-        } else if (whichVisualizationType == "scatterChart") {
-
-            visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries, rowCount);
-        }
     }
 
     @FXML
@@ -496,61 +323,6 @@ public class MainFXMLController implements Initializable {
             chartToPNG.saveChartToPNG(image, stage);
 
         }
-
-    }
-
-    @FXML
-    private void barChartButton(ActionEvent event) {
-        visualizeLabel.setText("Bar Chart");
-        lineChart.setVisible(false);
-        pieChart.setVisible(false);
-        barChart.setVisible(true);
-        areaChart.setVisible(false);
-        scatterChart.setVisible(false);
-
-    }
-
-    @FXML
-    private void pieChartButton(ActionEvent event) {
-        visualizeLabel.setText("Pie Chart");
-        lineChart.setVisible(false);
-        pieChart.setVisible(true);
-        barChart.setVisible(false);
-        areaChart.setVisible(false);
-        scatterChart.setVisible(false);
-
-    }
-
-    @FXML
-    private void areaChartButton(ActionEvent event) {
-        visualizeLabel.setText("Area Chart");
-        lineChart.setVisible(false);
-        pieChart.setVisible(false);
-        barChart.setVisible(false);
-        areaChart.setVisible(true);
-        scatterChart.setVisible(false);
-
-    }
-
-    @FXML
-    private void lineChartButton(ActionEvent event) {
-        visualizeLabel.setText("Line Chart");
-        lineChart.setVisible(true);
-        pieChart.setVisible(false);
-        barChart.setVisible(false);
-        areaChart.setVisible(false);
-        scatterChart.setVisible(false);
-
-    }
-
-    @FXML
-    private void scatterChartButton(ActionEvent event) {
-        visualizeLabel.setText("Scatter Chart");
-        lineChart.setVisible(false);
-        pieChart.setVisible(false);
-        barChart.setVisible(false);
-        areaChart.setVisible(false);
-        scatterChart.setVisible(true);
 
     }
 
@@ -607,37 +379,250 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    public void createTabPaneWithDataInsight() throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
-        DataInsight datainsight = new DataInsight();
+    public void setVisibleView(String whichView) {
 
-        Table tabellen = datainsight.getInsight(0, 1, tabPane, mapOverTabAndTable);
+        if ("visualizeView".equals(whichView)) {
 
+            anchorPaneVisualize.setVisible(true);
+            anchorPaneTables.setVisible(false);
+            anchorPaneInsight.setVisible(false);
+
+        }
+
+        if ("tableView".equals(whichView)) {
+            whichSelectedView = whichView;
+            anchorPaneVisualize.setVisible(false);
+            anchorPaneTables.setVisible(true);
+            anchorPaneInsight.setVisible(false);
+
+        }
+
+        if ("insightView".equals(whichView)) {
+            whichSelectedView = whichView;
+            anchorPaneVisualize.setVisible(false);
+            anchorPaneTables.setVisible(false);
+            anchorPaneInsight.setVisible(true);
+
+        }
+
+    }
+
+    void loadHelpScreen() throws IOException {
+
+        helpScreenController = fxmlLoader.getController();
+        helpScreenController.setValue(whichHelpView);
+
+        stage.showAndWait();
+
+    }
+
+    public Table getSelectedTable() {
+        if (whichSelectedView.equals("insightView")) {
+            Table table = mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem());
+            return table;
+        }
+        if (whichSelectedView.equals("tableView")) {
+            Table table = mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem());
+            System.out.println(table.listofColumns.size());
+            return table;
+        } else {
+            return null;
+        }
+
+    }
+
+    private void showLinearWizard(Boolean newSeries) {
+
+        if (getSelectedTable() != null) {
+
+            Table table = getSelectedTable();
+            ComboBox choiceBoxNames = new ComboBox();
+            new SelectKeyComboBoxListener(choiceBoxNames);
+
+            for (Kolonne kolonne : table.listofColumns) {
+                choiceBoxNames.getItems().add(kolonne.NAVN);
+            }
+
+            CheckBox checkBox = new CheckBox("Check here if you want to just count the rows, instead of using their actual value");
+            ComboBox choiceBoxValues = new ComboBox();
+            new SelectKeyComboBoxListener(choiceBoxValues);
+
+            for (Kolonne kolonne : table.listofColumns) {
+                choiceBoxValues.getItems().add(kolonne.NAVN);
+
+            }
+
+            Wizard wizard = new Wizard();
+
+            wizard.setTitle("Connection Wizard");
+
+            // --- page 1
+            int row = 0;
+
+            GridPane page1Grid = new GridPane();
+            page1Grid.setVgap(10);
+            page1Grid.setHgap(30);
+
+            page1Grid.add(new Label("Check which field that represent the categories: "), 0, row);
+
+            wizard.getValidationSupport().registerValidator(choiceBoxNames, Validator.createEmptyValidator("You must select what represents names"));
+            page1Grid.add(choiceBoxNames, 1, row++);
+
+            page1Grid.add(new Label("Check which field that represent the values: "), 0, row);
+
+            wizard.getValidationSupport().registerValidator(choiceBoxValues, Validator.createEmptyValidator("You must select what represents values"));
+            page1Grid.add(choiceBoxValues, 1, row++);
+            page1Grid.add(checkBox, 1, row);
+
+            Wizard.WizardPane page1 = new Wizard.WizardPane();
+            page1.setHeaderText("Please select your columns for visualizing");
+            page1.setContent(page1Grid);
+
+            wizard.setFlow(new LinearFlow(page1));
+
+            // show wizard and wait for response
+            wizard.showAndWait().ifPresent(result -> {
+                if (result == ButtonType.FINISH) {
+                    int en = choiceBoxNames.getSelectionModel().getSelectedIndex();
+                    int to = choiceBoxValues.getSelectionModel().getSelectedIndex();
+                    Boolean rowCount = checkBox.selectedProperty().getValue();
+                    try {
+                        Tab tab;
+                        if (whichSelectedView.equals("insightView")) {
+                            tab = tabPaneInsight.getSelectionModel().getSelectedItem();
+                            createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
+
+                        } else if (whichSelectedView.equals("tableView")) {
+                            tab = tabPane.getSelectionModel().getSelectedItem();
+                            createChart(whichVisualizationType, en, to, tab, newSeries, rowCount);
+                        }
+
+                    } catch (Exception e) {
+                        ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
+                        System.out.println(e);
+
+                    }
+
+                }
+
+            }
+            );
+        }
+    }
+
+    private void showInsightWizard() {
+
+        Table table = mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem());
+
+        ComboBox choiceBoxTransaction = new ComboBox();
+        new SelectKeyComboBoxListener(choiceBoxTransaction);
+
+        for (Kolonne kolonne : table.listofColumns) {
+            choiceBoxTransaction.getItems().add(kolonne.NAVN);
+        }
+
+        ComboBox choiceBoxItem = new ComboBox();
+        new SelectKeyComboBoxListener(choiceBoxItem);
+
+        for (Kolonne kolonne : table.listofColumns) {
+            choiceBoxItem.getItems().add(kolonne.NAVN);
+
+        }
+
+        Wizard wizard = new Wizard();
+
+        wizard.setTitle("Connection Wizard");
+
+        // --- page 1
+        int row = 0;
+
+        GridPane page1Grid = new GridPane();
+        page1Grid.setVgap(10);
+        page1Grid.setHgap(30);
+
+        page1Grid.add(new Label("Check which field that represent the transactionID: "), 0, row);
+
+        wizard.getValidationSupport().registerValidator(choiceBoxTransaction, Validator.createEmptyValidator("You must select what represents transactionID"));
+        page1Grid.add(choiceBoxTransaction, 1, row++);
+
+        page1Grid.add(new Label("Check which field that represent the itemID: "), 0, row);
+
+        wizard.getValidationSupport().registerValidator(choiceBoxItem, Validator.createEmptyValidator("You must select what represents itemID"));
+        page1Grid.add(choiceBoxItem, 1, row++);
+
+        Wizard.WizardPane page1 = new Wizard.WizardPane();
+        page1.setHeaderText("Please select your columns for visualizing");
+        page1.setContent(page1Grid);
+
+        wizard.setFlow(new LinearFlow(page1));
+
+        // show wizard and wait for response
+        wizard.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.FINISH) {
+                int en = choiceBoxTransaction.getSelectionModel().getSelectedIndex();
+                int to = choiceBoxItem.getSelectionModel().getSelectedIndex();
+
+                try {
+
+                    Table tabellen = datainsight.getInsight(0, 1, tabPane, mapOverTabAndTable, en, to);
+                    createTabPaneWithDataInsight(tabellen);
+
+                } catch (Exception e) {
+                    ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
+                    System.out.println(e);
+
+                }
+
+            }
+
+        }
+        );
+
+    }
+
+    private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries, Boolean rowCount) {
+        if ("barChart".equals(whichVisualizationType)) {
+
+            visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries, rowCount);
+
+        } else if ("pieChart".equals(whichVisualizationType)) {
+
+            visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries, rowCount);
+        } else if ("lineChart".equals(whichVisualizationType)) {
+
+            visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries, rowCount);
+        } else if ("areaChart".equals(whichVisualizationType)) {
+
+            visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries, rowCount);
+        } else if ("scatterChart".equals(whichVisualizationType)) {
+
+            visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries, rowCount);
+        }
+    }
+
+    public void createTabPaneWithDataInsight(Table tabellen) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
         VBox vBox = new VBox();
-
         TableView tableViewet = new TableView();
 
-        Label lbl = new Label("Number of rows : " + tabellen.numberofRows);
-        AnchorPane anchorPane = new AnchorPane(lbl);
-
-        anchorPane.setRightAnchor(lbl,
-                5.0);
-        //legger til tableviewet i tabben
+        Label lbl = new Label(datainsight.getStats());
+        Label lbl2 = new Label("Stats:");
+        lbl2.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
+        SplitPane split_pane = new SplitPane();
+        FlowPane anchorPane = new FlowPane(lbl2, lbl);
+        split_pane.setDividerPositions(9.0);
+        anchorPane.setOrientation(Orientation.VERTICAL);
+        split_pane.getItems().addAll(tableViewet, anchorPane);
         vBox.getChildren()
-                .addAll(tableViewet, anchorPane);
-        tableViewet = tabellen.fillTableView(tableViewet, tabellen);
-
+                .addAll(split_pane);
+          tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId(
                 "" + tabPaneCounter);
-
-        Tab tab = new Tab("qq"
-                + "@");
-
+        Tab tab = new Tab("Data Insight based on - " + (tabPane.getSelectionModel().getSelectedItem().getText())
+        );
         tab.setContent(vBox);
-
         tabPaneInsight.getTabs()
                 .add(tab);
         mapOverTabAndTable.put(tab, tabellen);
-
         tabPaneInsight.getSelectionModel()
                 .select(tab);
 
@@ -653,10 +638,10 @@ public class MainFXMLController implements Initializable {
         //  String query = textField.getText();
         //her skjer oppkoblingen
         //laster inn dataen med en query
-        tabellen.loadData("select * from " + whichTable + "  ", tabellen, tabPaneCounter);
+        tabellen.loadData("select * from " + whichTable + "  ", tabellen, tablesList.size() + 1);
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
-        tablesList.add(tabPaneCounter, tabellen);
+        tablesList.add(tabellen);
 
         TableView tableViewet = new TableView();
         listOfTableViews.add(tableViewet);
@@ -691,9 +676,6 @@ public class MainFXMLController implements Initializable {
                 .add(tab);
         mapOverTabAndTableView.put(tab, tableViewet);
         mapOverTabAndTable.put(tab, tabellen);
-        System.out.println(tab);
-        System.out.println(tabPane.getTabs().get(tabPaneCounter));
-        tabPaneCounter++;
 
         tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
@@ -716,7 +698,16 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    private void openNew() throws IOException {
+    void showHideCharts(Boolean lineChartVisibility, Boolean pieChartVisibility, Boolean barChartVisiblity, Boolean areaChartVisibility, Boolean scatterChartVisibility, String visualizeLabelText) {
+        visualizeLabel.setText(visualizeLabelText);
+        lineChart.setVisible(lineChartVisibility);
+        pieChart.setVisible(pieChartVisibility);
+        barChart.setVisible(barChartVisiblity);
+        areaChart.setVisible(areaChartVisibility);
+        scatterChart.setVisible(scatterChartVisibility);
+    }
+
+    private void openCombineColumnWizard() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
         Parent root = fxmlLoader.load();

@@ -5,17 +5,21 @@
 }
 
 #dataButton {
-    -fx-graphic:url('/Icons/database.png');
+    -fx-graphic:url('/Icons/tableview_icon.png');
     -fx-background-color: transparent;
 }
 
+#dataInsightButton {
+    -fx-graphic:url('/Icons/data_insight_icon.png');
+    -fx-background-color: transparent;
+}
 #visualizeButton {
-    -fx-graphic:url('/Icons/visualize.png');
+    -fx-graphic:url('/Icons/visualize_icon.png');
     -fx-background-color: transparent;
 }
 
 #combineButton{
-    -fx-graphic:url('/Icons/combineColumns.png');
+    -fx-graphic:url('/Icons/combine_column_icon.png');
     -fx-background-color: transparent;
 
 }
@@ -95,7 +99,7 @@
 
 
 .tooltip {
-   -fx-font: 22 arial;
+    -fx-font: 22 arial;
 }
 
 
