@@ -161,7 +161,7 @@ public class Table {
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
 
-        tableView.setMinHeight(800);
+        tableView.setMinHeight(832);
 
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
         sortedData = new SortedList<>(filteredItems);

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package View;
 
 import javafx.animation.Animation;
@@ -13,95 +12,101 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 /**
- * 
- * 
- * Built up on https://gist.github.com/jewelsea/1437374
-  /**
-     * Animates a node on and off screen to the left.
+ *
+ *
+ * Built up on https://gist.github.com/jewelsea/1437374 /** Animates a node on and off screen to the left.
+ */
+public class SideBar extends VBox {
+
+    Image maximize = new Image(
+            getClass().getResourceAsStream("/Icons/maximize.png"));
+    Image minimize = new Image(
+            getClass().getResourceAsStream("/Icons/minimize.png"));
+
+    /**
+     * @return a control button to hide and show the sidebar
      */
-   public class SideBar extends VBox {
+    /**
+     * creates a sidebar containing a vertical alignment of the given nodes
+     */
+    public SideBar(Button btn, final double expandedWidth, Node... nodes) {
 
+        getStyleClass().add("sidebar");
+        this.setPrefWidth(expandedWidth);
+        this.setMinWidth(0);
 
-        /**
-         * @return a control button to hide and show the sidebar
-         */
-        /**
-         * creates a sidebar containing a vertical alignment of the given nodes
-         */
-        public SideBar(Button btn,final double expandedWidth, Node... nodes ) {
-          
-           
-            getStyleClass().add("sidebar");
-            this.setPrefWidth(expandedWidth);
-            this.setMinWidth(0);
+        // create a bar to hide and show.
+        setAlignment(Pos.CENTER);
+        getChildren().addAll(nodes);
 
-            // create a bar to hide and show.
-            setAlignment(Pos.CENTER);
-            getChildren().addAll(nodes);
+        // create a button to hide and show the sidebar.
+        btn.getStyleClass().add("hide-left");
 
-            // create a button to hide and show the sidebar.
-             btn.getStyleClass().add("hide-left");
+        // apply the animations when the button is pressed.
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                btn.setGraphic(null);
+                // create an animation to hide sidebar.
+                final Animation hideSidebar = new Transition() {
+                    {
+                        setCycleDuration(Duration.millis(250));
+                    }
 
-            // apply the animations when the button is pressed.
-            btn.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    // create an animation to hide sidebar.
-                    final Animation hideSidebar = new Transition() {
-                        {
-                            setCycleDuration(Duration.millis(250));
-                        }
+                    protected void interpolate(double frac) {
+                        final double curWidth = expandedWidth * (1.0 - frac);
+                        setPrefWidth(curWidth);
+                        setTranslateX(-expandedWidth + curWidth);
+                    }
+                };
+                hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        setVisible(false);
 
-                        protected void interpolate(double frac) {
-                            final double curWidth = expandedWidth * (1.0 - frac);
-                            setPrefWidth(curWidth);
-                            setTranslateX(-expandedWidth + curWidth);
-                        }
-                    };
-                    hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
-                            setVisible(false);
+                        btn.getStyleClass().remove("hide-left");
+                        btn.getStyleClass().add("show-right");
+                        btn.setGraphic(new ImageView(maximize));
+                    }
+                });
 
-                            btn.getStyleClass().remove("hide-left");
-                            btn.getStyleClass().add("show-right");
-                        }
-                    });
+                // create an animation to show a sidebar.
+                final Animation showSidebar = new Transition() {
+                    {
+                        setCycleDuration(Duration.millis(250));
+                    }
 
-                    // create an animation to show a sidebar.
-                    final Animation showSidebar = new Transition() {
-                        {
-                            setCycleDuration(Duration.millis(250));
-                        }
+                    protected void interpolate(double frac) {
+                        final double curWidth = expandedWidth * frac;
+                        setPrefWidth(curWidth);
+                        setTranslateX(-expandedWidth + curWidth);
+                    }
+                };
+                showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
 
-                        protected void interpolate(double frac) {
-                            final double curWidth = expandedWidth * frac;
-                            setPrefWidth(curWidth);
-                            setTranslateX(-expandedWidth + curWidth);
-                        }
-                    };
-                    showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
+                        btn.getStyleClass().add("hide-left");
+                        btn.getStyleClass().remove("show-right");
+                        btn.setGraphic(new ImageView(minimize));
+                    }
+                });
 
-                            btn.getStyleClass().add("hide-left");
-                            btn.getStyleClass().remove("show-right");
-                        }
-                    });
-
-                    if (showSidebar.statusProperty().get() == Animation.Status.STOPPED && hideSidebar.statusProperty().get() == Animation.Status.STOPPED) {
-                        if (isVisible()) {
-                            hideSidebar.play();
-                        } else {
-                            setVisible(true);
-                            showSidebar.play();
-                        }
+                if (showSidebar.statusProperty().get() == Animation.Status.STOPPED && hideSidebar.statusProperty().get() == Animation.Status.STOPPED) {
+                    if (isVisible()) {
+                        hideSidebar.play();
+                    } else {
+                        setVisible(true);
+                        showSidebar.play();
                     }
                 }
-            });
-        }
+            }
+        });
     }
+}

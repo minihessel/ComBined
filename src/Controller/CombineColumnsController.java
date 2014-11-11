@@ -79,16 +79,18 @@ public class CombineColumnsController implements Initializable {
             }
         }
         if (atLeastTwoTablesSelected > 1 && !textField.getText().isEmpty()) {
-            Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
-            kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
+           Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             for (ComboBox cb : choiceBoxList) {
                 if (!cb.getSelectionModel().isEmpty()) {
-                    Kolonne addCol = myList.get(Integer.parseInt(cb.getUserData().toString())).listofColumns.get(cb.getSelectionModel().getSelectedIndex());
+                 
+                    Kolonne addCol = (Kolonne) cb.getSelectionModel().getSelectedItem();
                     kol.listOfColumns.add(addCol);
+                    cb.setValue(null);
                 }
             }
 
             combinedTable.listofColumns.add(kol);
+            textField.setText(null);
 
             listView.setItems(FXCollections.observableArrayList(combinedTable.listofColumns));
         } else if (textField.getText().isEmpty()) {
@@ -119,6 +121,7 @@ public class CombineColumnsController implements Initializable {
                 }
             });
             combinedTable.numberofRows = combinedTable.listofColumns.get(0).allFields().size();
+            System.out.println(combinedTable.numberofRows = combinedTable.listofColumns.get(0).allFields().size());
             Label lbl = new Label("Number of rows : " + combinedTable.numberofRows);
             AnchorPane anchorPane = new AnchorPane(lbl);
 
@@ -171,12 +174,12 @@ public class CombineColumnsController implements Initializable {
             pane.setStyle("-fx-border-color: black;-fx-border-width:0.1px;");
             Label lbl = new Label("Table : " + tbl.NAVN);
 
-            ComboBox cb = new ComboBox();
+            ComboBox<Kolonne> cb = new ComboBox();
             new SelectKeyComboBoxListener(cb);
             cb.setUserData(tbl.tableNumber);
             choiceBoxList.add(cb);
             for (Kolonne kol : tbl.listofColumns) {
-                cb.getItems().add(kol.NAVN);
+                cb.getItems().add(kol);
             }
             pane.setOrientation(Orientation.VERTICAL);
             pane.setHgap(2);

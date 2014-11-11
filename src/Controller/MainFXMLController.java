@@ -120,6 +120,10 @@ public class MainFXMLController implements Initializable {
     @FXML
     private Button btnNewSeries;
     @FXML
+    private Button btnInsight;
+    @FXML
+    private Button btnHelp;
+    @FXML
     private Button btnNewChart;
     @FXML
     private Button btnConnectedTables;
@@ -181,6 +185,12 @@ public class MainFXMLController implements Initializable {
                 mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem()).removeFilters();
             }
         }
+
+    }
+
+    @FXML
+    private void btnMenu(ActionEvent event) {
+        System.out.println("qq");
 
     }
 
@@ -267,7 +277,11 @@ public class MainFXMLController implements Initializable {
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         setVisibleView("tableView");
         //  openDialogWithSQLConnectionInfo();
+        createTabPaneWithTable("transactions");
         createTabPaneWithTable("G_salesline3");
+        System.out.println(tablesList.get(1).listofColumns.get(0).allFields().size());
+        whichHelpView = "tableView";
+        // createTabPaneWithTable("transbig");
 
     }
 
@@ -330,19 +344,6 @@ public class MainFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         new SelectKeyComboBoxListener(comboBox);
 
-        try {
-            root = fxmlLoader.load();
-            stage = new Stage();
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setOpacity(1);
-            stage.setTitle("My New Stage Title");
-            stage.setScene(new Scene(root));
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainFXMLController.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
             sql_manager.getConnection("localhost", "8889", "test");
@@ -362,9 +363,6 @@ public class MainFXMLController implements Initializable {
         }
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
-        btnNewSeries.setVisible(true);
-        btnNewChart.setVisible(true);
-
         SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
 
         borderPane.setLeft(sidebar);
@@ -372,6 +370,9 @@ public class MainFXMLController implements Initializable {
         btnConnectedTables.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnVisualize.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+
+        btnInsight.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        btnHelp.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         Image noTables = new Image(
                 getClass().getResourceAsStream("/Icons/no_tables.png"));
         imageView.setImage(noTables);
@@ -614,7 +615,7 @@ public class MainFXMLController implements Initializable {
         split_pane.getItems().addAll(tableViewet, anchorPane);
         vBox.getChildren()
                 .addAll(split_pane);
-          tableViewet = tabellen.fillTableView(tableViewet, tabellen);
+        tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId(
                 "" + tabPaneCounter);
         Tab tab = new Tab("Data Insight based on - " + (tabPane.getSelectionModel().getSelectedItem().getText())

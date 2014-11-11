@@ -66,10 +66,9 @@
 }
 
 
-
 #btnMenu
 {
-    -fx-graphic:url('/Icons/menu.png');
+    -fx-graphic:url('/Icons/minimize.png');
     -fx-background-color: transparent; 
 
 }
