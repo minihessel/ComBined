@@ -51,55 +51,22 @@ public class HelpScreenController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
+                if (newValue != null && !newValue.equals("")) {
+                    loadHelpScreen(newValue);
+                } else {
 
-                if (newValue != null && newValue.equals("tableView")) {
-                    loadTableViewHelpScreen();
-
-                } else if (newValue != null && newValue.equals("combineView")) {
-                    Image image1 = new Image(
-                            getClass().getResourceAsStream("/Icons/combineView/1.jpg"));
-                    Image image2 = new Image(
-                            getClass().getResourceAsStream("/Icons/combineView/2.jpg"));
-
-                    Image image3 = new Image(
-                            getClass().getResourceAsStream("/Icons/combineView/3.jpg"));
-
-                    Image image4 = new Image(
-                            getClass().getResourceAsStream("/Icons/combineView/4.jpg"));
-
-                    listofImages.add(image1);
-                    listofImages.add(image2);
-                    listofImages.add(image3);
-                    listofImages.add(image4);
-
-                    imageView.setImage(listofImages.get(0));
-
-                } else if (newValue != null && newValue.equals("visualizeView")) {
-                    Image image1 = new Image(
-                            getClass().getResourceAsStream("/Icons/visualizeView/1.jpg"));
-                    Image image2 = new Image(
-                            getClass().getResourceAsStream("/Icons/visualizeView/2.jpg"));
-
-                    Image image3 = new Image(
-                            getClass().getResourceAsStream("/Icons/visualizeView/3.jpg"));
-
-                    listofImages.add(image1);
-                    listofImages.add(image2);
-                    listofImages.add(image3);
-
-                    imageView.setImage(listofImages.get(0));
                 }
 
             }
 
-            private void loadTableViewHelpScreen() {
+            private void loadHelpScreen(String whichview) {
                 Image image1 = new Image(
-                        getClass().getResourceAsStream("/Icons/tableView/1.jpg"));
+                        getClass().getResourceAsStream("/Icons/" + whichview + "/1.jpg"));
                 Image image2 = new Image(
-                        getClass().getResourceAsStream("/Icons/tableView/2.jpg"));
+                        getClass().getResourceAsStream("/Icons/" + whichview + "/2.jpg"));
 
                 Image image3 = new Image(
-                        getClass().getResourceAsStream("/Icons/tableView/3.jpg"));
+                        getClass().getResourceAsStream("/Icons/" + whichview + "/3.jpg"));
 
                 listofImages.add(image1);
                 listofImages.add(image2);
@@ -127,7 +94,7 @@ public class HelpScreenController implements Initializable {
 
         } else {
             listofImages.clear();
-            MainFXMLController.stage.close();
+            MainFXMLController.helpScreenStage.close();
             btnNext.setGraphic(null);
             btnNext.setText("Got it!");
             counter = 0;

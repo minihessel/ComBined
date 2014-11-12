@@ -102,6 +102,22 @@
                                                         <NumberAxis animated="false" side="LEFT" />
                                                     </yAxis>
                                                 </StackedAreaChart>
+                                    <BubbleChart fx:id="bubbleChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                      <xAxis>
+                                        <NumberAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </BubbleChart>
+                                    <StackedBarChart fx:id="stackedBarChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </StackedBarChart>
                                                 <ScatterChart fx:id="scatterChart" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                                     <xAxis>
                                                         <CategoryAxis side="BOTTOM" />
@@ -140,6 +156,11 @@
                                                         <Tooltip text="Click here to make a line chart" />
                                                     </tooltip>
                                                 </Button>
+                                    <Button id="barChartButton" fx:id="handleBarChartButton1" onAction="#stackedBarChartButton">
+                                       <tooltip>
+                                          <Tooltip text="Click here to make a bar chart" />
+                                       </tooltip>
+                                    </Button>
                                                 <Button id="scatterChartButton" fx:id="handleLineChartButton11" onAction="#scatterChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a scatter chart" />
@@ -150,6 +171,11 @@
                                                         <Tooltip text="Click here to make a area chart" />
                                                     </tooltip>
                                                 </Button>
+                                    <Button id="scatterChartButton" fx:id="handleLineChartButton111" onAction="#bubbleChartButton">
+                                       <tooltip>
+                                          <Tooltip text="Click here to make a scatter chart" />
+                                       </tooltip>
+                                    </Button>
                                                 <Button id="exportToPNGbutton" fx:id="printScreenButton" onAction="#btnExportChartToPNG">
                                                     <tooltip>
                                                         <Tooltip text="Click here to save your chart as PNG" />

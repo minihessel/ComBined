@@ -79,10 +79,10 @@ public class CombineColumnsController implements Initializable {
             }
         }
         if (atLeastTwoTablesSelected > 1 && !textField.getText().isEmpty()) {
-           Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
+            Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             for (ComboBox cb : choiceBoxList) {
                 if (!cb.getSelectionModel().isEmpty()) {
-                 
+
                     Kolonne addCol = (Kolonne) cb.getSelectionModel().getSelectedItem();
                     kol.listOfColumns.add(addCol);
                     cb.setValue(null);

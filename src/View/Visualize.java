@@ -18,10 +18,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.StackedAreaChart;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
@@ -42,20 +44,12 @@ public class Visualize {
     private final Glow glow = new Glow(.8);
     //klassen for å lage dataen for visualiseringer
     private Map<String, Double> data = new HashMap<>();
+
     List<XYChart.Series> areaChartSeries = new ArrayList<>();
     List<XYChart.Series> lineChartSeries = new ArrayList<>();
 
-    void getPieChartD() {
-
-    }
-
     void addNewDataPoint(String name, double value) {
         data.merge(name, value, Double::sum);
-    }
-
-    void addNewDataPoint2(String name, double value) {
-        data.merge(name, value, Double::sum);
-
     }
 
     public void getPieChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries, Boolean rowCounter) {
@@ -129,7 +123,7 @@ public class Visualize {
 
     public void getLineChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
-        ObservableList<XYChart.Data<String, Double>> lineChartData;
+        ObservableList<XYChart.Data> lineChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -139,10 +133,7 @@ public class Visualize {
         lineChart.setAnimated(false);//bug fix
         addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
-        lineChartData
-                = data.entrySet().stream()
-                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(lineChartData::add);
 
         series1.getData().addAll(lineChartData);
         lineChart.getData().addAll(series1);
@@ -156,7 +147,7 @@ public class Visualize {
 
     public void getBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
-        ObservableList<XYChart.Data<String, Double>> barChartData;
+        ObservableList<XYChart.Data> barChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
 
         if (!newSeries) {
@@ -167,10 +158,7 @@ public class Visualize {
         barChart.setAnimated(false);//bug fix
         addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
-        barChartData
-                = data.entrySet().stream()
-                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
 
         barChart.getData().addAll(series1);
         series1.getData().addAll(barChartData);
@@ -184,7 +172,7 @@ public class Visualize {
 
     public void getAreaChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
-        ObservableList<XYChart.Data<String, Double>> areaChartData;
+        ObservableList<XYChart.Data> areaChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
             series1.getData().clear();
@@ -195,10 +183,7 @@ public class Visualize {
         areaChart.setAnimated(false);//bug fix
         addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
-        areaChartData
-                = data.entrySet().stream()
-                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(areaChartData::add);
 
         series1.getData().addAll(areaChartData);
 
@@ -217,7 +202,7 @@ public class Visualize {
 
     public void getScatterChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
-        ObservableList<XYChart.Data<String, Double>> scatterChartData;
+        ObservableList<XYChart.Data> scatterChartData = FXCollections.observableArrayList();
 
         XYChart.Series series1 = new XYChart.Series();
         if (!newSeries) {
@@ -228,10 +213,7 @@ public class Visualize {
         scatterChart.setAnimated(false);//bug fix
         addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
 
-        scatterChartData
-                = data.entrySet().stream()
-                .map(entry -> new XYChart.Data<String, Double>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toCollection(() -> FXCollections.observableArrayList()));
+        data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(scatterChartData::add);
 
         series1.getData().addAll(scatterChartData);
         scatterChart.getData().addAll(series1);
@@ -241,7 +223,31 @@ public class Visualize {
 
     }
 
-    private void addColorChangeOnIndividual(ObservableList<XYChart.Data<String, Double>> data
+    public void getStackedBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedBarChart stackedBarChart, Boolean newSeries, Boolean rowCounter) {
+        data.clear();
+        ObservableList<XYChart.Data> barChartData = FXCollections.observableArrayList();
+        XYChart.Series series1 = new XYChart.Series();
+
+        if (!newSeries) {
+            series1.getData().clear();
+            stackedBarChart.getData().clear();
+
+        }
+        stackedBarChart.setAnimated(false);//bug fix
+        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+
+        data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
+
+        stackedBarChart.getData().addAll(series1);
+        series1.getData().addAll(barChartData);
+
+        series1.getData().sort(Comparator.comparing(BarChart.Data<String, Double>::getYValue).reversed());
+
+        setupHover(series1);
+        addColorChangeOnIndividual(barChartData);
+    }
+
+    private void addColorChangeOnIndividual(ObservableList<XYChart.Data> data
     ) {
 
         final ContextMenu contextMenu = new ContextMenu();

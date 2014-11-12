@@ -34,10 +34,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.StackedAreaChart;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -87,9 +89,9 @@ public class MainFXMLController implements Initializable {
     Map<Tab, Table> mapOverTabAndTable = new HashMap<>();
     static String whichSelectedView;
     public int tabPaneCounter = 0;
-    String whichHelpView;
+    public String whichHelpView;
     Dialog dlg;
-    static Stage stage;
+    static Stage helpScreenStage;
     List<Kolonne> listOfCombinedColumns = new ArrayList<Kolonne>();
     List<String> listOfColumnNames = new ArrayList<String>();
     TreeItem<String> kombinerteKolonnerRoot = new TreeItem<String>("List of combined columns");
@@ -109,11 +111,15 @@ public class MainFXMLController implements Initializable {
     @FXML
     private BarChart barChart;
     @FXML
+    private StackedBarChart stackedBarChart;
+    @FXML
     StackedAreaChart areaChart;
     @FXML
     ScatterChart scatterChart;
     @FXML
     PieChart pieChart;
+    @FXML
+    BubbleChart bubbleChart;
     //////////////////////////////
 
     //Knapper fra FXML view filen
@@ -196,34 +202,41 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void barChartButton(ActionEvent event) {
-        showHideCharts(false, false, true, false, false, "Bar Chart");
+        showHideCharts(false, false, true, false, false, false, "Bar Chart");
         whichVisualizationType = "barChart";
 
     }
 
     @FXML
+    private void stackedBarChartButton(ActionEvent event) {
+        showHideCharts(false, false, false, false, false, true, "Stacked Bar Chart");
+        whichVisualizationType = "stackedBarChart";
+
+    }
+
+    @FXML
     private void pieChartButton(ActionEvent event) {
-        showHideCharts(false, true, false, false, false, "Pie Chart");
+        showHideCharts(false, true, false, false, false, false, "Pie Chart");
         whichVisualizationType = "pieChart";
 
     }
 
     @FXML
     private void areaChartButton(ActionEvent event) {
-        showHideCharts(false, false, false, true, false, "Area Chart");
+        showHideCharts(false, false, false, true, false, false, "Area Chart");
         whichVisualizationType = "areaChart";
 
     }
 
     @FXML
     private void lineChartButton(ActionEvent event) {
-        showHideCharts(true, false, false, false, false, "Line Chart");
+        showHideCharts(true, false, false, false, false, false, "Line Chart");
         whichVisualizationType = "lineChart";
     }
 
     @FXML
     private void scatterChartButton(ActionEvent event) {
-        showHideCharts(false, false, false, false, true, "Scatter Chart");
+        showHideCharts(false, false, false, false, true, false, "Scatter Chart");
         whichVisualizationType = "scatterChart";
 
     }
@@ -231,19 +244,12 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void btnNewChart(ActionEvent event
     ) {
-        showLinearWizard(Boolean.FALSE);
+        showVisualizationWizard(Boolean.FALSE);
     }
 
     @FXML
     private void btnNewSeries(ActionEvent event) {
-        showLinearWizard(Boolean.TRUE);
-    }
-
-    @FXML
-    private void handleDataButton(ActionEvent event
-    ) {
-        setVisibleView("tableView");
-        whichHelpView = "tableView";
+        showVisualizationWizard(Boolean.TRUE);
     }
 
     @FXML
@@ -279,7 +285,6 @@ public class MainFXMLController implements Initializable {
         //  openDialogWithSQLConnectionInfo();
         createTabPaneWithTable("transactions");
         createTabPaneWithTable("G_salesline3");
-        System.out.println(tablesList.get(1).listofColumns.get(0).allFields().size());
         whichHelpView = "tableView";
         // createTabPaneWithTable("transbig");
 
@@ -296,7 +301,15 @@ public class MainFXMLController implements Initializable {
     private void insightButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
 
         setVisibleView("insightView");
+        whichHelpView = "insightView";
 
+    }
+
+    @FXML
+    private void handleDataButton(ActionEvent event
+    ) {
+        setVisibleView("tableView");
+        whichHelpView = "tableView";
     }
 
     @FXML
@@ -319,14 +332,14 @@ public class MainFXMLController implements Initializable {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image, stage);
+            chartToPNG.saveChartToPNG(image, helpScreenStage);
 
         }
         if (pieChart.visibleProperty().get()) {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = pieChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image, stage);
+            chartToPNG.saveChartToPNG(image, helpScreenStage);
 
         }
 
@@ -334,7 +347,7 @@ public class MainFXMLController implements Initializable {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = lineChart.snapshot(new SnapshotParameters(), null);
 
-            chartToPNG.saveChartToPNG(image, stage);
+            chartToPNG.saveChartToPNG(image, helpScreenStage);
 
         }
 
@@ -343,6 +356,20 @@ public class MainFXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         new SelectKeyComboBoxListener(comboBox);
+
+        try {
+            root = fxmlLoader.load();
+            helpScreenStage = new Stage();
+            helpScreenStage.initStyle(StageStyle.UNDECORATED);
+            helpScreenStage.initModality(Modality.APPLICATION_MODAL);
+            helpScreenStage.setOpacity(1);
+            helpScreenStage.setTitle("My New Stage Title");
+            helpScreenStage.setScene(new Scene(root));
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
@@ -391,6 +418,7 @@ public class MainFXMLController implements Initializable {
         }
 
         if ("tableView".equals(whichView)) {
+            whichHelpView = "tableView";
             whichSelectedView = whichView;
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(true);
@@ -411,9 +439,10 @@ public class MainFXMLController implements Initializable {
     void loadHelpScreen() throws IOException {
 
         helpScreenController = fxmlLoader.getController();
+        System.out.println(whichHelpView);
         helpScreenController.setValue(whichHelpView);
-
-        stage.showAndWait();
+        System.out.println(whichHelpView);
+        helpScreenStage.showAndWait();
 
     }
 
@@ -432,7 +461,7 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    private void showLinearWizard(Boolean newSeries) {
+    private void showVisualizationWizard(Boolean newSeries) {
 
         if (getSelectedTable() != null) {
 
@@ -598,6 +627,9 @@ public class MainFXMLController implements Initializable {
         } else if ("scatterChart".equals(whichVisualizationType)) {
 
             visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries, rowCount);
+        } else if ("stackedBarChart".equals(whichVisualizationType)) {
+
+            visualize.getStackedBarChartData(en, to, tab, mapOverTabAndTable, stackedBarChart, newSeries, rowCount);
         }
     }
 
@@ -699,13 +731,15 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    void showHideCharts(Boolean lineChartVisibility, Boolean pieChartVisibility, Boolean barChartVisiblity, Boolean areaChartVisibility, Boolean scatterChartVisibility, String visualizeLabelText) {
+    void showHideCharts(Boolean lineChartVisibility, Boolean pieChartVisibility, Boolean barChartVisiblity, Boolean areaChartVisibility, Boolean scatterChartVisibility, Boolean stackedBarChartVisibility, String visualizeLabelText) {
         visualizeLabel.setText(visualizeLabelText);
         lineChart.setVisible(lineChartVisibility);
         pieChart.setVisible(pieChartVisibility);
         barChart.setVisible(barChartVisiblity);
         areaChart.setVisible(areaChartVisibility);
         scatterChart.setVisible(scatterChartVisibility);
+        stackedBarChart.setVisible(stackedBarChartVisibility);
+
     }
 
     private void openCombineColumnWizard() throws IOException {
@@ -713,14 +747,12 @@ public class MainFXMLController implements Initializable {
         fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
         Parent root = fxmlLoader.load();
         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
-        Stage stage = new Stage();
+        Stage stagen = new Stage();
         ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList, mapOverTabAndTableView, mapOverTabAndTable);
         c.myTabPane = tabPane;
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setOpacity(1);
-        stage.setScene(new Scene(root));
-        stage.show();
+        stagen.setOpacity(1);
+        stagen.setScene(new Scene(root));
+        stagen.show();
 
     }
 
