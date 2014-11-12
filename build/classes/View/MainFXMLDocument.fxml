@@ -156,7 +156,7 @@
                                                         <Tooltip text="Click here to make a line chart" />
                                                     </tooltip>
                                                 </Button>
-                                    <Button id="barChartButton" fx:id="handleBarChartButton1" onAction="#stackedBarChartButton">
+                                    <Button id="stackedBarChartButton" fx:id="handleBarChartButton1" onAction="#stackedBarChartButton">
                                        <tooltip>
                                           <Tooltip text="Click here to make a bar chart" />
                                        </tooltip>
@@ -171,11 +171,6 @@
                                                         <Tooltip text="Click here to make a area chart" />
                                                     </tooltip>
                                                 </Button>
-                                    <Button id="scatterChartButton" fx:id="handleLineChartButton111" onAction="#bubbleChartButton">
-                                       <tooltip>
-                                          <Tooltip text="Click here to make a scatter chart" />
-                                       </tooltip>
-                                    </Button>
                                                 <Button id="exportToPNGbutton" fx:id="printScreenButton" onAction="#btnExportChartToPNG">
                                                     <tooltip>
                                                         <Tooltip text="Click here to save your chart as PNG" />
