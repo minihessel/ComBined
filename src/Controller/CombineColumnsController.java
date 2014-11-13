@@ -142,6 +142,7 @@ public class CombineColumnsController implements Initializable {
             Stage stage = (Stage) btnFinish.getScene().getWindow();
             // do what you have to do
             stage.close();
+            
 
             //to select the last tab that has been selected
         } else {

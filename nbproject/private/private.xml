@@ -3,14 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Testing">
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AlgoFPGrowth.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/MainFXMLDocument.fxml</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/ColumnTableComperator.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumnsController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MyWizard.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/Kolonne.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/Table.java</file>
         </group>
     </open-files>
 </project-private>
