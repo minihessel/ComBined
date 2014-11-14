@@ -42,7 +42,6 @@ public class Table {
     ObservableList<List<String>> dataen;
     public SortedList<List<String>> sortedData;
     FilteredList<List<String>> filteredItems;
-    SQL_manager sql_manager = new SQL_manager();
     List<TextField> listOfTxtFields;
     public final String NAVN;
 
@@ -62,22 +61,22 @@ public class Table {
         numberofRows = 0;
         tableNumber = tableNumb;
 
-        sql_manager.getDataFromSQL(SQL);
+        SQL_manager.getDataFromSQL(SQL);
 
-        for (int i = 1; i <= sql_manager.rs.getMetaData().getColumnCount(); i++) {
-            String kolonneNavn = sql_manager.rs.getMetaData().getColumnName(i);
+        for (int i = 1; i <= SQL_manager.rs.getMetaData().getColumnCount(); i++) {
+            String kolonneNavn = SQL_manager.rs.getMetaData().getColumnName(i);
             Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
             listofColumns.add(kol);
 
         }
 
         //deretter legges all dataen til i kolonnene ved hjelp av rader
-        while (sql_manager.rs.next()) {
+        while (SQL_manager.rs.next()) {
             numberofRows++;
             ObservableList<String> row = FXCollections.observableArrayList();
 
             for (Kolonne k : listofColumns) {
-                k.addField(sql_manager.rs.getString(k.NAVN));
+                k.addField(SQL_manager.rs.getString(k.NAVN));
 
             }
 

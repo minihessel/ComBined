@@ -103,15 +103,7 @@
                                                         <NumberAxis animated="false" side="LEFT" />
                                                     </yAxis>
                                                 </StackedAreaChart>
-                                    <BubbleChart fx:id="bubbleChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
-                                      <xAxis>
-                                        <NumberAxis side="BOTTOM" />
-                                      </xAxis>
-                                      <yAxis>
-                                        <NumberAxis side="LEFT" />
-                                      </yAxis>
-                                    </BubbleChart>
-                                    <StackedBarChart fx:id="stackedBarChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                    <StackedBarChart fx:id="stackedBarChart" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                       <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                       </xAxis>
