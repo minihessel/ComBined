@@ -16,5 +16,6 @@ public interface WizardPage {
     public String getHeader();
     public GridPane getPane();
     public void addElements();
+        public void onEnter();
     public boolean valider();
 }

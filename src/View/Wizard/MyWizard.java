@@ -99,6 +99,7 @@ public class MyWizard {
                         pagePane.getChildren().setAll(pages[currentPage].getPane());
                         header.setText(pages[currentPage].getHeader());
                         previousButton.setDisable(false);
+                        pages[currentPage].onEnter();
                         if (currentPage + 1 == pages.length) {
                             nextButton.setText("Finish");
 

@@ -74,6 +74,12 @@ public class VisualizationPage1 implements WizardPage {
         fulfilled = ValidatorRegler.ikkeTom(valueColumn);
         return fulfilled;
     }
+       
+    @Override
+   public void onEnter() 
+    {
+        
+    }
 }
 
 /*Table table = getSelectedTable();

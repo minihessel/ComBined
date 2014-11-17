@@ -34,7 +34,8 @@ public class SQL_manager {
     public static void getAllTables(ComboBox comboBox) throws SQLException {
         //Henter ut alle tabellene i databasen ved hjelp av metadata
         DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs = md.getTables(null, null, "%", null);
+        String[] types = {"TABLE"};
+        ResultSet rs = md.getTables(null, null, "%", types);
 
         while (rs.next()) {
             System.out.println(rs.getString(3));
@@ -45,18 +46,30 @@ public class SQL_manager {
 
     }
 
-    public static void getConnection(String mySqlAdress, String myPort, String sqlInstance, String userName, String passWord) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+    public static void getConnection(String mySqlAdress, String myPort, String sqlInstance, String userName, String passWord, String whichSQL) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
 
         task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
                 Boolean result = null;
                 try {
+                    String myUrl = "";
+                    if (whichSQL.equals("Oracle")) {
+                        myUrl = "jdbc:oracle:thin:@" + mySqlAdress + ":" + myPort + ":XE";
+                        Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
+                    } else if (whichSQL.equals("MySQL")) {
+                        myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + sqlInstance + "?socketTimeout=3000&connectTimeout=3000";
+                        Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    } else if (whichSQL.equals("MSSQL")) {
+                        //myPort here isn't the port number but actually what database name the user wants
+                        myUrl = "jdbc:sqlserver://" + mySqlAdress + "\\" + sqlInstance + ";database=" + myPort;
+                        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+                    }
                     instanceName = sqlInstance;
-                    Class.forName("com.mysql.jdbc.Driver").newInstance();
 
                     System.out.println("Driver Loaded.");
-                    String myUrl = "jdbc:mysql://" + mySqlAdress + ":" + myPort + "/" + instanceName + "?socketTimeout=3000&connectTimeout=3000";
+                    // String myUrl = "jdbc:sqlserver://eskil-server-pc\\SQLExpress;database=test;username=sa;password=1234";
+
                     DriverManager.setLoginTimeout(10);
                     conn = DriverManager.getConnection(myUrl, userName, passWord);
 
@@ -64,6 +77,7 @@ public class SQL_manager {
                     result = true;
                 } catch (SQLException e) {
                     System.out.println("Driver Loaded FAILED.");
+                    System.out.println(e);
                     result = false;
                 }
                 return result;
@@ -83,7 +97,6 @@ public class SQL_manager {
         try {
             System.out.println(conn + "blabla");
             rs = conn.createStatement().executeQuery(SQL);
-
         } catch (Exception e) {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());

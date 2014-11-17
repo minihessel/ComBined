@@ -10,6 +10,8 @@ import Controller.SelectKeyComboBoxListener;
 import View.Wizard.ValidatorRegler;
 import View.Wizard.WizardPage;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -30,7 +32,7 @@ public final class SQlConnectPage11 implements WizardPage {
 
     public SQlConnectPage11() throws SQLException {
         new SelectKeyComboBoxListener(comboBox);
-        SQL_manager.getAllTables(comboBox);
+      
         addElements();
     }
 
@@ -56,4 +58,16 @@ public final class SQlConnectPage11 implements WizardPage {
         fulfilled = ValidatorRegler.ikkeTom(comboBox);
         return fulfilled;
     }
+    
+    @Override
+   public void onEnter() 
+    {
+        comboBox.getItems().clear();
+        try { 
+            SQL_manager.getAllTables(comboBox);
+        } catch (SQLException ex) {
+            Logger.getLogger(SQlConnectPage11.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+   
 }
