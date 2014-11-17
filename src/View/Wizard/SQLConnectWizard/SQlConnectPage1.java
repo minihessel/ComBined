@@ -99,7 +99,7 @@ public final class SQlConnectPage1 implements WizardPage {
             }
 
         });
-        pane.add(lblConnectionStatus, 1, 7);
+        pane.add(lblConnectionStatus, 1, 8);
     }
 
     @Override
