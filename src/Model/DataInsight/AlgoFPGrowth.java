@@ -427,4 +427,12 @@ public class AlgoFPGrowth {
     public int getDatabaseSize() {
         return transactionCount;
     }
+    
+    public void reset()
+    {
+        patterns = null;
+        transactionCount = 0;
+        itemsetCount = 0;
+        memoryLogger = null;
+    }
 }

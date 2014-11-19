@@ -10,6 +10,9 @@ import View.Wizard.ValidatorRegler;
 import View.Wizard.WizardPage;
 import Model.Kolonne;
 import Model.Table;
+import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -24,27 +27,42 @@ public class InsightWizardPage1 implements WizardPage {
 
     String header = "Please select which columns you would like data insight on";
     public ComboBox transactionIDcolumn = new ComboBox();
-
+    public ComboBox<Table> tableColumn = new ComboBox();
     public ComboBox itemIDcolumn = new ComboBox();
     public CheckBox checkBox = new CheckBox();
     final private GridPane pane = new GridPane();
     private boolean fulfilled = false;
     Table table;
 
-    public InsightWizardPage1(Table table) {
+    public InsightWizardPage1(List<Table> tablesList) {
         new SelectKeyComboBoxListener(transactionIDcolumn);
         new SelectKeyComboBoxListener(itemIDcolumn);
-        this.table = table;
-        for (Kolonne kol : table.listofColumns) {
-            transactionIDcolumn.getItems().add(kol.NAVN);
-            itemIDcolumn.getItems().add(kol.NAVN);
+        for (Table table : tablesList) {
+            tableColumn.getItems().add(table);
+
         }
+        tableColumn.valueProperty().addListener(new ChangeListener<Table>() {
+            @Override
+            public void changed(ObservableValue ov, Table t, Table t1) {
+                System.out.println("changed");
+                itemIDcolumn.getItems().clear();
+                transactionIDcolumn.getItems().clear();
+                for (Kolonne kol : t1.listofColumns) {
+                    itemIDcolumn.getItems().add(kol.NAVN);
+                    transactionIDcolumn.getItems().add(kol.NAVN);
+
+                }
+            }
+        });
         addElements();
     }
 
     @Override
     public void addElements() {
-        pane.add(new Label("You are now running insight on table: " + table + "\n \n \n \n \n"), 0, 0);
+        pane.add(new Label(
+                "Select which table that contains SalesLine table"), 0, 0);
+        pane.add(tableColumn, 1, 0);
+
         pane.add(new Label("Select a column that represents the transactionID: "), 0, 1);
         pane.add(transactionIDcolumn, 1, 1);
         pane.add(new Label("Select a column that represents the itemID: "), 0, 2);

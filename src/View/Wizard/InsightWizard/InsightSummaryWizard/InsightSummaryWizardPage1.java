@@ -44,6 +44,8 @@ public class InsightSummaryWizardPage1 implements WizardPage {
             @Override
             public void changed(ObservableValue ov, Table t, Table t1) {
                 System.out.println("changed");
+                itemIDColumn.getItems().clear();
+                itemDescriptionColumn.getItems().clear();
                 for (Kolonne kol : t1.listofColumns) {
                     itemIDColumn.getItems().add(kol.NAVN);
                     itemDescriptionColumn.getItems().add(kol.NAVN);

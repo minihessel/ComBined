@@ -1,5 +1,6 @@
 package Controller;
 
+import DataInsight.AlgoFPGrowth;
 import Model.CustomTab;
 import View.Wizard.MyWizard;
 import View.Wizard.VisualizationWizard.VisualizationPage1;
@@ -25,9 +26,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -87,7 +86,6 @@ public class MainFXMLController implements Initializable {
 
     Visualize visualize;
     HelpScreenController helpScreenController;
-    DataInsight datainsight = new DataInsight();
     ArrayList<Table> tablesList;
     SQL_manager sql_manager = new SQL_manager();
     Parent root;
@@ -166,12 +164,13 @@ public class MainFXMLController implements Initializable {
     SplitPane splitPane;
     @FXML
     TabPane tabPane;
+
     @FXML
     TabPane tabPaneInsight;
     @FXML
     BorderPane borderPane;
-    //////////////////////////////
 
+    //////////////////////////////
     @FXML
     private Label label;
     @FXML
@@ -196,7 +195,7 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void dataInsightCreateSummaryButton(ActionEvent event) {
-
+        Table dataInsightTable = whichTabIsSelected.getTable();
         InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
         //  openDialogWithSQLConnectionInfo();
 
@@ -206,18 +205,21 @@ public class MainFXMLController implements Initializable {
 
         if (finished) {
             TabPane summaryTabPane = new TabPane();
-            Tab summaryTab = new Tab("Summary on " + whichTabIsSelected.getTable().NAVN);
-            List<Table> tabs = datainsight.createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
+            CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
+            tabPaneInsight.getTabs().add(summaryTab);
+            tabPaneInsight.getSelectionModel().select(summaryTab);
+            List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
             for (Table table : tabs) {
 
                 TableView tableView = new TableView();
-                CustomTab tab = new CustomTab(table, table.NAVN, tableView);
+                CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
+
                 tableView = table.fillTableView(tableView, table);
                 tab.setContent(tableView);
                 summaryTabPane.getTabs().add(tab);
-                summaryTabPane.getSelectionModel().select(tab);
+
                 summaryTab.setContent(summaryTabPane);
-                tabPaneInsight.getTabs().add(summaryTab);
+
             }
 
         }
@@ -282,6 +284,7 @@ public class MainFXMLController implements Initializable {
 
         try {
             try {
+                setVisibleView("tableView");
                 createTabPaneWithTable("G_items");
                 createTabPaneWithTable("G_salesline3");
 
@@ -477,6 +480,15 @@ public class MainFXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb
     ) {
+
+        tabPane.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+                System.out.println("focused");
+
+            }
+        });
+
         new SelectKeyComboBoxListener(comboBox);
 
         try {
@@ -596,10 +608,9 @@ public class MainFXMLController implements Initializable {
     }
 
     private void showInsightWizard() {
-
         if (tabPane.getSelectionModel().getSelectedItem() != null) {
 
-            InsightWizardPage1 insightWizardPage1 = new InsightWizardPage1(whichTabIsSelected.getTable());
+            InsightWizardPage1 insightWizardPage1 = new InsightWizardPage1(tablesList);
 
             //  openDialogWithSQLConnectionInfo();
             MyWizard wizard = new MyWizard(insightWizardPage1);
@@ -611,14 +622,17 @@ public class MainFXMLController implements Initializable {
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
 
+                DataInsight dataInsight = new DataInsight();
                 try {
-                    Table tabellen = datainsight.getInsight(0, 1, whichTabIsSelected.getTable(), transactionIDcolumn, itemIDcolumn);
+                    Table tabellen = dataInsight.getInsight(0, 1, insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
+                    tabellen.setDataInsight(dataInsight);
                     createTabPaneWithDataInsight(tabellen);
+
                 } catch (Exception e) {
                     ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
-                    System.out.println(e);
                 }
 
+                //  System.out.println(e);
             }
 
         } else {
@@ -651,10 +665,11 @@ public class MainFXMLController implements Initializable {
     }
 
     public void createTabPaneWithDataInsight(Table tabellen) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+
         VBox vBox = new VBox();
         TableView tableViewet = new TableView();
 
-        Label lbl = new Label(datainsight.getStats());
+        Label lbl = new Label(tabellen.getDataInsight().getStats());
         Label lbl2 = new Label("Stats:");
         lbl2.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
         SplitPane split_pane = new SplitPane();
@@ -667,7 +682,7 @@ public class MainFXMLController implements Initializable {
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId(
                 "" + tabPaneCounter);
-        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText() + " Normal View"), tableViewet);
+        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText() + " Normal View"), tableViewet, anchorPaneInsight);
 
         tab.setContent(vBox);
         tabPaneInsight.getTabs().add(tab);
@@ -707,7 +722,7 @@ public class MainFXMLController implements Initializable {
                 "" + tabPaneCounter);
 
         CustomTab tab = new CustomTab(tabellen, (whichTable
-                + "@" + sql_manager.instanceName), tableViewet);
+                + "@" + sql_manager.instanceName), tableViewet, anchorPaneTables);
 
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
             @Override
@@ -760,7 +775,7 @@ public class MainFXMLController implements Initializable {
         Parent root = fxmlLoader.load();
         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
         Stage stagen = new Stage();
-        ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList);
+        ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList, anchorPaneTables);
         c.myTabPane = tabPane;
         stagen.setOpacity(1);
         stagen.setScene(new Scene(root));

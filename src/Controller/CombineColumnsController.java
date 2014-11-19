@@ -28,7 +28,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -48,10 +47,10 @@ import javafx.stage.Stage;
  * @author Eskil Hesselroth
  */
 public class CombineColumnsController implements Initializable {
-
+    
     @FXML
     TextField textField;
-
+    
     TabPane myTabPane;
     @FXML
     ListView<Kolonne> listView;
@@ -59,18 +58,20 @@ public class CombineColumnsController implements Initializable {
     final ObservableList<Kolonne> data = FXCollections.observableArrayList();
     List<Table> myList;
     List<ComboBox> choiceBoxList = new ArrayList();
-
+    
+    AnchorPane myAnchorpane;
+    
     @FXML
     VBox vBox;
-
+    
     @FXML
     Button btnFinish;
-
+    
     @FXML
     private void btnAdd(ActionEvent event
     ) {
         int atLeastTwoTablesSelected = 0;
-
+        
         for (ComboBox cb : choiceBoxList) {
             if (!cb.getSelectionModel().isEmpty()) {
                 atLeastTwoTablesSelected++;
@@ -80,37 +81,37 @@ public class CombineColumnsController implements Initializable {
             Kolonne kol = new Kolonne(textField.getText(), combinedTable, true, combinedTable.listofColumns.size() + 1);
             for (ComboBox cb : choiceBoxList) {
                 if (!cb.getSelectionModel().isEmpty()) {
-
+                    
                     Kolonne addCol = (Kolonne) cb.getSelectionModel().getSelectedItem();
                     kol.listOfColumns.add(addCol);
                     cb.setValue(null);
                 }
             }
-
+            
             combinedTable.listofColumns.add(kol);
             textField.setText(null);
-
+            
             listView.setItems(FXCollections.observableArrayList(combinedTable.listofColumns));
         } else if (textField.getText().isEmpty()) {
             ErrorDialog("Your new column need a new name", "Please fill in the name of your new column in the textfield");
-
+            
         } else {
-
+            
             ErrorDialog("Not enough columns selected", "You haven't selected enough columns. A combined column got to contain at least two columns ");
-
+            
         }
-
+        
     }
-
+    
     @FXML
     private void btnFinish(ActionEvent event
     ) {
-
+        
         if (!combinedTable.listofColumns.isEmpty()) {
             TableView tableViewCombined = new TableView();
             VBox tabPaneVBox = new VBox();
             tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
-            CustomTab tab = new CustomTab(combinedTable,"combined table",tableViewCombined);
+            CustomTab tab = new CustomTab(combinedTable, "combined table", tableViewCombined, myAnchorpane);
             tab.setOnClosed(new EventHandler<javafx.event.Event>() {
                 @Override
                 public void handle(javafx.event.Event e) {
@@ -122,7 +123,7 @@ public class CombineColumnsController implements Initializable {
             System.out.println(combinedTable.numberofRows = combinedTable.listofColumns.get(0).allFields().size());
             Label lbl = new Label("Number of rows : " + combinedTable.numberofRows);
             AnchorPane anchorPane = new AnchorPane(lbl);
-
+            
             anchorPane.setRightAnchor(lbl,
                     5.0);
             //legger til tableviewet i tabben
@@ -132,10 +133,10 @@ public class CombineColumnsController implements Initializable {
             System.out.println(myTabPane.getTabs().size());
             myList.add(combinedTable);
             myTabPane.getTabs().add(tab);
+            myTabPane.getSelectionModel().select(tab);
             // myTabPane.getSelectionModel().selectLast();
             tab.setId("" + myTabPane.getTabs().size() + 1);
-      
-
+            
             Stage stage = (Stage) btnFinish.getScene().getWindow();
             // do what you have to do
             stage.close();
@@ -144,23 +145,24 @@ public class CombineColumnsController implements Initializable {
         } else {
             ErrorDialog("No columns created", "There are no columns created, can not continue. Please create atleast one combined column");
         }
-
+        
     }
-
+    
     @FXML
     private void btnCancel(ActionEvent event
     ) {
-
+        
         Stage stage = (Stage) btnFinish.getScene().getWindow();
         // do what you have to do
         stage.close();
 
         //to select the last tab that has been selected
     }
-
-    public void setContext(List<Table> tablesList) {
+    
+    public void setContext(List<Table> tablesList, AnchorPane anchorPane) {
         this.myList = tablesList;
-
+        this.myAnchorpane = anchorPane;
+        
         for (Table tbl : myList) {
             FlowPane pane = new FlowPane();
             ImageView imageView = new ImageView(new Image(
@@ -168,7 +170,7 @@ public class CombineColumnsController implements Initializable {
             // pane.setPrefSize(20, 40);
             pane.setStyle("-fx-border-color: black;-fx-border-width:0.1px;");
             Label lbl = new Label("Table : " + tbl.NAVN);
-
+            
             ComboBox<Kolonne> cb = new ComboBox();
             new SelectKeyComboBoxListener(cb);
             cb.setUserData(tbl.tableNumber);
@@ -178,48 +180,48 @@ public class CombineColumnsController implements Initializable {
             }
             pane.setOrientation(Orientation.VERTICAL);
             pane.setHgap(2);
-
+            
             pane.getChildren().addAll(lbl, cb);
             pane.getChildren().add(imageView);
-
+            
             vBox.getChildren().add(pane);
         }
 
         // initialize country dependent data here rather then in initialize()
     }
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
         final ContextMenu contextMenu = new ContextMenu();
-
+        
         MenuItem delete = new MenuItem("Delete");
-
+        
         contextMenu.getItems().addAll(delete);
-
+        
         listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+            
             @Override
             public void handle(MouseEvent t) {
-
+                
                 if (t.getTarget() instanceof Text) {
-
+                    
                     if (t.getButton() == MouseButton.SECONDARY) {
                         delete.setOnAction(new EventHandler() {
                             public void handle(Event t) {
                                 combinedTable.listofColumns.remove(listView.getSelectionModel().getSelectedItem());
                                 listView.getItems().remove(listView.getSelectionModel().getSelectedItem());
-
+                                
                             }
-
+                            
                         });
                         Node n = (Node) t.getTarget();
                         contextMenu.show(n, t.getScreenX(), t.getScreenY());
                     }
-
+                    
                 }
             }
         });
     }
-
+    
 }

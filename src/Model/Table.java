@@ -43,6 +43,7 @@ public class Table {
     public SortedList<List<String>> sortedData;
     public FilteredList<List<String>> filteredItems;
     List<TextField> listOfTxtFields;
+    DataInsight datainsight;
     public final String NAVN;
 
     public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
@@ -240,6 +241,14 @@ public class Table {
         }
         filter();
 
+    }
+
+    public void setDataInsight(DataInsight datainsight) {
+        this.datainsight = datainsight;
+    }
+
+    public DataInsight getDataInsight() {
+        return datainsight;
     }
 
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {

@@ -36,12 +36,13 @@ import org.controlsfx.control.PopOver;
  */
 public class DataInsight {
 
-    Map<String, List<Item>> transdata = new HashMap<>();
-    Map<String, Item> itemMap = new HashMap<>();
-    Map<Integer, String> invertedItemMap = new HashMap();
-    Map<String, String> itemIDandDescriptionMap = new HashMap();
+    Map<String, List<Item>> transdata;
+    Map<String, Item> itemMap;
+    Map<Integer, String> invertedItemMap;
+    Map<String, String> itemIDandDescriptionMap;
     Integer createdProductNumber = 1;
     AlgoFPGrowth fpGrowth = new AlgoFPGrowth();
+
     Itemsets result;
     PopOver popover = new PopOver();
 
@@ -90,6 +91,11 @@ public class DataInsight {
         //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
         //deretter looper vi igjennom dataen og legger den til i transdata mappet.
 
+        transdata = new HashMap<>();
+        itemMap = new HashMap<>();
+        invertedItemMap = new HashMap();
+        result = null;
+        createdProductNumber = 1;
         for (List<String> a : selectedTable.sortedData) {
             addNewDataToTransactionsMap(a.get(transactionColumn), a.get(itmeColumn));
         }
@@ -221,6 +227,7 @@ public class DataInsight {
     }
 
     public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn, MainFXMLController mainFXMLController) {
+        itemIDandDescriptionMap = new HashMap<>();
         List<Table> tabs = new ArrayList();
         for (List<String> a : itemTable.sortedData) {
             itemIDandDescriptionMap.put(a.get(itemIDColumn), a.get(itemDescriptionColumn));
@@ -260,12 +267,10 @@ public class DataInsight {
                     }
                     items.addField(itemSet);
                     support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize());
-                    
 
                 }
                 tabell.listofColumns.add(items);
                 tabell.listofColumns.add(support);
-               
 
                 tabs.add(tabell);
             }
