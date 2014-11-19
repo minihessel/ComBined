@@ -90,8 +90,10 @@ public class MyWizard {
         nextButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+
                 if (pages[currentPage].valider()) {
                     if (currentPage + 1 == pages.length) {
+
                         stage.close();
                         finishedOrNot = true;
                     } else {

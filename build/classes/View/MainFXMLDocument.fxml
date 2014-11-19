@@ -199,6 +199,7 @@
                                           <Insets top="40.0" />
                                        </HBox.margin>
                                     </Button>
+                                    <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#exportTableToCSVButton" prefWidth="150.0" text="Export table to CSV" />
                                  </children>
                               </HBox>
                                         <TabPane id="tabPane" fx:id="tabPane">
@@ -227,6 +228,7 @@
                                        <HBox.margin>
                                           <Insets left="5.0" top="40.0" />
                                        </HBox.margin></Button>
+                                    <Button mnemonicParsing="false" onAction="#dataInsightCreateSummaryButton" text="Create summary" />
                                  </children>
                               </HBox>
                                         <TabPane id="tabPane" fx:id="tabPaneInsight" />

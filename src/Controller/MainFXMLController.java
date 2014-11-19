@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.CustomTab;
 import View.Wizard.MyWizard;
 import View.Wizard.VisualizationWizard.VisualizationPage1;
 import View.Wizard.SQLConnectWizard.SQlConnectPage11;
@@ -11,10 +12,16 @@ import Model.Kolonne;
 import Model.Table;
 import View.ChartToPng;
 import View.SideBar;
+import View.Wizard.InsightWizard.InsightSummaryWizard.InsightSummaryWizardPage1;
 import View.Wizard.InsightWizard.InsightWizardPage1;
+
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,6 +72,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -76,7 +84,7 @@ import org.controlsfx.dialog.Dialog;
  * @author Eskil Hesselroth
  */
 public class MainFXMLController implements Initializable {
-    
+
     Visualize visualize;
     HelpScreenController helpScreenController;
     DataInsight datainsight = new DataInsight();
@@ -97,7 +105,7 @@ public class MainFXMLController implements Initializable {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/helpme.fxml"));
     ChoiceBox choiceBoxTables = new ChoiceBox();
     String whichVisualizationType;
-    
+
     public MainFXMLController() {
         visualize = new Visualize();
         tablesList = new ArrayList<>();
@@ -178,121 +186,205 @@ public class MainFXMLController implements Initializable {
     ComboBox<Column> comboBox;
     @FXML
     VBox vBoxMenu;
-    
+
+    CustomTab whichTabIsSelected;
+
     @FXML
     private void removeFiltersButton(ActionEvent event) {
-        if (anchorPaneTables.visibleProperty().get()) {
-            if (tabPane.getSelectionModel().getSelectedItem() != null) {
-                mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()).removeFilters();
-            }
-        } else if (anchorPaneInsight.visibleProperty().get()) {
-            if (!tabPaneInsight.getSelectionModel().isEmpty()) {
-                mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem()).removeFilters();
-            }
-        }
-        
+        System.out.println(whichTabIsSelected.getText());
+        whichTabIsSelected.getTable();
+
     }
-    
+
+    @FXML
+    private void dataInsightCreateSummaryButton(ActionEvent event) {
+
+        InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
+        //  openDialogWithSQLConnectionInfo();
+
+        MyWizard wizard = new MyWizard(insightPage1);
+        wizard.blurMainWindow(pieChart.getScene().getRoot());
+        Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+
+        if (finished) {
+
+            Table tabs = datainsight.createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
+            CustomTab tab = new CustomTab(tabs);
+            ChoiceBox choiceBox = new ChoiceBox();
+            for (String string : tabs.listofColumns.get(2).allFields()) {
+                choiceBox.getItems().add(string);
+            }
+
+            mapOverTabAndTable.put(tab, tabs);
+            tab.setOnSelectionChanged(new EventHandler<javafx.event.Event>() {
+                @Override
+                public void handle(javafx.event.Event e) {
+                    whichTabIsSelected = tab;
+                }
+            });
+        }
+
+    }
+
+    @FXML
+    private void exportTableToCSVButton(ActionEvent event) throws IOException {
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File file = fileChooser.showSaveDialog(stage);
+        Writer writer = null;
+        if (file != null) {
+            try {
+
+                writer = new BufferedWriter(new FileWriter(file));
+                int counter = 0;
+
+                for (Kolonne kol : getSelectedTable().listofColumns) {
+                    if (kol == getSelectedTable().listofColumns.get(getSelectedTable().listofColumns.size() - 1)) {
+                        String text = kol.NAVN + "\n";
+                        writer.write(text);
+                    } else {
+                        String text = kol.NAVN + ",";
+                        writer.write(text);
+                    }
+                }
+
+                for (List<String> strings : getSelectedTable().sortedData) {
+
+                    for (int i = 0; i < strings.size(); i++) {
+                        if (i + 1 == strings.size()) {
+                            String text = strings.get(i);
+                            writer.write(text);
+                        } else {
+                            String text = strings.get(i) + ",";
+                            writer.write(text);
+                        }
+
+                    }
+                    String text = "\n";
+                    writer.write(text);
+
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+
+                writer.flush();
+                writer.close();
+
+            }
+
+        }
+
+    }
+
     @FXML
     private void showThat(ActionEvent event) {
-        
+
         try {
             try {
-                createTabPaneWithTable("lars");
+                createTabPaneWithTable("G_items");
+                createTabPaneWithTable("G_salesline3");
+
             } catch (SQLException ex) {
-                Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MainFXMLController.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
+
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(MainFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainFXMLController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @FXML
     private void barChartButton(ActionEvent event) {
         showHideCharts(false, false, true, false, false, false, "Bar Chart");
         whichVisualizationType = "barChart";
-        
+
     }
-    
+
     @FXML
     private void stackedBarChartButton(ActionEvent event) {
         showHideCharts(false, false, false, false, false, true, "Stacked Bar Chart");
         whichVisualizationType = "stackedBarChart";
-        
+
     }
-    
+
     @FXML
     private void pieChartButton(ActionEvent event) {
         showHideCharts(false, true, false, false, false, false, "Pie Chart");
         whichVisualizationType = "pieChart";
-        
+
     }
-    
+
     @FXML
     private void areaChartButton(ActionEvent event) {
         showHideCharts(false, false, false, true, false, false, "Area Chart");
         whichVisualizationType = "areaChart";
-        
+
     }
-    
+
     @FXML
     private void lineChartButton(ActionEvent event) {
         showHideCharts(true, false, false, false, false, false, "Line Chart");
         whichVisualizationType = "lineChart";
     }
-    
+
     @FXML
     private void scatterChartButton(ActionEvent event) {
         showHideCharts(false, false, false, false, true, false, "Scatter Chart");
         whichVisualizationType = "scatterChart";
-        
+
     }
-    
+
     @FXML
     private void btnNewChart(ActionEvent event
     ) {
         showVisualizationWizard(Boolean.FALSE);
     }
-    
+
     @FXML
     private void btnNewSeries(ActionEvent event) {
         showVisualizationWizard(Boolean.TRUE);
     }
-    
+
     @FXML
     private void combineButton(ActionEvent event
     ) throws IOException {
         openCombineColumnWizard();
-        
+
     }
-    
+
     @FXML
     public void goToColumn(ActionEvent event) {
-        
+
         if (!comboBox.getSelectionModel().isEmpty()) {
             Column selectedColumn = comboBox.getSelectionModel().getSelectedItem();
-            
+
             FadeTransition ft = new FadeTransition(Duration.millis(300), selectedColumn.getGraphic());
             ft.setFromValue(10.0);
             ft.setToValue(0.0);
             ft.setCycleCount(6);
             ft.setAutoReverse(true);
-            
+
             ft.play();
 
             // 
             mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()).scrollToColumn(selectedColumn);
-            
+
         }
     }
-    
+
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
-        
+
         SQlConnectPage1 sQlConnectPage1 = new SQlConnectPage1();
         SQlConnectPage11 SQLConnectPage2 = new SQlConnectPage11();
         //  openDialogWithSQLConnectionInfo();
@@ -300,84 +392,84 @@ public class MainFXMLController implements Initializable {
         MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2);
         wizard.blurMainWindow(button.getScene().getRoot());
         Boolean finished = wizard.createDialog(button.getScene().getWindow());
-        
+
         if (finished) {
             setVisibleView("tableView");
-            
+
             createTabPaneWithTable(SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString());
-            
+
         }
 
         // createTabPaneWithTable("transbig");
     }
-    
+
     @FXML
     private void visualizeButton(ActionEvent event) {
         setVisibleView("visualizeView");
         whichHelpView = "visualizeView";
-        
+
     }
-    
+
     @FXML
     private void insightButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
-        
+
         setVisibleView("insightView");
         whichHelpView = "insightView";
-        
+
     }
-    
+
     @FXML
     private void handleDataButton(ActionEvent event
     ) {
         setVisibleView("tableView");
         whichHelpView = "tableView";
     }
-    
+
     @FXML
     private void runNewAnalysisButton(ActionEvent event) throws IOException, UnsupportedEncodingException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
-        
+
         showInsightWizard();
-        
+
     }
-    
+
     @FXML
     private void btnHelp(ActionEvent event) throws IOException {
-        
+
         loadHelpScreen();
-        
+
     }
-    
+
     @FXML
     private void btnExportChartToPNG(ActionEvent event) throws IOException {
         if (barChart.visibleProperty().get()) {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
-            
+
             chartToPNG.saveChartToPNG(image, helpScreenStage);
-            
+
         }
         if (pieChart.visibleProperty().get()) {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = pieChart.snapshot(new SnapshotParameters(), null);
-            
+
             chartToPNG.saveChartToPNG(image, helpScreenStage);
-            
+
         }
-        
+
         if (lineChart.visibleProperty().get()) {
             ChartToPng chartToPNG = new ChartToPng();
             WritableImage image = lineChart.snapshot(new SnapshotParameters(), null);
-            
+
             chartToPNG.saveChartToPNG(image, helpScreenStage);
-            
+
         }
-        
+
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         new SelectKeyComboBoxListener(comboBox);
-        
+
         try {
             root = fxmlLoader.load();
             helpScreenStage = new Stage();
@@ -386,7 +478,7 @@ public class MainFXMLController implements Initializable {
             helpScreenStage.setOpacity(1);
             helpScreenStage.setTitle("My New Stage Title");
             helpScreenStage.setScene(new Scene(root));
-            
+
         } catch (IOException ex) {
             Logger.getLogger(MainFXMLController.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -394,8 +486,8 @@ public class MainFXMLController implements Initializable {
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         try {
-            
-            sql_manager.getConnection("localhost", "8889", "test", "root", "root","mysql");
+
+            sql_manager.getConnection("localhost", "8889", "test", "root", "root", "MySQL");
             //      createTabPaneWithTable("transactions");
             //   createTabPaneWithTable("G_salesline3");
 
@@ -415,61 +507,61 @@ public class MainFXMLController implements Initializable {
 
         //TEMPORARY, FOR Å SLIPPE Å SKRIVE INN TILKOBLING HVER GANG
         SideBar sidebar = new SideBar(btnMenu, 90, vBoxMenu);
-        
+
         borderPane.setLeft(sidebar);
-        
+
         btnConnectedTables.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnCombine.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnVisualize.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
-        
+
         btnInsight.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         btnHelp.disableProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
         Image noTables = new Image(
                 getClass().getResourceAsStream("/Icons/no_tables.png"));
         imageView.setImage(noTables);
         imageView.visibleProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
-        
+
     }
-    
+
     public void setVisibleView(String whichView) {
-        
+
         if ("visualizeView".equals(whichView)) {
-            
+
             anchorPaneVisualize.setVisible(true);
             anchorPaneTables.setVisible(false);
             anchorPaneInsight.setVisible(false);
-            
+
         }
-        
+
         if ("tableView".equals(whichView)) {
             whichHelpView = "tableView";
             whichSelectedView = whichView;
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(true);
             anchorPaneInsight.setVisible(false);
-            
+
         }
-        
+
         if ("insightView".equals(whichView)) {
             whichSelectedView = whichView;
             anchorPaneVisualize.setVisible(false);
             anchorPaneTables.setVisible(false);
             anchorPaneInsight.setVisible(true);
-            
+
         }
-        
+
     }
-    
+
     void loadHelpScreen() throws IOException {
-        
+
         helpScreenController = fxmlLoader.getController();
         System.out.println(whichHelpView);
         helpScreenController.setValue(whichHelpView);
         System.out.println(whichHelpView);
         helpScreenStage.showAndWait();
-        
+
     }
-    
+
     public Table getSelectedTable() {
         if (whichSelectedView.equals("insightView")) {
             Table table = mapOverTabAndTable.get(tabPaneInsight.getSelectionModel().getSelectedItem());
@@ -482,20 +574,20 @@ public class MainFXMLController implements Initializable {
         } else {
             return null;
         }
-        
+
     }
-    
+
     private void showVisualizationWizard(Boolean newSeries) {
-        
+
         if (getSelectedTable() != null) {
-            
+
             VisualizationPage1 visualizationPage1 = new VisualizationPage1(getSelectedTable());
             //  openDialogWithSQLConnectionInfo();
 
             MyWizard wizard = new MyWizard(visualizationPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
             Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
-            
+
             if (finished) {
                 Tab tab;
                 int nameColumn = visualizationPage1.nameColumn.getSelectionModel().getSelectedIndex();
@@ -504,33 +596,33 @@ public class MainFXMLController implements Initializable {
                 if (whichSelectedView.equals("insightView")) {
                     tab = tabPaneInsight.getSelectionModel().getSelectedItem();
                     createChart(whichVisualizationType, nameColumn, valueColumn, tab, newSeries, countRowsOrNot);
-                    
+
                 } else if (whichSelectedView.equals("tableView")) {
                     tab = tabPane.getSelectionModel().getSelectedItem();
                     createChart(whichVisualizationType, nameColumn, valueColumn, tab, newSeries, countRowsOrNot);
                 }
-                
+
             }
-            
+
         }
     }
-    
-    private void showInsightWizard() {
-        
-        if (tabPane.getSelectionModel().getSelectedItem() != null) {
-            
-            InsightWizardPage1 insightWizardPage1 = new InsightWizardPage1(mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()));
-            //  openDialogWithSQLConnectionInfo();
 
+    private void showInsightWizard() {
+
+        if (tabPane.getSelectionModel().getSelectedItem() != null) {
+
+            InsightWizardPage1 insightWizardPage1 = new InsightWizardPage1(mapOverTabAndTable.get(tabPane.getSelectionModel().getSelectedItem()));
+
+            //  openDialogWithSQLConnectionInfo();
             MyWizard wizard = new MyWizard(insightWizardPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
             Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
-            
+
             if (finished) {
                 Tab tab;
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
-                
+
                 try {
                     Table tabellen = datainsight.getInsight(0, 1, tabPane, mapOverTabAndTable, transactionIDcolumn, itemIDcolumn);
                     createTabPaneWithDataInsight(tabellen);
@@ -538,42 +630,60 @@ public class MainFXMLController implements Initializable {
                     ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
                     System.out.println(e);
                 }
-                
+
             }
-            
+
         } else {
             System.out.println("qq");
         }
-        
+
     }
-    
+
     private void createChart(String whichVisualizationType, int en, int to, Tab tab, Boolean newSeries, Boolean rowCount) {
         if ("barChart".equals(whichVisualizationType)) {
-            
+
             visualize.getBarChartData(en, to, tab, mapOverTabAndTable, barChart, newSeries, rowCount);
-            
+
         } else if ("pieChart".equals(whichVisualizationType)) {
-            
+
             visualize.getPieChartData(en, to, tab, mapOverTabAndTable, pieChart, label, newSeries, rowCount);
         } else if ("lineChart".equals(whichVisualizationType)) {
-            
+
             visualize.getLineChartData(en, to, tab, mapOverTabAndTable, lineChart, newSeries, rowCount);
         } else if ("areaChart".equals(whichVisualizationType)) {
-            
+
             visualize.getAreaChartData(en, to, tab, mapOverTabAndTable, areaChart, newSeries, rowCount);
         } else if ("scatterChart".equals(whichVisualizationType)) {
-            
+
             visualize.getScatterChartData(en, to, tab, mapOverTabAndTable, scatterChart, newSeries, rowCount);
         } else if ("stackedBarChart".equals(whichVisualizationType)) {
-            
+
             visualize.getStackedBarChartData(en, to, tab, mapOverTabAndTable, stackedBarChart, newSeries, rowCount);
         }
     }
-    
+
+    public void createTabWithTable(Table table, Tab tab, TabPane tabPane) {
+
+        tabPane.getTabs()
+                .add(tab);
+        System.out.println("2" + tab);
+
+        tabPane.getSelectionModel()
+                .select(tab);
+        mapOverTabAndTable.put(tab, table);
+        System.out.println("3" + tab);
+        tab.setOnSelectionChanged(new EventHandler<javafx.event.Event>() {
+            @Override
+            public void handle(javafx.event.Event e) {
+                whichTabIsSelected = tab;
+            }
+        });
+    }
+
     public void createTabPaneWithDataInsight(Table tabellen) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
         VBox vBox = new VBox();
         TableView tableViewet = new TableView();
-        
+
         Label lbl = new Label(datainsight.getStats());
         Label lbl2 = new Label("Stats:");
         lbl2.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
@@ -587,22 +697,19 @@ public class MainFXMLController implements Initializable {
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId(
                 "" + tabPaneCounter);
-        Tab tab = new Tab("Data Insight based on - " + (tabPane.getSelectionModel().getSelectedItem().getText())
+        Tab tab = new Tab((tabPane.getSelectionModel().getSelectedItem().getText() + " Normal View")
         );
+
         tab.setContent(vBox);
-        tabPaneInsight.getTabs()
-                .add(tab);
-        mapOverTabAndTable.put(tab, tabellen);
-        tabPaneInsight.getSelectionModel()
-                .select(tab);
-        
+        createTabWithTable(tabellen, tab, tabPaneInsight);
+
     }
-    
+
     public void createTabPaneWithTable(String whichTable) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
-        
+
         Table tabellen = new Table(whichTable + "@" + SQL_manager.instanceName);
 
         //  String query = textField.getText();
@@ -612,26 +719,26 @@ public class MainFXMLController implements Initializable {
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabellen);
-        
+
         TableView tableViewet = new TableView();
         listOfTableViews.add(tableViewet);
-        
+
         Label lbl = new Label("Number of rows : " + tabellen.numberofRows);
         AnchorPane anchorPane = new AnchorPane(lbl);
-        
+
         anchorPane.setRightAnchor(lbl,
                 5.0);
         //legger til tableviewet i tabben
         vBox.getChildren()
                 .addAll(tableViewet, anchorPane);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
-        
+
         vBox.setId(
                 "" + tabPaneCounter);
-        
+
         Tab tab = new Tab(whichTable
                 + "@" + sql_manager.instanceName);
-        
+
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
             @Override
             public void handle(javafx.event.Event e) {
@@ -639,35 +746,41 @@ public class MainFXMLController implements Initializable {
                 tabPane.getTabs().remove(tab);
             }
         });
-        
+
+        tab.setOnSelectionChanged(new EventHandler<javafx.event.Event>() {
+            @Override
+            public void handle(javafx.event.Event e) {
+                whichTabIsSelected = tab;
+            }
+        });
         tab.setContent(vBox);
-        
+
         tabPane.getTabs()
                 .add(tab);
         mapOverTabAndTableView.put(tab, tableViewet);
         mapOverTabAndTable.put(tab, tabellen);
-        
+
         tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-                
+
                 if (new_val.equals(Boolean.TRUE)) {
-                    
+
                     comboBox.getItems().clear();
                     comboBox.getItems().addAll(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()).getColumns());
                     comboBox.setValue(null);
                     System.out.println("true");
-                    
+
                 }
-                
+
             }
         });
-        
+
         tabPane.getSelectionModel()
                 .select(tab);
         comboBox.getItems().addAll(mapOverTabAndTableView.get(tabPane.getSelectionModel().getSelectedItem()).getColumns());
-        
+
     }
-    
+
     void showHideCharts(Boolean lineChartVisibility, Boolean pieChartVisibility, Boolean barChartVisiblity, Boolean areaChartVisibility, Boolean scatterChartVisibility, Boolean stackedBarChartVisibility, String visualizeLabelText) {
         visualizeLabel.setText(visualizeLabelText);
         lineChart.setVisible(lineChartVisibility);
@@ -676,9 +789,9 @@ public class MainFXMLController implements Initializable {
         areaChart.setVisible(areaChartVisibility);
         scatterChart.setVisible(scatterChartVisibility);
         stackedBarChart.setVisible(stackedBarChartVisibility);
-        
+
     }
-    
+
     private void openCombineColumnWizard() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
@@ -690,7 +803,7 @@ public class MainFXMLController implements Initializable {
         stagen.setOpacity(1);
         stagen.setScene(new Scene(root));
         stagen.show();
-        
+
     }
-    
+
 }

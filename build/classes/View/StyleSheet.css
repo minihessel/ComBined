@@ -33,7 +33,9 @@
 
 }
 
-
+.list-cell:selected {  
+    -fx-background-color: blue;  
+}  
 
 #exportToPNGbutton{
     -fx-graphic:url('/Icons/exportToPNG.png');
