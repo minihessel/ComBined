@@ -44,15 +44,13 @@ public class InsightWizardPage1 implements WizardPage {
 
     @Override
     public void addElements() {
-
-        pane.add(new Label("Select a column that represents the transactionID: "), 0, 0);
-        pane.add(transactionIDcolumn, 1, 0);
+        pane.add(new Label("You are now running insight on table: " + table + "\n \n \n \n \n"), 0, 0);
+        pane.add(new Label("Select a column that represents the transactionID: "), 0, 1);
+        pane.add(transactionIDcolumn, 1, 1);
         pane.add(new Label("Select a column that represents the itemID: "), 0, 2);
         pane.add(itemIDcolumn, 1, 2);
         pane.add(new Label(""), 0, 3);
         pane.add(new Label(""), 0, 4);
-     
-
 
     }
 
@@ -73,11 +71,10 @@ public class InsightWizardPage1 implements WizardPage {
         fulfilled = ValidatorRegler.ikkeTom(itemIDcolumn);
         return fulfilled;
     }
-       
+
     @Override
-   public void onEnter() 
-    {
-    
+    public void onEnter() {
+
     }
 }
 

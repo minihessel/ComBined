@@ -21,16 +21,16 @@ import javafx.scene.layout.GridPane;
  * @author Eskil Hesselroth
  */
 public class VisualizationPage1 implements WizardPage {
-    
+
     String header = "Please select which columns to visualize";
     public ComboBox nameColumn = new ComboBox();
-    
+
     public ComboBox valueColumn = new ComboBox();
     public CheckBox checkBox = new CheckBox();
     final private GridPane pane = new GridPane();
     private boolean fulfilled = false;
     Table table;
-    
+
     public VisualizationPage1(Table table) {
         new SelectKeyComboBoxListener(nameColumn);
         new SelectKeyComboBoxListener(valueColumn);
@@ -41,12 +41,13 @@ public class VisualizationPage1 implements WizardPage {
         }
         addElements();
     }
-    
+
     @Override
     public void addElements() {
-        
-        pane.add(new Label("Select a column that represents the categories: "), 0, 0);
-        pane.add(nameColumn, 1, 0);
+     
+        pane.add(new Label("You are now visualizing on table: " + table +"\n \n \n \n \n"), 0, 0);
+        pane.add(new Label("Select a column that represents the categories: "), 0,1 );
+        pane.add(nameColumn, 1, 1);
         pane.add(new Label("Select a column that represents the values: "), 0, 2);
         pane.add(valueColumn, 1, 2);
         pane.add(new Label(""), 0, 3);
@@ -54,31 +55,30 @@ public class VisualizationPage1 implements WizardPage {
         pane.add(checkBox, 1, 5);
         pane.add(new Label("Select this checkbox if you just want to "), 1, 6);
         pane.add(new Label("count how many rows each category has"), 1, 7);
-        
+
     }
-    
+
     @Override
     public GridPane getPane() {
         pane.setAlignment(Pos.CENTER);
         return pane;
     }
-    
+
     @Override
     public String getHeader() {
         return header;
     }
-    
+
     @Override
     public boolean valider() {
         fulfilled = ValidatorRegler.ikkeTom(nameColumn);
         fulfilled = ValidatorRegler.ikkeTom(valueColumn);
         return fulfilled;
     }
-       
+
     @Override
-   public void onEnter() 
-    {
-        
+    public void onEnter() {
+
     }
 }
 

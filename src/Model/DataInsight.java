@@ -86,16 +86,16 @@ public class DataInsight {
     //Dette er en del av data mining og pattern recognition 
     //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
     // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
-    public Table getInsight(Integer nameColumn, Integer valueColumn, TabPane tabPane, Map mapOverTabsAndTables, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+    public Table getInsight(Integer nameColumn, Integer valueColumn, Table selectedTable, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
         //deretter looper vi igjennom dataen og legger den til i transdata mappet.
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tabPane.getSelectionModel().getSelectedItem());
+
         for (List<String> a : selectedTable.sortedData) {
             addNewDataToTransactionsMap(a.get(transactionColumn), a.get(itmeColumn));
         }
 
         //minsup betyr minimum support..Alså, hva er minste grensen i % for itemsets vi skal se etter.
-        double minsup = 0.004;
+        double minsup = 0.006;
 
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         result = fpGrowth.runAlgorithm(transdata, null, minsup);
@@ -106,10 +106,10 @@ public class DataInsight {
         // Itemset er settet av produktene
         // Support er hvor stor andel av alle transaksjonene som har dette itemsettet
         // Level er hvor mange produkter det er i itemsettet
-        Kolonne itemSetKolonne = new Kolonne("itemset", 0, table, true);
-        Kolonne supportKolonne = new Kolonne("Support ", 1, table, true);
-        Kolonne supporNormalizedColumn = new Kolonne("Support normalized", 2, table, true);
-        Kolonne Level = new Kolonne("Number of items", 3, table, true);
+        Kolonne itemSetKolonne = new Kolonne("itemset", 0, table);
+        Kolonne supportKolonne = new Kolonne("Support ", 1, table);
+        Kolonne supporNormalizedColumn = new Kolonne("Support normalized", 2, table);
+        Kolonne Level = new Kolonne("Number of items", 3, table);
 
         int levelCount = 0;
 
@@ -220,8 +220,8 @@ public class DataInsight {
         return summaryTab;
     }
 
-    public Table createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn, MainFXMLController mainFXMLController) {
-        Table tabell = new Table("Combination of items");
+    public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn, MainFXMLController mainFXMLController) {
+        List<Table> tabs = new ArrayList();
         for (List<String> a : itemTable.sortedData) {
             itemIDandDescriptionMap.put(a.get(itemIDColumn), a.get(itemDescriptionColumn));
         }
@@ -230,15 +230,14 @@ public class DataInsight {
         for (List<Itemset> level : result.getLevels()) {
 
             if (levelCount > 0) {
-
+                Table tabell;
                 if (levelCount == 1) {
-
+                    tabell = new Table("Most popular single items");
                 } else {
-
+                    tabell = new Table("These " + levelCount + " items should be placed together");
                 }
-                Kolonne items = new Kolonne("Items that should be placed together", 0, tabell, true);
-                Kolonne support = new Kolonne("Threshold", 1, tabell, true);
-                Kolonne howManyItems = new Kolonne("How many items", 2, tabell, false);
+                Kolonne items = new Kolonne("Items that should be placed together", 0, tabell);
+                Kolonne support = new Kolonne("Threshold", 1, tabell);
 
                 for (Itemset itemset : level) {
 
@@ -261,19 +260,20 @@ public class DataInsight {
                     }
                     items.addField(itemSet);
                     support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize());
-                    howManyItems.addField("" + levelCount);
+                    
 
                 }
                 tabell.listofColumns.add(items);
                 tabell.listofColumns.add(support);
-                tabell.listofColumns.add(howManyItems);
+               
 
+                tabs.add(tabell);
             }
             levelCount++;
 
         }
 
-        return tabell;
+        return tabs;
     }
 
     public String getStats() {

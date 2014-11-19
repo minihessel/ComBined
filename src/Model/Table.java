@@ -44,14 +44,14 @@ public class Table {
     public FilteredList<List<String>> filteredItems;
     List<TextField> listOfTxtFields;
     public final String NAVN;
-    
+
     public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
-    
+
     public Table(String name) {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
         NAVN = name;
-        
+
     }
 
     /**
@@ -60,32 +60,32 @@ public class Table {
     public void loadData(String SQL, Table tbl, int tableNumb) throws SQLException {
         numberofRows = 0;
         tableNumber = tableNumb;
-        
+
         SQL_manager.getDataFromSQL(SQL);
-        
+
         for (int i = 1; i <= SQL_manager.rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = SQL_manager.rs.getMetaData().getColumnName(i);
-            Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl,true);
+            Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
             listofColumns.add(kol);
-            
+
         }
 
         //deretter legges all dataen til i kolonnene ved hjelp av rader
         while (SQL_manager.rs.next()) {
             numberofRows++;
             ObservableList<String> row = FXCollections.observableArrayList();
-            
+
             for (Kolonne k : listofColumns) {
                 k.addField(SQL_manager.rs.getString(k.NAVN));
-                
+
             }
-            
+
         }
         //her skal tilkoblingen lukkes, kun fjernet mens jeg tester
         //SQL_manager.conn.close();
 
     }
-    
+
     public TableView fillTableView(TableView tableView, Table tbl) {
         listOfTxtFields = new ArrayList();
 
@@ -96,18 +96,18 @@ public class Table {
         //denne for løkken legger til kolonner dynamisk.
         //Dette må til da vi på forhånd ikke vet hvor mange kolonner det er og ikke har sjans til å lage en modell som forteller det
         for (Kolonne kol : listofColumns) {
-            
+
             final int j = counter;
             Column col = new Column(kol.toString());
             mapKolonneTableColumn.put(kol, col);
-            
+
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
-                    
+
                 }
             });
-            col.setVisible(kol.visible);
+
             col.setSortable(true);
             //  col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
@@ -117,13 +117,13 @@ public class Table {
             Label lbl = new Label(kol.NAVN);
             lbl.setStyle("-fx-font-size:13px;");
             VBox vbox = new VBox();
-            
+
             vbox.getChildren().add(lbl);
-            
+
             vbox.getChildren().add(txtField);
-            
+
             listOfTxtFields.add(txtField);
-            
+
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent ke) {
@@ -132,13 +132,13 @@ public class Table {
                     }
                 }
             });
-            
+
             col.setGraphic(vbox);
-            
+
             tableView.getColumns().add(col);
-            
+
             counter++;
-            
+
         }
 
         //Her sjekker jeg om kolonnen som kommer er en vanlig eller kombinert kolonne. Er den en kombinert kaller vi på CombineColumns()
@@ -148,7 +148,7 @@ public class Table {
                 kol.combineColumns();
             }
             dataen.addAll(kol.allFields());
-            
+
         }
         //ettersom jeg snakker til data vertikalt(fordi jeg snakker om kolonner), men tableView snakker om data i rader(horisontalt)
         //, snur jeg dataen fra vertikalt til horisontalt ved å bruke transpose.
@@ -159,7 +159,7 @@ public class Table {
         // med andre ord: den sjekker rett og slett :
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
-        
+
         tableView.setMinHeight(832);
 
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
@@ -171,17 +171,17 @@ public class Table {
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
-        
+
     }
-    
+
     public void filter() {
-        
+
         DateTest dateTest = new DateTest();
         filteredItems.setPredicate(li -> {
-            
+
             for (int i = 0; i < li.size(); i++) {
                 if (dateTest.isValidDate(listOfTxtFields.get(i).getText().replace("a", "").replace("b", ""))) {
-                    
+
                     try {
                         dateTest.isValidDate(li.get(i));
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -190,7 +190,7 @@ public class Table {
                         if (listOfTxtFields.get(i).getText().contains("a")) {
                             if (date1.after(date2)) {
                                 return true;
-                                
+
                             }
                         }
                         if (listOfTxtFields.get(i).getText().contains("b")) {
@@ -205,7 +205,7 @@ public class Table {
                     } catch (ParseException ex) {
                         Logger.getLogger(Table.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                 } else if (listOfTxtFields.get(i).getText().contains("<") && checkForInteger.isInteger(li.get(i))) {
                     if (Float.parseFloat(li.get(i)) > Float.parseFloat(listOfTxtFields.get(i).getText().replace("<", ""))) {
                         return false;
@@ -219,29 +219,29 @@ public class Table {
                             contains(
                                     listOfTxtFields.get(i).getText().toLowerCase()
                             )) {
-                        
+
                         return false;
-                        
+
                     }
-                    
+
                 }
-                
+
             }
-            
+
             return true;
         });
-        
+
     }
-    
+
     public void removeFilters() {
         for (TextField txtField : listOfTxtFields) {
             txtField.setText("");
-            
+
         }
         filter();
-        
+
     }
-    
+
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {
         ObservableList<List<String>> ret
                 = FXCollections.observableArrayList();
@@ -255,7 +255,7 @@ public class Table {
         }
         return ret;
     }
-    
+
     @Override
     public String toString() {
         return NAVN;

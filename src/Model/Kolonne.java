@@ -15,7 +15,7 @@ public class Kolonne {
     public final String NAVN;
     public final Table tbl;
     public final int kolonneNummer;
-    public final boolean visible;
+
 
     //En kolonne inneholder felter(altså dataen i en kolonne
     private List<String> fields;
@@ -23,7 +23,7 @@ public class Kolonne {
 
     boolean amICombined;
 
-    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1,Boolean visible) {
+    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1) {
         //konstruktøren
         NAVN = kolonneNavn;
         tbl = tbl1;
@@ -31,7 +31,7 @@ public class Kolonne {
         amICombined = false;
         listOfColumns = null;
         kolonneNummer = kolonneIndex;
-        this.visible = visible;
+       
         
     }
 
@@ -44,7 +44,7 @@ public class Kolonne {
         NAVN = navn;
         amICombined = combined;
         kolonneNummer = kolonneIndex;
-        visible = true;
+     
     }
 
     void addColumn(Kolonne kol) {

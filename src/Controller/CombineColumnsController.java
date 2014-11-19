@@ -5,13 +5,13 @@
  */
 package Controller;
 
+import Model.CustomTab;
 import static Model.ErrorDialog.ErrorDialog;
 import Model.Kolonne;
 import Model.Table;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,8 +58,6 @@ public class CombineColumnsController implements Initializable {
     Table combinedTable = new Table("combined table");
     final ObservableList<Kolonne> data = FXCollections.observableArrayList();
     List<Table> myList;
-    Map<Tab, TableView> mapOverTabAndTableViews;
-    Map<Tab, Table> mapOverTabAndTable;
     List<ComboBox> choiceBoxList = new ArrayList();
 
     @FXML
@@ -112,7 +110,7 @@ public class CombineColumnsController implements Initializable {
             TableView tableViewCombined = new TableView();
             VBox tabPaneVBox = new VBox();
             tableViewCombined = combinedTable.fillTableView(tableViewCombined, combinedTable);
-            Tab tab = new Tab("combined table");
+            CustomTab tab = new CustomTab(combinedTable,"combined table",tableViewCombined);
             tab.setOnClosed(new EventHandler<javafx.event.Event>() {
                 @Override
                 public void handle(javafx.event.Event e) {
@@ -136,13 +134,11 @@ public class CombineColumnsController implements Initializable {
             myTabPane.getTabs().add(tab);
             // myTabPane.getSelectionModel().selectLast();
             tab.setId("" + myTabPane.getTabs().size() + 1);
-            mapOverTabAndTableViews.put(tab, tableViewCombined);
-            mapOverTabAndTable.put(tab, combinedTable);
+      
 
             Stage stage = (Stage) btnFinish.getScene().getWindow();
             // do what you have to do
             stage.close();
-            
 
             //to select the last tab that has been selected
         } else {
@@ -162,10 +158,8 @@ public class CombineColumnsController implements Initializable {
         //to select the last tab that has been selected
     }
 
-    public void setContext(List<Table> tablesList, Map mapOverTabAndTableViews, Map mapOverTabAndTables) {
+    public void setContext(List<Table> tablesList) {
         this.myList = tablesList;
-        this.mapOverTabAndTable = mapOverTabAndTables;
-        this.mapOverTabAndTableViews = mapOverTabAndTableViews;
 
         for (Table tbl : myList) {
             FlowPane pane = new FlowPane();

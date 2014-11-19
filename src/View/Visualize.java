@@ -52,14 +52,14 @@ public class Visualize {
         data.merge(name, value, Double::sum);
     }
 
-    public void getPieChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, PieChart pieChart, Label lbl, Boolean newSeries, Boolean rowCounter) {
+    public void getPieChartData(Integer nameColumn, Integer valueColumn, Table table, PieChart pieChart, Label lbl, Boolean newSeries, Boolean rowCounter) {
         data.clear();
 
         if (!newSeries) {
             pieChart.getData().clear();
         }
 
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new PieChart.Data(entry.getKey(), entry.getValue())).forEach(pieChart.getData()::add);
 
@@ -121,7 +121,7 @@ public class Visualize {
 
     }
 
-    public void getLineChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, LineChart lineChart, Boolean newSeries, Boolean rowCounter) {
+    public void getLineChartData(Integer nameColumn, Integer valueColumn, Table table, LineChart lineChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> lineChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
@@ -131,7 +131,7 @@ public class Visualize {
 
         }
         lineChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(lineChartData::add);
 
@@ -145,7 +145,7 @@ public class Visualize {
 
     }
 
-    public void getBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, BarChart barChart, Boolean newSeries, Boolean rowCounter) {
+    public void getBarChartData(Integer nameColumn, Integer valueColumn, Table table, BarChart barChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> barChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
@@ -156,7 +156,7 @@ public class Visualize {
 
         }
         barChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
 
@@ -170,7 +170,7 @@ public class Visualize {
 
     }
 
-    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
+    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Table table,StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> areaChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
@@ -181,7 +181,7 @@ public class Visualize {
 
         }
         areaChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(areaChartData::add);
 
@@ -200,7 +200,7 @@ public class Visualize {
 
     }
 
-    public void getScatterChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, ScatterChart scatterChart, Boolean newSeries, Boolean rowCounter) {
+    public void getScatterChartData(Integer nameColumn, Integer valueColumn, Table table, ScatterChart scatterChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> scatterChartData = FXCollections.observableArrayList();
 
@@ -211,7 +211,7 @@ public class Visualize {
 
         }
         scatterChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(scatterChartData::add);
 
@@ -223,7 +223,7 @@ public class Visualize {
 
     }
 
-    public void getStackedBarChartData(Integer nameColumn, Integer valueColumn, Tab tab, Map mapOverTabsAndTables, StackedBarChart stackedBarChart, Boolean newSeries, Boolean rowCounter) {
+    public void getStackedBarChartData(Integer nameColumn, Integer valueColumn, Table table, StackedBarChart stackedBarChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> barChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
@@ -234,7 +234,7 @@ public class Visualize {
 
         }
         stackedBarChart.setAnimated(false);//bug fix
-        addDataFromTable(mapOverTabsAndTables, tab, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
 
@@ -290,8 +290,7 @@ public class Visualize {
 
     }
 
-    private void addDataFromTable(Map mapOverTabsAndTables, Tab tab, Integer valueColumn, Integer nameColumn, Boolean rowCount) throws NumberFormatException {
-        Table selectedTable = (Table) mapOverTabsAndTables.get(tab);
+    private void addDataFromTable(Table selectedTable, Integer valueColumn, Integer nameColumn, Boolean rowCount) throws NumberFormatException {
 
         for (List<String> a : selectedTable.sortedData) {
             if (!a.get(valueColumn).isEmpty() && !a.get(valueColumn).isEmpty()) {
