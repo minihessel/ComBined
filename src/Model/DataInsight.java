@@ -87,7 +87,7 @@ public class DataInsight {
     //Dette er en del av data mining og pattern recognition 
     //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
     // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
-    public Table getInsight(Integer nameColumn, Integer valueColumn, Table selectedTable, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+    public Table getInsight(Table selectedTable, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
         //deretter looper vi igjennom dataen og legger den til i transdata mappet.
 

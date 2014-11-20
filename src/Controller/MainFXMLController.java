@@ -1,6 +1,5 @@
 package Controller;
 
-import DataInsight.AlgoFPGrowth;
 import Model.CustomTab;
 import View.Wizard.MyWizard;
 import View.Wizard.VisualizationWizard.VisualizationPage1;
@@ -195,6 +194,7 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void dataInsightCreateSummaryButton(ActionEvent event) {
+
         Table dataInsightTable = whichTabIsSelected.getTable();
         InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
         //  openDialogWithSQLConnectionInfo();
@@ -204,21 +204,25 @@ public class MainFXMLController implements Initializable {
         Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
 
         if (finished) {
-            TabPane summaryTabPane = new TabPane();
-            CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
-            tabPaneInsight.getTabs().add(summaryTab);
-            tabPaneInsight.getSelectionModel().select(summaryTab);
-            List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
-            for (Table table : tabs) {
+            if (whichTabIsSelected.getTable().getDataInsight() == null) {
+                System.out.println("error");
+            } else {
+                TabPane summaryTabPane = new TabPane();
+                CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
+                tabPaneInsight.getTabs().add(summaryTab);
+                tabPaneInsight.getSelectionModel().select(summaryTab);
+                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
+                for (Table table : tabs) {
 
-                TableView tableView = new TableView();
-                CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
+                    TableView tableView = new TableView();
+                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
 
-                tableView = table.fillTableView(tableView, table);
-                tab.setContent(tableView);
-                summaryTabPane.getTabs().add(tab);
+                    tableView = table.fillTableView(tableView, table);
+                    tab.setContent(tableView);
+                    summaryTabPane.getTabs().add(tab);
 
-                summaryTab.setContent(summaryTabPane);
+                    summaryTab.setContent(summaryTabPane);
+                }
 
             }
 
@@ -624,7 +628,7 @@ public class MainFXMLController implements Initializable {
 
                 DataInsight dataInsight = new DataInsight();
                 try {
-                    Table tabellen = dataInsight.getInsight(0, 1, insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
+                    Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                     tabellen.setDataInsight(dataInsight);
                     createTabPaneWithDataInsight(tabellen);
 
