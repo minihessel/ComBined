@@ -80,6 +80,12 @@ public class VisualizationPage1 implements WizardPage {
     public void onEnter() {
 
     }
+    
+    @Override
+    public void onFinish()
+    {
+        
+    }
 }
 
 /*Table table = getSelectedTable();

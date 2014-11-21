@@ -13,12 +13,21 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Testing">
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage3.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/InsightWizard/InsightSummaryWizard/InsightSummaryWizardPage1.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/QueryBuilder.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumnsController.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/CustomTab.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/WizardPage.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/ColumnTableComperator.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/VisualizationWizard/VisualizationPage1.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/SQL_manager.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/MyWizard.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/CustomTab.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/ColumnTableComperator.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage11.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage1.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/ValidatorRegler.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/Kolonne.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/InsightWizard/InsightWizardPage1.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/Table.java</file>

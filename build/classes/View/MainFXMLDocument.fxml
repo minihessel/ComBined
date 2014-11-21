@@ -65,7 +65,7 @@
                                     <items>
                               <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                                <Button fx:id="btnNewSeries" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#btnNewSeries" text="Add new series to chart">
+                                                <Button fx:id="btnNewSeries" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#btnNewSeries" text="Add new series to chart" visible="false">
                                        <HBox.margin>
                                           <Insets left="5.0" top="40.0" />
                                        </HBox.margin>
@@ -78,7 +78,7 @@
                                           <Insets top="3.0" />
                                        </HBox.margin>
                                               </Label>
-                                                <Button fx:id="btnNewChart" alignment="TOP_CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#btnNewChart" prefHeight="26.0" prefWidth="154.0" text="Create new chart">
+                                                <Button fx:id="btnNewChart" alignment="TOP_CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#btnNewChart" prefHeight="26.0" prefWidth="154.0" text="Create new chart" visible="false">
                                        <HBox.margin>
                                           <Insets right="5.0" top="40.0" />
                                        </HBox.margin>
@@ -134,32 +134,32 @@
                                         </AnchorPane>
                                         <ToolBar id="toolBar" maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" SplitPane.resizableWithParent="false">
                                             <items>
-                                                <Button id="pieChartButton" fx:id="handlePieChartButton" onAction="#pieChartButton">
+                                                <Button id="pieChartButton" fx:id="pieChartButton" onAction="#pieChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a pie chart" />
                                                     </tooltip>
                                                 </Button>
-                                                <Button id="barChartButton" fx:id="handleBarChartButton" onAction="#barChartButton">
+                                                <Button id="barChartButton" fx:id="barChartButton" onAction="#barChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a bar chart" />
                                                     </tooltip>
                                                 </Button>
-                                                <Button id="lineChartButton" fx:id="handleLineChartButton" onAction="#lineChartButton">
+                                                <Button id="lineChartButton" fx:id="lineChartButton" onAction="#lineChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a line chart" />
                                                     </tooltip>
                                                 </Button>
-                                    <Button id="stackedBarChartButton" fx:id="handleBarChartButton1" onAction="#stackedBarChartButton">
+                                    <Button id="stackedBarChartButton" fx:id="stackedBarChartButton" onAction="#stackedBarChartButton">
                                        <tooltip>
                                           <Tooltip text="Click here to make a bar chart" />
                                        </tooltip>
                                     </Button>
-                                                <Button id="scatterChartButton" fx:id="handleLineChartButton11" onAction="#scatterChartButton">
+                                                <Button id="scatterChartButton" fx:id="scatterChartButton" onAction="#scatterChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a scatter chart" />
                                                     </tooltip>
                                                 </Button>
-                                                <Button id="areaChartButton" fx:id="handleLineChartButton1" onAction="#areaChartButton">
+                                                <Button id="areaChartButton" fx:id="areaChartButton" onAction="#areaChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a area chart" />
                                                     </tooltip>

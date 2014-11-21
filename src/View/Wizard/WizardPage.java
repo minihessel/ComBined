@@ -13,9 +13,16 @@ import javafx.scene.layout.GridPane;
  * @author Eskil Hesselroth
  */
 public interface WizardPage {
+
     public String getHeader();
+
     public GridPane getPane();
+
     public void addElements();
-        public void onEnter();
+
+    public void onEnter();
+
     public boolean valider();
+
+    public void onFinish();
 }

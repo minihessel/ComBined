@@ -90,6 +90,12 @@ public class InsightSummaryWizardPage1 implements WizardPage {
     @Override
     public void onEnter() {
     }
+    
+    @Override
+    public void onFinish()
+    {
+        
+    }
 }
 
 /*Table table = getSelectedTable();

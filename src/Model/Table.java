@@ -82,10 +82,11 @@ public class Table {
         }
         List<String> list = new ArrayList();
 
+        int number = SQL_manager.rs.getMetaData().getColumnCount();
         while (SQL_manager.rs.next()) {
 
             numberofRows++;
-            for (int i = 0; i < listofColumns.size(); i++) {
+            for (int i = 0; i < number; i++) {
                 Kolonne k = listofColumns.get(i);
                 k.addField(SQL_manager.rs.getString(k.NAVN));
 

@@ -12,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
+import org.controlsfx.control.ListSelectionView;
 
 /**
  *
@@ -29,13 +30,24 @@ public class ValidatorRegler {
         }
 
     }
-    
-        public static boolean ikkeTom(ComboBox comboBox) {
 
-        if (comboBox.getSelectionModel().getSelectedItem()!=null) {
+    public static boolean ikkeTom(ComboBox comboBox) {
+
+        if (comboBox.getSelectionModel().getSelectedItem() != null) {
             return true;
         } else {
             blink(comboBox);
+            return false;
+        }
+
+    }
+
+    public static boolean ikkeTom(ListSelectionView listSelectView) {
+
+        if (listSelectView.getTargetItems().size() >0) {
+            return true;
+        } else {
+            blink(listSelectView);
             return false;
         }
 

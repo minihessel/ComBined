@@ -28,6 +28,8 @@ public final class SQlConnectPage11 implements WizardPage {
 
     public ComboBox comboBox = new ComboBox();
     final private GridPane pane = new GridPane();
+    TextField textField = new TextField();
+
     private boolean fulfilled = false;
 
     public SQlConnectPage11() throws SQLException {
@@ -40,6 +42,7 @@ public final class SQlConnectPage11 implements WizardPage {
     public void addElements() {
         pane.add(new Label("Select which table: "), 0, 0);
         pane.add(comboBox, 1, 0);
+        pane.add(textField, 0, 2);
     }
 
     @Override
@@ -58,16 +61,25 @@ public final class SQlConnectPage11 implements WizardPage {
         fulfilled = ValidatorRegler.ikkeTom(comboBox);
         return fulfilled;
     }
-    
+
     @Override
-   public void onEnter() 
+    public void onFinish()
     {
-        comboBox.getItems().clear();
-        try { 
-            SQL_manager.getAllTables(comboBox);
+        try {
+            SQL_manager.getDataFromSQL("select * from " + comboBox.getSelectionModel().getSelectedItem().toString());
         } catch (SQLException ex) {
             Logger.getLogger(SQlConnectPage11.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+    @Override
+    public void onEnter() {
+        comboBox.getItems().clear();
+        try {
+            SQL_manager.getAllTables(comboBox);
+        } catch (SQLException ex) {
+            Logger.getLogger(SQlConnectPage11.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
 }

@@ -97,7 +97,9 @@ public class MyWizard {
                         stage.close();
                         finishedOrNot = true;
                     } else {
+                        pages[currentPage].onFinish();
                         currentPage++;
+
                         pagePane.getChildren().setAll(pages[currentPage].getPane());
                         header.setText(pages[currentPage].getHeader());
                         previousButton.setDisable(false);

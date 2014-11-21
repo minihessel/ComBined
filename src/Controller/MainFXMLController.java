@@ -14,6 +14,7 @@ import View.ChartToPng;
 import View.SideBar;
 import View.Wizard.InsightWizard.InsightSummaryWizard.InsightSummaryWizardPage1;
 import View.Wizard.InsightWizard.InsightWizardPage1;
+import View.Wizard.SQLConnectWizard.SQlConnectPage3;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -222,6 +223,7 @@ public class MainFXMLController implements Initializable {
                 System.out.println("error");
             } else {
                 TabPane summaryTabPane = new TabPane();
+
                 CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
                 tabPaneInsight.getTabs().add(summaryTab);
                 tabPaneInsight.getSelectionModel().select(summaryTab);
@@ -303,8 +305,8 @@ public class MainFXMLController implements Initializable {
         try {
             try {
                 setVisibleView("tableView");
-                createTabPaneWithTable("G_items");
-                createTabPaneWithTable("G_salesline3");
+                createTabPaneWithTable("select * from G_items", "g_items");
+                createTabPaneWithTable("select * from G_salesline3", "G_salesline");
 
             } catch (SQLException ex) {
                 Logger.getLogger(MainFXMLController.class
@@ -412,19 +414,25 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
-
+//jqjqweiwjqjie
         SQlConnectPage1 sQlConnectPage1 = new SQlConnectPage1();
         SQlConnectPage11 SQLConnectPage2 = new SQlConnectPage11();
+        SQlConnectPage3 SQLConnectPage3 = new SQlConnectPage3();
+
         //  openDialogWithSQLConnectionInfo();
         Button button = (Button) event.getSource();
-        MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2);
+        MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2, SQLConnectPage3);
         wizard.blurMainWindow(button.getScene().getRoot());
         Boolean finished = wizard.createDialog(button.getScene().getWindow());
 
         if (finished) {
+            String tableSelected = SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString();
+            QueryBuilder queryBuilder = new QueryBuilder(tableSelected);
+            List<String> selectedColumns = SQLConnectPage3.listView.getTargetItems();
             setVisibleView("tableView");
 
-            createTabPaneWithTable(SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString());
+            queryBuilder.addColumnNames(selectedColumns);
+            createTabPaneWithTable(queryBuilder.getQuery(), tableSelected);
 
         }
 
@@ -717,17 +725,18 @@ public class MainFXMLController implements Initializable {
 
     }
 
-    public void createTabPaneWithTable(String whichTable) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+    public void createTabPaneWithTable(String sql, String tableName) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Hver gang brukeren kobler til en ny tabell, lager vi en ny tabpane
         //dette for å kunne organisere tabeller og vite hvilken rekkefølge de er i
         VBox vBox = new VBox();
 
-        Table tabellen = new Table(whichTable + "@" + SQL_manager.instanceName);
+        Table tabellen = new Table(tableName + "@" + SQL_manager.instanceName);
 
         //  String query = textField.getText();
         //her skjer oppkoblingen
         //laster inn dataen med en query
-        tabellen.loadData("select * from " + whichTable + "  ", tabellen, tablesList.size() + 1);
+        System.out.println(sql);
+        tabellen.loadData(sql, tabellen, tablesList.size() + 1);
 
         //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
         tablesList.add(tabellen);
@@ -748,7 +757,7 @@ public class MainFXMLController implements Initializable {
         vBox.setId(
                 "" + tabPaneCounter);
 
-        CustomTab tab = new CustomTab(tabellen, (whichTable
+        CustomTab tab = new CustomTab(tabellen, (tableName
                 + "@" + sql_manager.instanceName), tableViewet, anchorPaneTables);
 
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
