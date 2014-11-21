@@ -414,7 +414,7 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
-//jqjqweiwjqjie
+//jqjqweiwjqjie/qweeqw/
         SQlConnectPage1 sQlConnectPage1 = new SQlConnectPage1();
         SQlConnectPage11 SQLConnectPage2 = new SQlConnectPage11();
         SQlConnectPage3 SQLConnectPage3 = new SQlConnectPage3();
