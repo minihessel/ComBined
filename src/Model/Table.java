@@ -114,9 +114,9 @@ public class Table {
             mapKolonneTableColumn.put(kol, col);
 
             if (kol.amIInteger) {
-                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
-                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
-                        return new SimpleIntegerProperty(Integer.getInteger(param.getValue().get(j).toString()));
+              col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(j).toString());
 
                     }
                 });

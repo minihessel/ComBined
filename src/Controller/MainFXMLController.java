@@ -203,7 +203,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void removeFiltersButton(ActionEvent event) {
         whichTabIsSelected.getTable().removeFilters();
-        System.out.println(whichTabIsSelected.getTableView().getSelectionModel().getSelectedCells().get(0));
+
 
     }
 
