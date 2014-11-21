@@ -40,6 +40,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -148,8 +149,20 @@ public class MainFXMLController implements Initializable {
     Button combineButton;
     @FXML
     Button btnMenu;
-    //////////////////////////////
+    @FXML
+    Button pieChartButton;
+    @FXML
+    Button barChartButton;
+    @FXML
+    Button lineChartButton;
+    @FXML
+    Button stackedBarChartButton;
+    @FXML
+    Button scatterChartButton;
+    @FXML
+    Button areaChartButton;
 
+    //////////////////////////////
     //Panes fra FXML view filen
     @FXML
     AnchorPane anchorPaneTables;
@@ -189,6 +202,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void removeFiltersButton(ActionEvent event) {
         whichTabIsSelected.getTable().removeFilters();
+        System.out.println(whichTabIsSelected.getTableView().getSelectionModel().getSelectedCells().get(0));
 
     }
 
@@ -545,6 +559,15 @@ public class MainFXMLController implements Initializable {
                 getClass().getResourceAsStream("/Icons/no_tables.png"));
         imageView.setImage(noTables);
         imageView.visibleProperty().bind(Bindings.size(tabPane.getTabs()).isEqualTo(0));
+        markRedWhenSelected(pieChartButton, pieChart);
+        markRedWhenSelected(barChartButton, barChart);
+        markRedWhenSelected(lineChartButton, lineChart);
+        markRedWhenSelected(stackedBarChartButton, stackedBarChart);
+        markRedWhenSelected(scatterChartButton, scatterChart);
+        markRedWhenSelected(areaChartButton, areaChart);
+        markRedWhenSelected(btnConnectedTables, anchorPaneTables);
+        markRedWhenSelected(btnVisualize, anchorPaneVisualize);
+        markRedWhenSelected(btnInsight, anchorPaneInsight);
 
     }
 
@@ -763,6 +786,8 @@ public class MainFXMLController implements Initializable {
     }
 
     void showHideCharts(Boolean lineChartVisibility, Boolean pieChartVisibility, Boolean barChartVisiblity, Boolean areaChartVisibility, Boolean scatterChartVisibility, Boolean stackedBarChartVisibility, String visualizeLabelText) {
+        btnNewChart.setVisible(true);
+        btnNewSeries.setVisible(true);
         visualizeLabel.setText(visualizeLabelText);
         lineChart.setVisible(lineChartVisibility);
         pieChart.setVisible(pieChartVisibility);
@@ -771,6 +796,22 @@ public class MainFXMLController implements Initializable {
         scatterChart.setVisible(scatterChartVisibility);
         stackedBarChart.setVisible(stackedBarChartVisibility);
 
+    }
+
+    private void markRedWhenSelected(Button button, Node control) {
+        control.visibleProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                System.out.println(newValue);
+                if (newValue) {
+                    button.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,0,0,0.50), 10, 0.8, 0, 0);");
+                } else {
+                    button.setStyle("");
+
+                }
+            }
+        });
     }
 
     private void openCombineColumnWizard() throws IOException {

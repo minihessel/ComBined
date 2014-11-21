@@ -1,6 +1,8 @@
 package Model;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class Kolonne {
     public final String NAVN;
     public final Table tbl;
     public final int kolonneNummer;
-
+    public boolean amIInteger;
 
     //En kolonne inneholder felter(altså dataen i en kolonne
     private List<String> fields;
@@ -23,7 +25,7 @@ public class Kolonne {
 
     boolean amICombined;
 
-    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1) {
+    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1, Boolean amIInteger) {
         //konstruktøren
         NAVN = kolonneNavn;
         tbl = tbl1;
@@ -31,8 +33,8 @@ public class Kolonne {
         amICombined = false;
         listOfColumns = null;
         kolonneNummer = kolonneIndex;
-       
-        
+        this.amIInteger = amIInteger;
+
     }
 
     public Kolonne(String navn, Table tbl1, Boolean combined, Integer kolonneIndex) {
@@ -44,7 +46,7 @@ public class Kolonne {
         NAVN = navn;
         amICombined = combined;
         kolonneNummer = kolonneIndex;
-     
+
     }
 
     void addColumn(Kolonne kol) {

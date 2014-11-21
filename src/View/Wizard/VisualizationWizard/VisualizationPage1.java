@@ -44,9 +44,9 @@ public class VisualizationPage1 implements WizardPage {
 
     @Override
     public void addElements() {
-     
-        pane.add(new Label("You are now visualizing on table: " + table +"\n \n \n \n \n"), 0, 0);
-        pane.add(new Label("Select a column that represents the categories: "), 0,1 );
+
+        pane.add(new Label("You are now visualizing on table: " + table + "\n \n \n \n \n"), 0, 0);
+        pane.add(new Label("Select a column that represents the categories: "), 0, 1);
         pane.add(nameColumn, 1, 1);
         pane.add(new Label("Select a column that represents the values: "), 0, 2);
         pane.add(valueColumn, 1, 2);

@@ -3,6 +3,7 @@ package Model;
 import Controller.Column;
 import Controller.SQL_manager;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -66,25 +68,33 @@ public class Table {
 
         for (int i = 1; i <= SQL_manager.rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = SQL_manager.rs.getMetaData().getColumnName(i);
-            Kolonne kol = new Kolonne(kolonneNavn, i - 1, tbl);
+
+            Kolonne kol;
+            int type = SQL_manager.rs.getMetaData().getColumnType(i);
+            if (type == Types.DOUBLE) {
+                kol = new Kolonne(kolonneNavn, i - 1, tbl, true);
+            } else {
+
+                kol = new Kolonne(kolonneNavn, i - 1, tbl, false);
+            }
             listofColumns.add(kol);
 
         }
+        List<String> list = new ArrayList();
 
-        //deretter legges all dataen til i kolonnene ved hjelp av rader
         while (SQL_manager.rs.next()) {
-            numberofRows++;
-            ObservableList<String> row = FXCollections.observableArrayList();
 
-            for (Kolonne k : listofColumns) {
+            numberofRows++;
+            for (int i = 0; i < listofColumns.size(); i++) {
+                Kolonne k = listofColumns.get(i);
                 k.addField(SQL_manager.rs.getString(k.NAVN));
 
             }
 
         }
+
         //her skal tilkoblingen lukkes, kun fjernet mens jeg tester
         //SQL_manager.conn.close();
-
     }
 
     public TableView fillTableView(TableView tableView, Table tbl) {
@@ -102,12 +112,21 @@ public class Table {
             Column col = new Column(kol.toString());
             mapKolonneTableColumn.put(kol, col);
 
-            col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue().get(j).toString());
+            if (kol.amIInteger) {
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
+                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
+                        return new SimpleIntegerProperty(Integer.getInteger(param.getValue().get(j).toString()));
 
-                }
-            });
+                    }
+                });
+            } else {
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(j).toString());
+
+                    }
+                });
+            }
 
             col.setSortable(true);
             //  col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
@@ -248,11 +267,9 @@ public class Table {
     }
 
     public DataInsight getDataInsight() {
-        if(datainsight!=null)
-        {
+        if (datainsight != null) {
             return datainsight;
-        }
-        else{
+        } else {
             return null;
         }
     }

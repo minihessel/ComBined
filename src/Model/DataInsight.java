@@ -24,8 +24,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.controlsfx.control.PopOver;
@@ -112,10 +110,10 @@ public class DataInsight {
         // Itemset er settet av produktene
         // Support er hvor stor andel av alle transaksjonene som har dette itemsettet
         // Level er hvor mange produkter det er i itemsettet
-        Kolonne itemSetKolonne = new Kolonne("itemset", 0, table);
-        Kolonne supportKolonne = new Kolonne("Support ", 1, table);
-        Kolonne supporNormalizedColumn = new Kolonne("Support normalized", 2, table);
-        Kolonne Level = new Kolonne("Number of items", 3, table);
+        Kolonne itemSetKolonne = new Kolonne("itemset", 0, table,false);
+        Kolonne supportKolonne = new Kolonne("Support ", 1, table,true);
+        Kolonne supporNormalizedColumn = new Kolonne("Support normalized", 2, table,true);
+        Kolonne Level = new Kolonne("Number of items", 3, table,false);
 
         int levelCount = 0;
 
@@ -235,7 +233,7 @@ public class DataInsight {
 
         int levelCount = 0;
         for (List<Itemset> level : result.getLevels()) {
-
+int intId = 1;
             if (levelCount > 0) {
                 Table tabell;
                 if (levelCount == 1) {
@@ -243,8 +241,9 @@ public class DataInsight {
                 } else {
                     tabell = new Table("These " + levelCount + " items should be placed together");
                 }
-                Kolonne items = new Kolonne("Items that should be placed together", 0, tabell);
-                Kolonne support = new Kolonne("Threshold", 1, tabell);
+                Kolonne id = new Kolonne("Itemset ID", 0, tabell,true);
+                Kolonne items = new Kolonne("Items that should be placed together", 1, tabell,false);
+                Kolonne support = new Kolonne("Threshold", 2, tabell,true);
 
                 for (Itemset itemset : level) {
 
@@ -265,10 +264,13 @@ public class DataInsight {
                         numberOfItems++;
 
                     }
+                    id.addField(""+intId);
+                    intId++;
                     items.addField(itemSet);
                     support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize());
 
                 }
+                tabell.listofColumns.add(id);
                 tabell.listofColumns.add(items);
                 tabell.listofColumns.add(support);
 
