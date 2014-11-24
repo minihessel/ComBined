@@ -22,6 +22,7 @@ public class Column extends TableColumn {
     @Override
     public String toString() {
         return NAVN;
+
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -23,12 +24,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import org.controlsfx.control.PopOver;
 
 /**
  *
@@ -47,10 +51,18 @@ public class Table {
     List<TextField> listOfTxtFields;
     DataInsight datainsight = null;
     public final String NAVN;
+    List<String> rowMessages = new ArrayList();
+    PopOver popup;
+    Label label = new Label();
 
     public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
 
     public Table(String name) {
+
+        label.setTextFill(Color.web("#0076a3"));
+        popup = new PopOver();
+        popup.autoHideProperty().set(true);
+        popup.setContentNode(label);
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
         NAVN = name;
@@ -72,10 +84,11 @@ public class Table {
             Kolonne kol;
             int type = SQL_manager.rs.getMetaData().getColumnType(i);
             if (type == Types.DOUBLE) {
-                kol = new Kolonne(kolonneNavn, i - 1, tbl, true);
+                kol = new Kolonne(kolonneNavn, i - 1, tbl, false, true);
+            } else if (type == Types.INTEGER) {
+                kol = new Kolonne(kolonneNavn, i - 1, tbl, true, false);
             } else {
-
-                kol = new Kolonne(kolonneNavn, i - 1, tbl, false);
+                kol = new Kolonne(kolonneNavn, i - 1, tbl, false, false);
             }
             listofColumns.add(kol);
 
@@ -110,17 +123,37 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            Column col = new Column(kol.toString());
+            Column col = new Column(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
+            tableView.setRowFactory(tv -> {
+                TableRow<ObservableList> row = new TableRow<>();
+                row.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                        //  label.setText(rowMessages.get(tableView.getSelectionModel().getSelectedIndex()));
 
+                        //   popup.show(tableView.;
+                    }
+                });
+                return row;
+            });
             if (kol.amIInteger) {
-              col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(j).toString());
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
+                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
+                        return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
 
                     }
                 });
-            } else {
+
+            } else if (kol.amIDouble) {
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
+                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
+                        return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
+
+                    }
+                });
+                System.out.println("true3");
+
+            } else if (!kol.amIDouble && !kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                         return new SimpleStringProperty(param.getValue().get(j).toString());
@@ -129,22 +162,57 @@ public class Table {
                 });
             }
 
+            /*
+             col.setCellFactory(new Callback<TableColumn<ObservableList, String>, TableCell<ObservableList, String>>() {
+             @Override
+             public TableCell<ObservableList, String> call(TableColumn<ObservableList, String> col) {
+             final TableCell<ObservableList, String> cell = new TableCell<ObservableList, String>() {
+             @Override
+             public void updateItem(String firstName, boolean empty) {
+             super.updateItem(firstName, empty);
+             if (empty) {
+             setText(null);
+             } else {
+             setText(firstName);
+             }
+             }
+             };
+             col.cellFactoryProperty().
+             cell.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+             @Override
+             public void handle(MouseEvent event) {
+
+             if (event.getClickCount() > 1) {
+
+             label.setText(rowMessages.get(j));
+             popup.show(cell);
+             }
+             }
+             });
+             return cell;
+             }
+             });
+
+             }
+             */
             col.setSortable(true);
             //  col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
             //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
+
             Label lbl = new Label(kol.NAVN);
+
             lbl.setStyle("-fx-font-size:13px;");
-            VBox vbox = new VBox();
+            GridPane vbox = new GridPane();
 
-            vbox.getChildren().add(lbl);
-
-            vbox.getChildren().add(txtField);
+            vbox.add(lbl, 0, 1);
+            vbox.add(txtField, 0, 2);
 
             listOfTxtFields.add(txtField);
-
+       
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent ke) {
@@ -168,6 +236,7 @@ public class Table {
             if (kol.amICombined == true) {
                 kol.combineColumns();
             }
+
             dataen.addAll(kol.allFields());
 
         }
@@ -181,12 +250,15 @@ public class Table {
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
 
-        tableView.setMinHeight(832);
+        tableView.setMinHeight(
+                832);
 
         //for å ikke miste muligheten for å sortere data, legger vi det inn i en sorted list
         sortedData = new SortedList<>(filteredItems);
+
         //å binder det til tableViewen..Da mister vi ikke sorting funksjonalitet.
-        sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+        sortedData.comparatorProperty()
+                .bind(tableView.comparatorProperty());
         //deretter setter vi tableView til å bruke denne nye "sorted data". 
         tableView.setItems(sortedData);
 
@@ -221,10 +293,12 @@ public class Table {
                         } else {
                             if (!date1.equals(date2)) {
                                 return false;
+
                             }
                         }
                     } catch (ParseException ex) {
-                        Logger.getLogger(Table.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Table.class
+                                .getName()).log(Level.SEVERE, null, ex);
                     }
 
                 } else if (listOfTxtFields.get(i).getText().contains("<") && checkForInteger.isInteger(li.get(i))) {
@@ -292,5 +366,7 @@ public class Table {
     @Override
     public String toString() {
         return NAVN;
+
     }
+
 }

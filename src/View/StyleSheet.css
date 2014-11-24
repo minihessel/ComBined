@@ -131,4 +131,9 @@
 }
 
 
+.popover  {
+	-fx-background-color: black;
+	-fx-padding: 0.0;
+}
+
 

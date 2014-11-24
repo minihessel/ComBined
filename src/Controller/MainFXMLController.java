@@ -659,6 +659,7 @@ public class MainFXMLController implements Initializable {
 
                 DataInsight dataInsight = new DataInsight();
                 try {
+            
                     Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                     tabellen.setDataInsight(dataInsight);
                     createTabPaneWithDataInsight(tabellen);

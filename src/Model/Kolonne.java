@@ -1,10 +1,10 @@
 package Model;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 
 /**
  *
@@ -23,9 +23,13 @@ public class Kolonne {
     private List<String> fields;
     public List<Kolonne> listOfColumns;
 
-    boolean amICombined;
 
-    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1, Boolean amIInteger) {
+
+    boolean amICombined;
+    boolean amIDouble;
+    public List<TableCell> list1 = new ArrayList();
+
+    public Kolonne(String kolonneNavn, Integer kolonneIndex, Table tbl1, Boolean amIInteger, Boolean amIDouble) {
         //konstruktøren
         NAVN = kolonneNavn;
         tbl = tbl1;
@@ -34,6 +38,7 @@ public class Kolonne {
         listOfColumns = null;
         kolonneNummer = kolonneIndex;
         this.amIInteger = amIInteger;
+        this.amIDouble = amIDouble;
 
     }
 
@@ -41,7 +46,6 @@ public class Kolonne {
         //Konstruktøren for en kombinert kolonne
         fields = new ArrayList<>();
         listOfColumns = new ArrayList<Kolonne>();
-
         tbl = tbl1;
         NAVN = navn;
         amICombined = combined;
