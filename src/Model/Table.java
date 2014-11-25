@@ -54,6 +54,7 @@ public class Table {
     List<String> rowMessages = new ArrayList();
     PopOver popup;
     Label label = new Label();
+    List<TableRow> listofrows = new ArrayList();
 
     public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
 
@@ -117,7 +118,7 @@ public class Table {
         //Metode for å fylle tableview med kolonner og rader
         //først henter vi ut alle kolonnene og legger til de i tableview
         int counter = 0;
-
+        int r = 0;
         //denne for løkken legger til kolonner dynamisk.
         //Dette må til da vi på forhånd ikke vet hvor mange kolonner det er og ikke har sjans til å lage en modell som forteller det
         for (Kolonne kol : listofColumns) {
@@ -125,17 +126,8 @@ public class Table {
             final int j = counter;
             Column col = new Column(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
-            tableView.setRowFactory(tv -> {
-                TableRow<ObservableList> row = new TableRow<>();
-                row.setOnMouseClicked(event -> {
-                    if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                        //  label.setText(rowMessages.get(tableView.getSelectionModel().getSelectedIndex()));
+            int counterz = 0;
 
-                        //   popup.show(tableView.;
-                    }
-                });
-                return row;
-            });
             if (kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
                     public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
@@ -163,9 +155,9 @@ public class Table {
             }
 
             /*
-             col.setCellFactory(new Callback<TableColumn<ObservableList, String>, TableCell<ObservableList, String>>() {
+             row.setCellFactory(new Callback<TableColumn<ObservableList, String>, TableCell<ObservableList, String>>() {
              @Override
-             public TableCell<ObservableList, String> call(TableColumn<ObservableList, String> col) {
+             public TableCell<ObservableList, String> call(TableColumn<ObservableList, String> row) {
              final TableCell<ObservableList, String> cell = new TableCell<ObservableList, String>() {
              @Override
              public void updateItem(String firstName, boolean empty) {
@@ -177,7 +169,7 @@ public class Table {
              }
              }
              };
-             col.cellFactoryProperty().
+             row.cellFactoryProperty().
              cell.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
              @Override
@@ -197,7 +189,7 @@ public class Table {
              }
              */
             col.setSortable(true);
-            //  col.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
+            //  row.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
             col.setUserData(counter);
             //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
@@ -212,7 +204,7 @@ public class Table {
             vbox.add(txtField, 0, 2);
 
             listOfTxtFields.add(txtField);
-       
+
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent ke) {
@@ -230,6 +222,22 @@ public class Table {
 
         }
 
+        tableView.setRowFactory(tv -> {
+
+            TableRow<ObservableList> row = new TableRow<>();
+            listofrows.add(row);
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    //  label.setText(rowMessages.get(tableView.getSelectionModel().getSelectedIndex()));
+                     
+                    //   popup.show(tableView.;
+                }
+            });
+
+            return row;
+
+        });
+
         //Her sjekker jeg om kolonnen som kommer er en vanlig eller kombinert kolonne. Er den en kombinert kaller vi på CombineColumns()
         // for å kombinere kolonnen.
         for (Kolonne kol : listofColumns) {
@@ -243,7 +251,7 @@ public class Table {
         //ettersom jeg snakker til data vertikalt(fordi jeg snakker om kolonner), men tableView snakker om data i rader(horisontalt)
         //, snur jeg dataen fra vertikalt til horisontalt ved å bruke transpose.
         dataen = transpose(dataen);
-
+        System.out.println(dataen.size());
         // Her legger jeg til filtreringen på tekstfeltene. Det viktige er at dette skjer dynamisk, fordi jeg ikke vet hvor mange tekstfelter jeg har
         //Bruker lambda funksjon som sier at HVIS det finnes rader som har teksten fra alle tekstfeltene, vis dem
         // med andre ord: den sjekker rett og slett :
@@ -349,18 +357,18 @@ public class Table {
         }
     }
 
-    static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> table) {
-        ObservableList<List<String>> ret
+    static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> originalData) {
+        ObservableList<List<String>> flippedData
                 = FXCollections.observableArrayList();
-        final int N = table.get(0).size();
+        final int N = originalData.get(0).size();
         for (int i = 0; i < N; i++) {
-            ObservableList<String> col = FXCollections.observableArrayList();
-            for (List<String> row : table) {
-                col.add(row.get(i));
+            ObservableList<String> row = FXCollections.observableArrayList();
+            for (List<String> col : originalData) {
+                row.add(col.get(i));
             }
-            ret.add(col);
+            flippedData.add(row);
         }
-        return ret;
+        return flippedData;
     }
 
     @Override
