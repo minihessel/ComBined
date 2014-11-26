@@ -140,7 +140,6 @@ public class DataInsight {
 
                 itemSetKolonne.addField(itemSet);
                 // print the support of this itemset
-
                 supportKolonne.addField(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize()));
 
                 Level.addField("" + levelCount);
@@ -268,17 +267,17 @@ public class DataInsight {
                     intId++;
                     items.addField(itemSet);
                     support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize());
-                    Double soldTogether =  (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize();
+                    Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize();
                     //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
                     tabell.rowMessages.add(String.format("The reason is because this is sold together %.0f times out of all the %d transactions", soldTogether, fpGrowth.getDatabaseSize()));
 
-                    
                 }
                 tabell.listofColumns.add(id);
                 tabell.listofColumns.add(items);
                 tabell.listofColumns.add(support);
 
                 tabs.add(tabell);
+                tabell.numberofRows = items.allFields().size();
             }
             levelCount++;
 
