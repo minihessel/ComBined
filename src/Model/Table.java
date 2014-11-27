@@ -270,10 +270,9 @@ public class Table {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
                         int originalRowIndex = dataen.indexOf(tableView.getSelectionModel().getSelectedItem());
                         label.setText(rowMessages.get(originalRowIndex));
-                        TableCell cell = (TableCell) tableView.getSelectionModel().getSelectedCells().get(0);
-                        popup.show(cell);
 
-                        System.out.println(cell.getItem());
+                      //to get cell here
+                        // popup.show(cell);
                     }
                 });
 

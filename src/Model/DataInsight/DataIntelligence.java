@@ -215,7 +215,7 @@ public class DataIntelligence {
 
     public String getStats() {
 
-        return "qq";
+        return fpGrowth.printStats();
     }
 
     //metode for å inverte ett map
