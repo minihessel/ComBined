@@ -53,11 +53,11 @@ public class Kolonne {
 
     }
 
-    void addColumn(Kolonne kol) {
+   public void addColumn(Kolonne kol) {
         listOfColumns.add(kol);
     }
 
-    void addField(String item) {
+   public void addField(String item) {
         fields.add(item);
     }
 

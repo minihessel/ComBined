@@ -1,4 +1,4 @@
-package DataInsight;
+package Model.DataInsight;
 
 /* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
  * 
@@ -17,9 +17,7 @@ package DataInsight;
  * SPMF. If not, see <http://www.gnu.org/licenses/>.
  */
 import Model.Item;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,8 +57,6 @@ public class AlgoFPGrowth {
     // parameter
     public int relativeMinsupp;// the relative minimum support
 
-    BufferedWriter writer = null; // object to write the output file
-
     // The  patterns that are found 
     // (if the user want to keep them into memory)
     protected Itemsets patterns = null;
@@ -83,24 +79,15 @@ public class AlgoFPGrowth {
      * @return the result if no output file path is provided.
      * @throws IOException exception if error reading or writing files
      */
-    public Itemsets runAlgorithm(Map map, String output, double minsupp) throws FileNotFoundException, IOException {
+    public Itemsets runAlgorithm(Map map, double minsupp) throws FileNotFoundException, IOException {
         // record start time
         startTimestamp = System.currentTimeMillis();
         // number of itemsets found
         itemsetCount = 0;
-
+        patterns = new Itemsets("FREQUENT ITEMSETS");
         //initialize tool to record memory usage
         memoryLogger = new MemoryLogger();
         memoryLogger.checkMemory();
-
-        // if the user want to keep the result into memory
-        if (output == null) {
-            writer = null;
-            patterns = new Itemsets("FREQUENT ITEMSETS");
-        } else { // if the user want to save the result to a file
-            patterns = null;
-            writer = new BufferedWriter(new FileWriter(output));
-        }
 
         // (1) PREPROCESSING: Initial database scan to determine the frequency of each item
         // The frequency is stored in a map:
@@ -164,10 +151,6 @@ public class AlgoFPGrowth {
             fpgrowth(tree, prefixAlpha, transactionCount, mapSupport);
         }
 
-        // close the output file if the result was saved to a file
-        if (writer != null) {
-            writer.close();
-        }
         // record the execution end time
         endTime = System.currentTimeMillis();
 
@@ -197,10 +180,9 @@ public class AlgoFPGrowth {
 
             List<Item> transaction = (List<Item>) pairs.getValue();
             // for each item in this line (transaction)
-            int[] trans = new int[transaction.size()];
-            //System.out.println("new trans");
+
             for (int i = 0; i < transaction.size(); i++) {
-                // System.out.print(i);
+
                 // transform this item from a string to an integer
                 Item item = transaction.get(i);
 
@@ -215,7 +197,7 @@ public class AlgoFPGrowth {
             // increase the transaction count
             transactionCount++;
         }
-        System.out.println(numberofT);
+        System.out.println("antall trans funnet " + numberofT);
 
     }
 
@@ -370,7 +352,7 @@ public class AlgoFPGrowth {
     /**
      * Write a frequent itemset that is found to the output file or keep into memory if the user prefer that the result be saved into memory.
      */
-    private void saveItemset(int[] itemset, int support) throws IOException {
+    private void saveItemset(int[] itemset, int support) {
         // increase the number of itemsets found for statistics purpose
         itemsetCount++;
 
@@ -378,35 +360,19 @@ public class AlgoFPGrowth {
         // in lexical order.
         Arrays.sort(itemset);
 
-        // if the result should be saved to a file
-        if (writer != null) {
-            // Create a string buffer
-            StringBuffer buffer = new StringBuffer();
-            // write the items of the itemset
-            for (int i = 0; i < itemset.length; i++) {
-                buffer.append(itemset[i]);
-                if (i != itemset.length - 1) {
-                    buffer.append(' ');
-                }
-            }
-            // Then, write the support
-            buffer.append(" #SUP: ");
-            buffer.append(support);
-            // write to file and create a new line
-            writer.write(buffer.toString());
-            writer.newLine();
-        }// otherwise the result is kept into memory
-        else {
-            // create an object Itemset and add it to the set of patterns 
-            // found.
-            Itemset itemsetObj = new Itemset(itemset);
-            itemsetObj.setAbsoluteSupport(support);
-            patterns.addItemset(itemsetObj, itemsetObj.size());
-        }
+        // create an object Itemset and add it to the set of patterns 
+        // found.
+        Itemset itemsetObj = new Itemset(itemset);
+
+        itemsetObj.setAbsoluteSupport(support);
+        patterns.addItemset(itemsetObj, itemsetObj.size());
+
     }
 
     /**
      * Print statistics about the algorithm execution to System.out.
+     *
+     * @return
      */
     public String printStats() {
         String stats = "";
@@ -427,9 +393,8 @@ public class AlgoFPGrowth {
     public int getDatabaseSize() {
         return transactionCount;
     }
-    
-    public void reset()
-    {
+
+    public void reset() {
         patterns = null;
         transactionCount = 0;
         itemsetCount = 0;

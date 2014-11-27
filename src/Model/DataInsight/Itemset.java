@@ -1,6 +1,6 @@
-package DataInsight;
+package Model.DataInsight;
 import DataInsight.ArraysAlgos;
-import DataInsight.AbstractOrderedItemset;
+
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
 * 

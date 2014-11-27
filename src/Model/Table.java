@@ -1,5 +1,6 @@
 package Model;
 
+import Model.DataInsight.DataIntelligence;
 import Controller.Column;
 import Controller.SQL_manager;
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -49,18 +51,18 @@ public class Table {
     public SortedList<List<String>> sortedData;
     public FilteredList<List<String>> filteredItems;
     List<TextField> listOfTxtFields;
-    DataInsight datainsight = null;
+    DataIntelligence datainsight = null;
     public final String NAVN;
-    List<String> rowMessages = new ArrayList();
+    public List<String> rowMessages = new ArrayList();
     PopOver popup;
     Label label = new Label();
     List<TableRow> listofrows = new ArrayList();
     Map<List<String>, String> map = new HashMap();
-    
+
     public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
-    
+
     public Table(String name) {
-        
+
         label.setTextFill(Color.web("#0076a3"));
         popup = new PopOver();
         popup.autoHideProperty().set(true);
@@ -68,7 +70,7 @@ public class Table {
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
         NAVN = name;
-        
+
     }
 
     /**
@@ -77,12 +79,12 @@ public class Table {
     public void loadData(String SQL, Table tbl, int tableNumb) throws SQLException {
         numberofRows = 0;
         tableNumber = tableNumb;
-        
+
         SQL_manager.getDataFromSQL(SQL);
-        
+
         for (int i = 1; i <= SQL_manager.rs.getMetaData().getColumnCount(); i++) {
             String kolonneNavn = SQL_manager.rs.getMetaData().getColumnName(i);
-            
+
             Kolonne kol;
             int type = SQL_manager.rs.getMetaData().getColumnType(i);
             if (type == Types.DOUBLE) {
@@ -93,26 +95,26 @@ public class Table {
                 kol = new Kolonne(kolonneNavn, i - 1, tbl, false, false);
             }
             listofColumns.add(kol);
-            
+
         }
         List<String> list = new ArrayList();
-        
+
         int number = SQL_manager.rs.getMetaData().getColumnCount();
         while (SQL_manager.rs.next()) {
-            
+
             numberofRows++;
             for (int i = 0; i < number; i++) {
                 Kolonne k = listofColumns.get(i);
                 k.addField(SQL_manager.rs.getString(k.NAVN));
-                
+
             }
-            
+
         }
 
         //her skal tilkoblingen lukkes, kun fjernet mens jeg tester
         //SQL_manager.conn.close();
     }
-    
+
     public TableView fillTableView(TableView tableView, Table tbl) {
         listOfTxtFields = new ArrayList();
 
@@ -123,34 +125,34 @@ public class Table {
         //denne for løkken legger til kolonner dynamisk.
         //Dette må til da vi på forhånd ikke vet hvor mange kolonner det er og ikke har sjans til å lage en modell som forteller det
         for (Kolonne kol : listofColumns) {
-            
+
             final int j = counter;
             Column col = new Column(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
             int counterz = 0;
-            
+
             if (kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
                     public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
                         return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
-                        
+
                     }
                 });
-                
+
             } else if (kol.amIDouble) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
                     public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
                         return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
-                        
+
                     }
                 });
                 System.out.println("true3");
-                
+
             } else if (!kol.amIDouble && !kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                         return new SimpleStringProperty(param.getValue().get(j).toString());
-                        
+
                     }
                 });
             }
@@ -195,17 +197,17 @@ public class Table {
             //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
-            
+
             Label lbl = new Label(kol.NAVN);
-            
+
             lbl.setStyle("-fx-font-size:13px;");
             GridPane vbox = new GridPane();
-            
+
             vbox.add(lbl, 0, 1);
             vbox.add(txtField, 0, 2);
-            
+
             listOfTxtFields.add(txtField);
-            
+
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent ke) {
@@ -214,13 +216,13 @@ public class Table {
                     }
                 }
             });
-            
+
             col.setGraphic(vbox);
-            
+
             tableView.getColumns().add(col);
-            
+
             counter++;
-            
+
         }
 
         //Her sjekker jeg om kolonnen som kommer er en vanlig eller kombinert kolonne. Er den en kombinert kaller vi på CombineColumns()
@@ -229,21 +231,21 @@ public class Table {
             if (kol.amICombined == true) {
                 kol.combineColumns();
             }
-            
+
             dataen.addAll(kol.allFields());
-            
+
         }
         //ettersom jeg snakker til data vertikalt(fordi jeg snakker om kolonner), men tableView snakker om data i rader(horisontalt)
         //, snur jeg dataen fra vertikalt til horisontalt ved å bruke transpose.
         dataen = transpose(dataen);
-        
+
         System.out.println(dataen.size());
         // Her legger jeg til filtreringen på tekstfeltene. Det viktige er at dette skjer dynamisk, fordi jeg ikke vet hvor mange tekstfelter jeg har
         //Bruker lambda funksjon som sier at HVIS det finnes rader som har teksten fra alle tekstfeltene, vis dem
         // med andre ord: den sjekker rett og slett :
         // SHOW DATA; WHERE DATA=txtField1,txtField2 osv.
         filteredItems = new FilteredList(dataen, e -> true);
-        
+
         tableView.setMinHeight(
                 832);
 
@@ -255,42 +257,44 @@ public class Table {
                 .bind(tableView.comparatorProperty());
         //deretter setter vi tableView til å bruke denne nye "sorted data". 
         tableView.setItems(sortedData);
-        
+
         System.out.println("stø " + rowMessages.size());
         System.out.println("stæ " + numberofRows);
-        
+
         if (rowMessages.size() == numberofRows) {
             tableView.setRowFactory(tv -> {
-                
+
                 TableRow<ObservableList> row = new TableRow<>();
-                
+
                 row.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                        System.out.println("blabla");
                         int originalRowIndex = dataen.indexOf(tableView.getSelectionModel().getSelectedItem());
                         label.setText(rowMessages.get(originalRowIndex));
-                        popup.show(row.getTableView());
+                        TableCell cell = (TableCell) tableView.getSelectionModel().getSelectedCells().get(0);
+                        popup.show(cell);
+
+                        System.out.println(cell.getItem());
                     }
                 });
-                
+
                 return row;
-                
+
             });
         }
 
         //returnerer tableviewn til tableviewn som kalte på denne metoden
         return tableView;
-        
+
     }
-    
+
     public void filter() {
-        
+
         DateTest dateTest = new DateTest();
         filteredItems.setPredicate(li -> {
-            
+
             for (int i = 0; i < li.size(); i++) {
                 if (dateTest.isValidDate(listOfTxtFields.get(i).getText().replace("a", "").replace("b", ""))) {
-                    
+
                     try {
                         dateTest.isValidDate(li.get(i));
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -299,7 +303,7 @@ public class Table {
                         if (listOfTxtFields.get(i).getText().contains("a")) {
                             if (date1.after(date2)) {
                                 return true;
-                                
+
                             }
                         }
                         if (listOfTxtFields.get(i).getText().contains("b")) {
@@ -309,14 +313,14 @@ public class Table {
                         } else {
                             if (!date1.equals(date2)) {
                                 return false;
-                                
+
                             }
                         }
                     } catch (ParseException ex) {
                         Logger.getLogger(Table.class
                                 .getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                 } else if (listOfTxtFields.get(i).getText().contains("<") && checkForInteger.isInteger(li.get(i))) {
                     if (Float.parseFloat(li.get(i)) > Float.parseFloat(listOfTxtFields.get(i).getText().replace("<", ""))) {
                         return false;
@@ -330,41 +334,41 @@ public class Table {
                             contains(
                                     listOfTxtFields.get(i).getText().toLowerCase()
                             )) {
-                        
+
                         return false;
-                        
+
                     }
-                    
+
                 }
-                
+
             }
-            
+
             return true;
         });
-        
+
     }
-    
+
     public void removeFilters() {
         for (TextField txtField : listOfTxtFields) {
             txtField.setText("");
-            
+
         }
         filter();
-        
+
     }
-    
-    public void setDataInsight(DataInsight datainsight) {
+
+    public void setDataInsight(DataIntelligence datainsight) {
         this.datainsight = datainsight;
     }
-    
-    public DataInsight getDataInsight() {
+
+    public DataIntelligence getDataInsight() {
         if (datainsight != null) {
             return datainsight;
         } else {
             return null;
         }
     }
-    
+
     static <T> ObservableList<List<String>> transpose(ObservableList<List<String>> originalData) {
         ObservableList<List<String>> flippedData
                 = FXCollections.observableArrayList();
@@ -374,17 +378,17 @@ public class Table {
             for (List<String> col : originalData) {
                 row.add(col.get(i));
             }
-            
+
             flippedData.add(row);
-            
+
         }
         return flippedData;
     }
-    
+
     @Override
     public String toString() {
         return NAVN;
-        
+
     }
-    
+
 }

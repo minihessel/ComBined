@@ -1,4 +1,4 @@
-package DataInsight;
+package Model.DataInsight;
 /* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
  * 
  * This file is part of the SPMF DATA MINING SOFTWARE
@@ -16,9 +16,9 @@ package DataInsight;
  * SPMF. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DataInsight.ArraysAlgos;
 import Model.Item;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,14 +93,7 @@ public class AlgoApriori {
      */
     public Itemsets runAlgorithm(double minsup, Map map, String output) throws IOException {
 
-        // if the user want to keep the result into memory
-        if (output == null) {
-            writer = null;
-            patterns = new Itemsets("FREQUENT ITEMSETS");
-        } else { // if the user want to save the result to a file
-            patterns = null;
-            writer = new BufferedWriter(new FileWriter(output));
-        }
+        patterns = new Itemsets("FREQUENT ITEMSETS");
 
         // record the start time
         startTimestamp = System.currentTimeMillis();
@@ -126,15 +119,21 @@ public class AlgoApriori {
             Map.Entry pairs = (Map.Entry) it.next();
 
             List<Item> transaction = (List<Item>) pairs.getValue();
+
             // for each item in this line (transaction)
             int[] trans = new int[transaction.size()];
+            System.out.println("------");
             System.out.println("new trans");
+            System.out.println("den har størrelsen " + transaction.size());
+            System.out.println(" og items ");
+
             for (int i = 0; i < transaction.size(); i++) {
-                System.out.print(i);
+
                 // transform this item from a string to an integer
                 Item item = transaction.get(i);
                 // store the item in the memory representation of the database
                 trans[i] = item.createdInt;
+                System.out.println(item.ID);
 
                 // increase the support count
                 Integer count = mapItemCount.get(item.createdInt);
@@ -144,7 +143,7 @@ public class AlgoApriori {
                     mapItemCount.put(item.createdInt, ++count);
                 }
             }
-
+            System.out.println("----");
             // add the transaction to the database
             database.add(trans);
             // increase the number of transaction
@@ -178,10 +177,7 @@ public class AlgoApriori {
 
         // If no frequent item, the algorithm stops!
         if (frequent1.size() == 0) {
-            // close the output file if we used it
-            if (writer != null) {
-                writer.close();
-            }
+
             return patterns;
         }
 
@@ -259,8 +255,8 @@ public class AlgoApriori {
                 if (candidate.getAbsoluteSupport() >= minsupRelative) {
                     // add the candidate
                     level.add(candidate);
-                    // the itemset is frequent so save it into results
                     saveItemset(candidate);
+
                 }
             }
             // we will generate larger itemsets next.
@@ -271,11 +267,6 @@ public class AlgoApriori {
         endTimestamp = System.currentTimeMillis();
         // check the memory usage
         MemoryLogger.getInstance().checkMemory();
-
-        // close the output file if the result was saved to a file.
-        if (writer != null) {
-            writer.close();
-        }
 
         return patterns;
     }
@@ -409,32 +400,19 @@ public class AlgoApriori {
     }
 
     void saveItemset(Itemset itemset) throws IOException {
+        System.out.println(itemset.toString());
         itemsetCount++;
 
-        // if the result should be saved to a file
-        if (writer != null) {
-            writer.write(itemset.toString() + " #SUP: "
-                    + itemset.getAbsoluteSupport());
-            writer.newLine();
-        }// otherwise the result is kept into memory
-        else {
-            patterns.addItemset(itemset, itemset.size());
-        }
+        patterns.addItemset(itemset, itemset.size());
+
     }
 
     void saveItemsetToFile(Integer item, Integer support) throws IOException {
         itemsetCount++;
+        Itemset itemset = new Itemset(item);
+        itemset.setAbsoluteSupport(support);
+        patterns.addItemset(itemset, 1);
 
-        // if the result should be saved to a file
-        if (writer != null) {
-            writer.write(item + " #SUP: " + support);
-            writer.newLine();
-        }// otherwise the result is kept into memory
-        else {
-            Itemset itemset = new Itemset(item);
-            itemset.setAbsoluteSupport(support);
-            patterns.addItemset(itemset, 1);
-        }
     }
 
     /**

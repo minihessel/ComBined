@@ -6,7 +6,7 @@
 package Model;
 
 import Controller.MainFXMLController;
-import DataInsight.AlgoFPGrowth;
+import Model.DataInsight.AlgoFPGrowth;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;

@@ -1,4 +1,4 @@
-package DataInsight; 
+package Model.DataInsight; 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE

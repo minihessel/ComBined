@@ -1,4 +1,4 @@
-package DataInsight;
+package Model.DataInsight;
 
 /* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
 * 

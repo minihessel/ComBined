@@ -5,7 +5,7 @@ import View.Wizard.MyWizard;
 import View.Wizard.VisualizationWizard.VisualizationPage1;
 import View.Wizard.SQLConnectWizard.SQlConnectPage11;
 import View.Wizard.SQLConnectWizard.SQlConnectPage1;
-import Model.DataInsight;
+import Model.DataInsight.DataIntelligence;
 import static Model.ErrorDialog.ErrorDialog;
 import View.Visualize;
 import Model.Kolonne;
@@ -226,7 +226,7 @@ public class MainFXMLController implements Initializable {
                 CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
                 tabPaneInsight.getTabs().add(summaryTab);
                 tabPaneInsight.getSelectionModel().select(summaryTab);
-                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), MainFXMLController.this);
+                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
                 for (Table table : tabs) {
 
                     TableView tableView = new TableView();
@@ -304,8 +304,8 @@ public class MainFXMLController implements Initializable {
         try {
             try {
                 setVisibleView("tableView");
-                createTabPaneWithTable("select * from G_items", "g_items");
-                createTabPaneWithTable("select * from G_salesline3", "G_salesline");
+                createTabPaneWithTable("select * from G_Items", "ITEMS");
+                createTabPaneWithTable("select * from G_Salesline3", "G_salesline");
 
             } catch (SQLException ex) {
                 Logger.getLogger(MainFXMLController.class
@@ -641,7 +641,7 @@ public class MainFXMLController implements Initializable {
         }
     }
 
-    private void showInsightWizard() {
+    private void showInsightWizard() throws UnsupportedEncodingException, IOException, FileNotFoundException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         if (tabPane.getSelectionModel().getSelectedItem() != null) {
 
             InsightWizardPage1 insightWizardPage1 = new InsightWizardPage1(tablesList);
@@ -656,16 +656,14 @@ public class MainFXMLController implements Initializable {
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
 
-                DataInsight dataInsight = new DataInsight();
-                try {
+                DataIntelligence dataInsight = new DataIntelligence();
+                
 
                     Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                     tabellen.setDataInsight(dataInsight);
                     createTabPaneWithDataInsight(tabellen);
 
-                } catch (Exception e) {
-                    ErrorDialog("Invalid columns detected", "The first column has to be a text column, and the second one has to contain numbers");
-                }
+                
 
                 //  System.out.println(e);
             }

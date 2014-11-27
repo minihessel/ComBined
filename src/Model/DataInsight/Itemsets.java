@@ -1,4 +1,4 @@
-package DataInsight;
+package Model.DataInsight;
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
  * 
@@ -94,6 +94,7 @@ public class Itemsets {
      * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#addItemset(ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset, int)
      */
     public void addItemset(Itemset itemset, int k) {
+       
         while (levels.size() <= k) {
             levels.add(new ArrayList<Itemset>());
         }
