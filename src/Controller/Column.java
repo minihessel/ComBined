@@ -5,6 +5,10 @@
  */
 package Controller;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 
 /**
@@ -17,12 +21,16 @@ public class Column extends TableColumn {
 
     public Column(String navn) {
         NAVN = navn;
+        setText(navn);
     }
 
     @Override
     public String toString() {
         return NAVN;
 
+    }
+
+    public Column() {
     }
 
 }

@@ -128,7 +128,7 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            TableColumn col = new TableColumn(kol.NAVN);
+            Column col = new Column(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
             int counterz = 0;
 
@@ -203,9 +203,9 @@ public class Table {
 
             lbl.setStyle("-fx-font-size:13px;");
             GridPane vbox = new GridPane();
-
-            vbox.add(txtField, 0, 2);
-            vbox.minWidth(lbl.getText().length() + 50);
+            // vbox.add(lbl, 0, 1);
+            //  vbox.add(txtField, 0, 2);
+            //vbox.minWidth(lbl.getText().length() + 50);
             col.minWidthProperty().bind(vbox.widthProperty()); //for å automatisere bredden på kolonnene 
             listOfTxtFields.add(txtField);
 
