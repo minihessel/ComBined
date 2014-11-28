@@ -61,7 +61,7 @@
                         <ImageView fx:id="imageView" opacity="0.55" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <AnchorPane fx:id="anchorPaneVisualize" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.07298474945533769, 0.954248366013072" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <SplitPane fx:id="splitPaneVisualize" dividerPositions="0.061, 0.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
                               <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
@@ -180,58 +180,86 @@
                         </AnchorPane>
                         <AnchorPane fx:id="anchorPaneTables" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <SplitPane fx:id="splitPaneTables" dividerPositions="0.0784313725490196" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <items>
-                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                <SplitPane fx:id="splitPaneTables" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <SplitPane dividerPositions="0.061" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                              <VBox alignment="TOP_CENTER" prefHeight="0.0" prefWidth="1221.0">
                                  <children>
-                                                <ComboBox fx:id="comboBox" maxWidth="150.0" onAction="#goToColumn" promptText="Jump to column">
-                                       <HBox.margin>
-                                          <Insets right="5.0" top="40.0" />
-                                       </HBox.margin>
-                                    </ComboBox>
                                                 <Label id="lblYourConnectedTables" alignment="CENTER" contentDisplay="TOP" text="Your connected tables" textAlignment="CENTER">
                                                     <font>
                                                         <Font name="Menlo Regular" size="20.0" />
                                                     </font>
                                                 </Label>
-                                                <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#removeFiltersButton" prefWidth="150.0" text="Remove filters">
-                                       <HBox.margin>
-                                          <Insets top="40.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#exportTableToCSVButton" prefWidth="150.0" text="Export table to CSV" />
+                                    <HBox alignment="TOP_CENTER">
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                       <children>
+                                                      <ComboBox fx:id="comboBox" maxWidth="150.0" onAction="#goToColumn" promptText="Jump to column" />
+                                                      <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#removeFiltersButton" prefWidth="150.0" text="Remove filters" />
+                                          <Button alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#exportTableToCSVButton" prefWidth="150.0" text="Export table to CSV" />
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </HBox>
-                                        <TabPane id="tabPane" fx:id="tabPane">
+                              </VBox>
+                                        <TabPane id="tabPane" fx:id="tabPane" prefHeight="746.0" prefWidth="1221.0">
                                           
                                         </TabPane>
-                                    </items>
-                                </SplitPane>
+                          </items>
+                        </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneInsight" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="anchorPaneInsight" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <SplitPane fx:id="splitPaneTables1" dividerPositions="0.06098964326812428" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <SplitPane fx:id="splitPaneTables1" dividerPositions="0.061, 0.95" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>
-                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                              <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                                <Button mnemonicParsing="false" onAction="#runNewAnalysisButton" text="Run new analysis">
-                                       <HBox.margin>
-                                          <Insets right="5.0" top="40.0" />
-                                       </HBox.margin></Button>
-                                                <Label id="lblYourConnectedTables" alignment="TOP_RIGHT" contentDisplay="TOP" text="Data insight" textAlignment="CENTER">
+                                                <Label id="lblYourConnectedTables" alignment="TOP_CENTER" contentDisplay="TOP" text="Data insight" textAlignment="CENTER">
                                                     <font>
                                                         <Font name="Menlo Regular" size="20.0" />
                                                     </font>
                                                 </Label>
-                                                <Button alignment="BASELINE_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#removeFiltersButton" text="Remove filters">
+                                    <HBox alignment="CENTER" prefHeight="34.0" prefWidth="200.0">
+                                       <children>
+                                                      <Button mnemonicParsing="false" onAction="#runNewAnalysisButton" text="Run new analysis">
+                                             <HBox.margin>
+                                                <Insets right="5.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#dataInsightCreateSummaryButton" text="Create summary">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                                      <Button alignment="BASELINE_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#removeFiltersButton" text="Remove filters">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <TabPane id="tabPane" fx:id="tabPaneInsightSummary" visible="false" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                              <TabPane id="tabPane" fx:id="tabPaneInsightNormal" prefHeight="792.0" prefWidth="1219.0" visible="false" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <HBox alignment="CENTER" prefHeight="134.0" prefWidth="1219.0">
+                                 <children>
+                                    <Button fx:id="normalInsightViewButton" mnemonicParsing="false" onAction="#normalInsightViewButton" text="Normal View">
                                        <HBox.margin>
-                                          <Insets left="5.0" top="40.0" />
-                                       </HBox.margin></Button>
-                                    <Button mnemonicParsing="false" onAction="#dataInsightCreateSummaryButton" text="Create summary" />
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="summaryInsightViewButton" mnemonicParsing="false" onAction="#summaryInsightViewButton" text="Summary View" />
                                  </children>
                               </HBox>
-                                        <TabPane id="tabPane" fx:id="tabPaneInsight" />
                                     </items>
                                 </SplitPane>
                             </children>

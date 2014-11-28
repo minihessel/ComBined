@@ -24,13 +24,13 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -67,6 +67,7 @@ public class Table {
         popup = new PopOver();
         popup.autoHideProperty().set(true);
         popup.setContentNode(label);
+        popup.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
         listofColumns = new ArrayList<>();
         dataen = FXCollections.observableArrayList();
         NAVN = name;
@@ -127,7 +128,7 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            Column col = new Column(kol.NAVN);
+            TableColumn col = new TableColumn(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
             int counterz = 0;
 
@@ -192,7 +193,7 @@ public class Table {
              }
              */
             col.setSortable(true);
-            //  row.prefWidthProperty().bind(tableView.widthProperty().multiply(0.10)); //for å automatisere bredden på kolonnene 
+
             col.setUserData(counter);
             //For å legge til filtere på tableView dynamisk bruker jeg denne koden. Jeg lager en ny label, en ny tekstboks
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
@@ -203,9 +204,9 @@ public class Table {
             lbl.setStyle("-fx-font-size:13px;");
             GridPane vbox = new GridPane();
 
-            vbox.add(lbl, 0, 1);
             vbox.add(txtField, 0, 2);
-
+            vbox.minWidth(lbl.getText().length() + 50);
+            col.minWidthProperty().bind(vbox.widthProperty()); //for å automatisere bredden på kolonnene 
             listOfTxtFields.add(txtField);
 
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -217,7 +218,7 @@ public class Table {
                 }
             });
 
-            col.setGraphic(vbox);
+            col.setGraphic(txtField);
 
             tableView.getColumns().add(col);
 
@@ -266,13 +267,16 @@ public class Table {
 
                 TableRow<ObservableList> row = new TableRow<>();
 
-                row.setOnMouseClicked(event -> {
+                row.setOnMouseClicked((MouseEvent event) -> {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
                         int originalRowIndex = dataen.indexOf(tableView.getSelectionModel().getSelectedItem());
                         label.setText(rowMessages.get(originalRowIndex));
+                        double y = ((TableRow) event.getSource()).getLocalToSceneTransform().getTy();
+                        double x = ((TableRow) event.getSource()).getLocalToSceneTransform().getTx();
+                        popup.show(row);
 
-                      //to get cell here
-                        // popup.show(cell);
+                        //    popup.setAnchorX(tableView.getLayoutX());
+                        // popup.setY(((TableRow)event.getSource()).getLocalToSceneTransform().getTy());
                     }
                 });
 

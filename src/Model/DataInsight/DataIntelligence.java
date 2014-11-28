@@ -195,9 +195,13 @@ public class DataIntelligence {
                     items.addField(itemSet);
                     support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(transactionsFound)) / 100) * transactionsFound);
                     Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(transactionsFound)) / 100) * transactionsFound;
-                    //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
-                    tabell.rowMessages.add(String.format("The reason is because this is sold together %.0f times out of all the %d transactions", soldTogether, transactionsFound));
+                    if (itemset.size() > 1) {
+                        //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
+                        tabell.rowMessages.add(String.format("We reccomend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", transactionsFound, soldTogether));
+                    } else {
 
+                        tabell.rowMessages.add(String.format("This item is popular because we found that out of your %d transactions, this item is sold %.0f times.", transactionsFound, soldTogether));
+                    }
                 }
 
                 tabell.listofColumns.add(items);

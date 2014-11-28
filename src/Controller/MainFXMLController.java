@@ -163,6 +163,12 @@ public class MainFXMLController implements Initializable {
     @FXML
     Button areaChartButton;
 
+    @FXML
+    Button normalInsightViewButton;
+
+    @FXML
+    Button summaryInsightViewButton;
+
     //////////////////////////////
     //Panes fra FXML view filen
     @FXML
@@ -179,7 +185,10 @@ public class MainFXMLController implements Initializable {
     TabPane tabPane;
 
     @FXML
-    TabPane tabPaneInsight;
+    TabPane tabPaneInsightNormal;
+
+    @FXML
+    TabPane tabPaneInsightSummary;
     @FXML
     BorderPane borderPane;
 
@@ -207,6 +216,21 @@ public class MainFXMLController implements Initializable {
     }
 
     @FXML
+    private void normalInsightViewButton(ActionEvent event) {
+
+        tabPaneInsightNormal.setVisible(true);
+        tabPaneInsightSummary.setVisible(false);
+
+    }
+
+    @FXML
+    private void summaryInsightViewButton(ActionEvent event) {
+        tabPaneInsightNormal.setVisible(false);
+        tabPaneInsightSummary.setVisible(true);
+
+    }
+
+    @FXML
     private void dataInsightCreateSummaryButton(ActionEvent event) {
 
         Table dataInsightTable = whichTabIsSelected.getTable();
@@ -223,9 +247,9 @@ public class MainFXMLController implements Initializable {
             } else {
                 TabPane summaryTabPane = new TabPane();
 
-                CustomTab summaryTab = new CustomTab(tabPaneInsight.getSelectionModel().getSelectedItem().getText().replace("Normal View", "Summary View"));
-                tabPaneInsight.getTabs().add(summaryTab);
-                tabPaneInsight.getSelectionModel().select(summaryTab);
+                CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
+                tabPaneInsightSummary.getTabs().add(summaryTab);
+                tabPaneInsightSummary.getSelectionModel().select(summaryTab);
                 List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
                 for (Table table : tabs) {
 
@@ -237,6 +261,9 @@ public class MainFXMLController implements Initializable {
                     summaryTabPane.getTabs().add(tab);
 
                     summaryTab.setContent(summaryTabPane);
+                    tabPaneInsightNormal.setVisible(false);
+                    tabPaneInsightSummary.setVisible(true);
+
                 }
 
             }
@@ -575,6 +602,8 @@ public class MainFXMLController implements Initializable {
         markRedWhenSelected(btnConnectedTables, anchorPaneTables);
         markRedWhenSelected(btnVisualize, anchorPaneVisualize);
         markRedWhenSelected(btnInsight, anchorPaneInsight);
+        markRedWhenSelected(normalInsightViewButton, tabPaneInsightNormal);
+        markRedWhenSelected(summaryInsightViewButton, tabPaneInsightSummary);
 
     }
 
@@ -657,13 +686,10 @@ public class MainFXMLController implements Initializable {
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
 
                 DataIntelligence dataInsight = new DataIntelligence();
-                
 
-                    Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
-                    tabellen.setDataInsight(dataInsight);
-                    createTabPaneWithDataInsight(tabellen);
-
-                
+                Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
+                tabellen.setDataInsight(dataInsight);
+                createTabPaneWithDataInsight(tabellen);
 
                 //  System.out.println(e);
             }
@@ -715,12 +741,13 @@ public class MainFXMLController implements Initializable {
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
         vBox.setId(
                 "" + tabPaneCounter);
-        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText() + " Normal View"), tableViewet, anchorPaneInsight);
+        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText()), tableViewet, anchorPaneInsight);
 
         tab.setContent(vBox);
-        tabPaneInsight.getTabs().add(tab);
-        tabPaneInsight.getSelectionModel().select(tab);
-
+        tabPaneInsightNormal.getTabs().add(tab);
+        tabPaneInsightNormal.getSelectionModel().select(tab);
+        tabPaneInsightSummary.setVisible(false);
+        tabPaneInsightNormal.setVisible(true);
     }
 
     public void createTabPaneWithTable(String sql, String tableName) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
