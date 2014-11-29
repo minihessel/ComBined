@@ -32,6 +32,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import org.controlsfx.control.PopOver;
@@ -128,14 +129,19 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            Column col = new Column(kol.NAVN);
+            TableColumn col = new TableColumn(kol.NAVN);
             mapKolonneTableColumn.put(kol, col);
             int counterz = 0;
 
             if (kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
                     public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
-                        return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
+
+                        if (param.getValue().get(j) != null) {
+                            return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
+                        } else {
+                            return new SimpleIntegerProperty();
+                        }
 
                     }
                 });
@@ -143,7 +149,11 @@ public class Table {
             } else if (kol.amIDouble) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
                     public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
-                        return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
+                        if (param.getValue().get(j) != null) {
+                            return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
+                        } else {
+                            return new SimpleDoubleProperty();
+                        }
 
                     }
                 });
@@ -152,8 +162,10 @@ public class Table {
             } else if (!kol.amIDouble && !kol.amIInteger) {
                 col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(j).toString());
-
+                        if (param.getValue().get(j) != null) {
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }
+                        return new SimpleStringProperty("");
                     }
                 });
             }
@@ -199,14 +211,9 @@ public class Table {
             // disse legger jeg til i en vBoks som jeg setter som grafikkElement på hver eneste kolonne i tableviewet.
             TextField txtField = new TextField();
 
-            Label lbl = new Label(kol.NAVN);
-
-            lbl.setStyle("-fx-font-size:13px;");
-            GridPane vbox = new GridPane();
             // vbox.add(lbl, 0, 1);
             //  vbox.add(txtField, 0, 2);
             //vbox.minWidth(lbl.getText().length() + 50);
-            col.minWidthProperty().bind(vbox.widthProperty()); //for å automatisere bredden på kolonnene 
             listOfTxtFields.add(txtField);
 
             txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -220,8 +227,9 @@ public class Table {
 
             col.setGraphic(txtField);
 
+            txtField.setMinWidth(Region.USE_PREF_SIZE);
+            txtField.prefWidthProperty().bind(col.widthProperty().subtract(8));
             tableView.getColumns().add(col);
-
             counter++;
 
         }

@@ -187,3 +187,8 @@
     -fx-background: -fx-accent;
     -fx-text-fill: -fx-selection-bar-text;
 }
+
+.table-column .label {
+    -fx-content-display: bottom ;
+}
+

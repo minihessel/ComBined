@@ -6,19 +6,18 @@
 package View;
 
 import Model.Table;
+import com.mysql.jdbc.StringUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.ScatterChart;
@@ -29,11 +28,11 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  *
@@ -59,7 +58,7 @@ public class Visualize {
             pieChart.getData().clear();
         }
 
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new PieChart.Data(entry.getKey(), entry.getValue())).forEach(pieChart.getData()::add);
 
@@ -170,7 +169,7 @@ public class Visualize {
 
     }
 
-    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Table table,StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
+    public void getAreaChartData(Integer nameColumn, Integer valueColumn, Table table, StackedAreaChart areaChart, Boolean newSeries, Boolean rowCounter) {
         data.clear();
         ObservableList<XYChart.Data> areaChartData = FXCollections.observableArrayList();
         XYChart.Series series1 = new XYChart.Series();
@@ -290,10 +289,10 @@ public class Visualize {
 
     }
 
-    private void addDataFromTable(Table selectedTable, Integer valueColumn, Integer nameColumn, Boolean rowCount) throws NumberFormatException {
+    private void addDataFromTable(Table selectedTable, Integer nameColumn, Integer valueColumn, Boolean rowCount) throws NumberFormatException {
 
         for (List<String> a : selectedTable.sortedData) {
-            if (!a.get(valueColumn).isEmpty() && !a.get(valueColumn).isEmpty()) {
+            if (!a.get(nameColumn).isEmpty() && NumberUtils.isNumber(a.get(valueColumn))) {
                 //hvis brukeren ønsker å telle hvor mange rader en kategori har, bruker vi bare 1
                 //for eksempel, hvor mange produkter har varegruppe Vifte, legg til 1 for hver vare
                 if (rowCount) {
@@ -304,6 +303,7 @@ public class Visualize {
                 }
 
             } else {
+                System.out.println("LEGG TIL FEILMELDING AT DETTE IKKE ER NUMMER");
 
             }
         }

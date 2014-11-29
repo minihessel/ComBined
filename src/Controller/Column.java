@@ -22,6 +22,7 @@ public class Column extends TableColumn {
     public Column(String navn) {
         NAVN = navn;
         setText(navn);
+
     }
 
     @Override

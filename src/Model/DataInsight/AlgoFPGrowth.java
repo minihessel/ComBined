@@ -117,6 +117,7 @@ public class AlgoFPGrowth {
             for (int i = 0; i < trans.size(); i++) {
                 Integer item = trans.get(i).createdInt;
                 // only add items that have the minimum support
+
                 if (alreadySeen.contains(item) == false
                         && mapSupport.get(item) >= relativeMinsupp) {
                     transaction.add(item);
