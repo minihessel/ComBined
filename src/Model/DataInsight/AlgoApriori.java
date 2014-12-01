@@ -91,7 +91,7 @@ public class AlgoApriori {
      * @param output the path of an input if the result should be saved to a file. If null, the result will be kept into memory and this method will return the result.
      * @throws IOException exception if error while writting or reading the input/output file
      */
-    public Itemsets runAlgorithm(double minsup, Map map, String output) throws IOException {
+    public Itemsets runAlgorithm(double minsup, Map<String, List<Item>> map, String output) throws IOException {
 
         patterns = new Itemsets("FREQUENT ITEMSETS");
 

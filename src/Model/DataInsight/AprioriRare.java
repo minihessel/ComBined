@@ -123,6 +123,7 @@ public class AprioriRare {
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
             List<Item> transaction = (List<Item>) pairs.getValue();
+
             // for each item in this line (transaction)
             int[] trans = new int[transaction.size()];
             System.out.println("----new trans----");

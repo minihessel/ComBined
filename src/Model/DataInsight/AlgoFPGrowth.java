@@ -112,16 +112,15 @@ public class AlgoFPGrowth {
 
             List<Item> trans = (List<Item>) pairs.getValue();
             List<Integer> transaction = new ArrayList();
-            Set<Integer> alreadySeen = new HashSet<Integer>();
+
             // for each item in the transaction
             for (int i = 0; i < trans.size(); i++) {
                 Integer item = trans.get(i).createdInt;
                 // only add items that have the minimum support
 
-                if (alreadySeen.contains(item) == false
-                        && mapSupport.get(item) >= relativeMinsupp) {
+                if (mapSupport.get(item) >= relativeMinsupp) {
                     transaction.add(item);
-                    alreadySeen.add(item);
+
                 }
             }
             // sort item in the transaction by descending order of support

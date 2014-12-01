@@ -250,7 +250,7 @@ public class MainFXMLController implements Initializable {
                 CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
                 tabPaneInsightSummary.getTabs().add(summaryTab);
                 tabPaneInsightSummary.getSelectionModel().select(summaryTab);
-                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
+                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), whichTabIsSelected.getTable().numberofRows);
                 for (Table table : tabs) {
 
                     TableView tableView = new TableView();

@@ -32,6 +32,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -104,16 +106,7 @@ public class AlgoAprioriInverse {
      */
     public Itemsets runAlgorithm(Map map, double minsup, double maxsup) throws IOException {
 
-        String output = null;
-        String input = null;
-        // if the user want to keep the result into memory
-        if (output == null) {
-            writer = null;
-            patterns = new Itemsets("SPORADIC ITEMSETS");
-        } else { // if the user want to save the result to a file
-            patterns = null;
-            writer = new BufferedWriter(new FileWriter(output));
-        }
+        patterns = new Itemsets("SPORADIC ITEMSETS");
 
         // record the start time
         startTimestamp = System.currentTimeMillis();
@@ -142,9 +135,11 @@ public class AlgoAprioriInverse {
             int[] trans = new int[transaction.size()];
 
             for (int i = 0; i < transaction.size(); i++) {
+
                 // System.out.print(i);
                 // transform this item from a string to an integer
                 Item item = transaction.get(i);
+
                 trans[i] = item.createdInt;
 
                 // increase the support count of the item
@@ -157,7 +152,7 @@ public class AlgoAprioriInverse {
                     mapItemCount.put(item.createdInt, ++count);
                 }
             }
-
+            Arrays.sort(trans);
             // add the transaction to the database
             database.add(trans);
             // increase the number of transaction
@@ -193,10 +188,7 @@ public class AlgoAprioriInverse {
 
         // If no frequent item, the algorithm stops!
         if (frequent1.size() == 0) {
-            // close the output file if we used it
-            if (writer != null) {
-                writer.close();
-            }
+
             return patterns;
         }
 
@@ -230,6 +222,11 @@ public class AlgoAprioriInverse {
             // of each candidates and keep those with higher suport.
             // For each transaction:
             for (int[] transaction : database) {
+
+                if (transaction.length < k) {
+//					System.out.println("test");
+                    continue;
+                }
                 // for each candidate:
                 loopCand:
                 for (Itemset candidate : candidatesK) {
@@ -281,10 +278,6 @@ public class AlgoAprioriInverse {
         MemoryLogger.getInstance().checkMemory();
 
         // close the output file if the result was saved to a file.
-        if (writer != null) {
-            writer.close();
-        }
-
         return patterns;
     }
 
@@ -426,15 +419,8 @@ public class AlgoAprioriInverse {
         // increase frequent itemset count
         itemsetCount++;
 
-        // if the result should be saved to a file
-        if (writer != null) {
-            writer.write(itemset.toString() + " #SUP: "
-                    + itemset.getAbsoluteSupport());
-            writer.newLine();
-        }// otherwise the result is kept into memory
-        else {
-            patterns.addItemset(itemset, itemset.size());
-        }
+        patterns.addItemset(itemset, itemset.size());
+
     }
 
     /**
@@ -447,16 +433,10 @@ public class AlgoAprioriInverse {
     void saveItemsetToFile(Integer item, Integer support) throws IOException {
         itemsetCount++; // increase frequent itemset count
 
-        // if the result should be saved to a file
-        if (writer != null) {
-            writer.write(item + " #SUP: " + support);
-            writer.newLine();
-        }// otherwise the result is kept into memory
-        else {
-            Itemset itemset = new Itemset(item);
-            itemset.setAbsoluteSupport(support);
-            patterns.addItemset(itemset, 1);
-        }
+        Itemset itemset = new Itemset(item);
+        itemset.setAbsoluteSupport(support);
+        patterns.addItemset(itemset, 1);
+
     }
 
     /**

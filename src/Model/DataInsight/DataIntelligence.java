@@ -8,6 +8,7 @@ package Model.DataInsight;
 import Model.Item;
 import Model.Kolonne;
 import Model.Table;
+import com.sun.jnlp.ApiDialog;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -60,7 +61,11 @@ public class DataIntelligence {
         // item objektet i denne transaksjonen. 
         //Finnes den ikke, lager vi en ny transaksjon og legger til 
         if (transdata.containsKey(key)) {
-            transdata.get(key).add(item);
+            if (transdata.get(key).contains(item)) {
+
+            } else {
+                transdata.get(key).add(item);
+            }
 
         } else {
             List<Item> transaction = new ArrayList();
@@ -92,7 +97,8 @@ public class DataIntelligence {
 
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
-        result = fpGrowth.runAlgorithm(transdata, 0.006);
+        //result = fpGrowth.runAlgorithm(transdata, 0.006);
+        result = aprioriInverse.runAlgorithm(transdata, 0.001, 0.0059);
         //Deretter lager vi en tabell vi skal putte alle de nye itemsetsene inn i for å vise det til brukeren
         Table table = new Table("Data insight");
         //Lager tre kolonner, en for itemset, en for support og en for level. 
@@ -130,10 +136,10 @@ public class DataIntelligence {
 
                 itemSetKolonne.addField(itemSet);
                 // print the support of this itemset
-                supportKolonne.addField(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize()));
+                supportKolonne.addField(itemset.getRelativeSupportAsString(aprioriInverse.getDatabaseSize()));
 
                 Level.addField("" + levelCount);
-                supporNormalizedColumn.addField(" " + (Double.parseDouble(itemset.getRelativeSupportAsString(fpGrowth.getDatabaseSize())) / 100) * fpGrowth.getDatabaseSize());
+                supporNormalizedColumn.addField(" " + (Double.parseDouble(itemset.getRelativeSupportAsString(aprioriInverse.getDatabaseSize())) / 100) * aprioriInverse.getDatabaseSize());
 
             }
 
@@ -144,14 +150,14 @@ public class DataIntelligence {
         table.listofColumns.add(Level);
         table.listofColumns.add(supportKolonne);
         table.listofColumns.add(supporNormalizedColumn);
-        table.numberofRows = fpGrowth.getDatabaseSize();
-        System.out.println(fpGrowth.printStats());
+        table.numberofRows = aprioriInverse.getDatabaseSize();
+        // System.out.println(fpGrowth.printStats());
         return table;
 
     }
 
-    public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn) {
-        int transactionsFound = fpGrowth.getDatabaseSize();
+    public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn, int transctionsFound) {
+        int transactionsFound = transctionsFound;
         itemIDandDescriptionMap = new HashMap<>();
         List<Table> tabs = new ArrayList();
         for (List<String> a : itemTable.sortedData) {
@@ -219,7 +225,7 @@ public class DataIntelligence {
 
     public String getStats() {
 
-        return fpGrowth.printStats();
+        return "";// fpGrowth.printStats();
     }
 
     //metode for å inverte ett map
