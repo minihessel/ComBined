@@ -222,13 +222,10 @@ public class AlgoAprioriInverse {
             // For each transaction:
             for (int[] transaction : database) {
 
-                if (transaction.length < k) {
-//					System.out.println("test");
-                    continue;
-                }
                 // for each candidate:
                 loopCand:
                 for (Itemset candidate : candidatesK) {
+
                     // a variable that will be use to check if 
                     // all items of candidate are in this transaction
                     int pos = 0;
@@ -415,6 +412,7 @@ public class AlgoAprioriInverse {
      * @throws IOException exception if error while writing the file
      */
     void saveItemset(Itemset itemset) throws IOException {
+
         // increase frequent itemset count
         itemsetCount++;
 
@@ -430,6 +428,7 @@ public class AlgoAprioriInverse {
      * @throws IOException exception if error while writing the file
      */
     void saveItemsetToFile(Integer item, Integer support) throws IOException {
+
         itemsetCount++; // increase frequent itemset count
 
         Itemset itemset = new Itemset(item);

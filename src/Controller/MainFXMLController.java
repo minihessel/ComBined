@@ -647,9 +647,9 @@ public class MainFXMLController implements Initializable {
                 String whichTypeOfInsight = insightWizardPage1.whichTypeOfInsight.getSelectionModel().getSelectedItem().toString();
                 DataIntelligence dataInsight = new DataIntelligence();
                 if (whichTypeOfInsight.equals("Rare item sets")) {
-                    dataInsight.getRareItemSets(whichTabIsSelected.getTable(), transactionIDcolumn, itemIDcolumn);
+                    dataInsight.getRareItemSets(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                 } else {
-                    dataInsight.getFrequentItemSets(whichTabIsSelected.getTable(), transactionIDcolumn, itemIDcolumn);
+                    dataInsight.getFrequentItemSets(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                 }
 
                 Table tabellen = dataInsight.getInsight(dataInsight.result);

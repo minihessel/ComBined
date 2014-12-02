@@ -92,7 +92,7 @@ public class DataIntelligence {
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
         //result = fpGrowth.runAlgorithm(transdata, 0.01);
-        result = aprioriInverse.runAlgorithm(transdata, 0.0001, 0.0003);
+        result = aprioriInverse.runAlgorithm(transdata, 0.00002666, 0.0002666);
         numberOfTransactionsFound = aprioriInverse.getDatabaseSize();
         stats = aprioriInverse.getStats();
 
