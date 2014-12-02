@@ -6,9 +6,9 @@ import View.Wizard.VisualizationWizard.VisualizationPage1;
 import View.Wizard.SQLConnectWizard.SQlConnectPage11;
 import View.Wizard.SQLConnectWizard.SQlConnectPage1;
 import Model.DataInsight.DataIntelligence;
-import static Model.ErrorDialog.ErrorDialog;
 import View.Visualize;
 import Model.Kolonne;
+import Model.MyTableColumn;
 import Model.Table;
 import View.ChartToPng;
 import View.SideBar;
@@ -203,7 +203,7 @@ public class MainFXMLController implements Initializable {
     @FXML
     ImageView imageView;
     @FXML
-    ComboBox<Column> comboBox;
+    ComboBox<MyTableColumn> comboBox;
     @FXML
     VBox vBoxMenu;
 
@@ -228,47 +228,6 @@ public class MainFXMLController implements Initializable {
         tabPaneInsightNormal.setVisible(false);
         tabPaneInsightSummary.setVisible(true);
 
-    }
-
-    @FXML
-    private void dataInsightCreateSummaryButton(ActionEvent event) {
-
-        Table dataInsightTable = whichTabIsSelected.getTable();
-        InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
-        //  openDialogWithSQLConnectionInfo();
-
-        MyWizard wizard = new MyWizard(insightPage1);
-        wizard.blurMainWindow(pieChart.getScene().getRoot());
-        Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
-
-        if (finished) {
-            if (whichTabIsSelected.getTable().getDataInsight() == null) {
-                System.out.println("error");
-            } else {
-                TabPane summaryTabPane = new TabPane();
-
-                CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
-                tabPaneInsightSummary.getTabs().add(summaryTab);
-                tabPaneInsightSummary.getSelectionModel().select(summaryTab);
-                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex(), whichTabIsSelected.getTable().numberofRows);
-                for (Table table : tabs) {
-
-                    TableView tableView = new TableView();
-                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
-
-                    tableView = table.fillTableView(tableView, table);
-                    tab.setContent(tableView);
-                    summaryTabPane.getTabs().add(tab);
-
-                    summaryTab.setContent(summaryTabPane);
-                    tabPaneInsightNormal.setVisible(false);
-                    tabPaneInsightSummary.setVisible(true);
-
-                }
-
-            }
-
-        }
     }
 
     @FXML
@@ -326,7 +285,8 @@ public class MainFXMLController implements Initializable {
 
     @FXML
     private void showThat(ActionEvent event
-    ) {
+    ) //THIS SHOULD BE REMOVED; ONLY FOR TESTING
+    {
 
         try {
             try {
@@ -422,7 +382,7 @@ public class MainFXMLController implements Initializable {
     ) {
 
         if (!comboBox.getSelectionModel().isEmpty()) {
-            Column selectedColumn = comboBox.getSelectionModel().getSelectedItem();
+            MyTableColumn selectedColumn = comboBox.getSelectionModel().getSelectedItem();
 
             FadeTransition ft = new FadeTransition(Duration.millis(300), selectedColumn.getGraphic());
             ft.setFromValue(10.0);
@@ -441,28 +401,8 @@ public class MainFXMLController implements Initializable {
     @FXML
     private void newConnectionButton(ActionEvent event) throws IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
 
-        SQlConnectPage1 sQlConnectPage1 = new SQlConnectPage1();
-        SQlConnectPage11 SQLConnectPage2 = new SQlConnectPage11();
-        SQlConnectPage3 SQLConnectPage3 = new SQlConnectPage3();
+        showNewSQLConnectionWizard(event);
 
-        //  openDialogWithSQLConnectionInfo();
-        Button button = (Button) event.getSource();
-        MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2, SQLConnectPage3);
-        wizard.blurMainWindow(button.getScene().getRoot());
-        Boolean finished = wizard.createDialog(button.getScene().getWindow());
-
-        if (finished) {
-            String tableSelected = SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString();
-            QueryBuilder queryBuilder = new QueryBuilder(tableSelected);
-            List<String> selectedColumns = SQLConnectPage3.listView.getTargetItems();
-            setVisibleView("tableView");
-
-            queryBuilder.addColumnNames(selectedColumns);
-            createTabPaneWithTable(queryBuilder.getQuery(), tableSelected);
-
-        }
-
-        // createTabPaneWithTable("transbig");
     }
 
     @FXML
@@ -493,6 +433,12 @@ public class MainFXMLController implements Initializable {
 
         showInsightWizard();
 
+    }
+
+    @FXML
+    private void dataInsightCreateSummaryButton(ActionEvent event) {
+
+        showInsightSummaryWizard();
     }
 
     @FXML
@@ -532,14 +478,6 @@ public class MainFXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb
     ) {
-
-        tabPane.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-                System.out.println("focused");
-
-            }
-        });
 
         new SelectKeyComboBoxListener(comboBox);
 
@@ -670,6 +608,29 @@ public class MainFXMLController implements Initializable {
         }
     }
 
+    private void showNewSQLConnectionWizard(ActionEvent event) throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
+        SQlConnectPage1 sQlConnectPage1 = new SQlConnectPage1();
+        SQlConnectPage11 SQLConnectPage2 = new SQlConnectPage11();
+        SQlConnectPage3 SQLConnectPage3 = new SQlConnectPage3();
+
+        //  openDialogWithSQLConnectionInfo();
+        Button button = (Button) event.getSource();
+        MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2, SQLConnectPage3);
+        wizard.blurMainWindow(button.getScene().getRoot());
+        Boolean finished = wizard.createDialog(button.getScene().getWindow());
+
+        if (finished) {
+            String tableSelected = SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString();
+            QueryBuilder queryBuilder = new QueryBuilder(tableSelected);
+            List<String> selectedColumns = SQLConnectPage3.listView.getTargetItems();
+            setVisibleView("tableView");
+
+            queryBuilder.addColumnNames(selectedColumns);
+            createTabPaneWithTable(queryBuilder.getQuery(), tableSelected);
+
+        }
+    }
+
     private void showInsightWizard() throws UnsupportedEncodingException, IOException, FileNotFoundException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         if (tabPane.getSelectionModel().getSelectedItem() != null) {
 
@@ -681,23 +642,73 @@ public class MainFXMLController implements Initializable {
             Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
 
             if (finished) {
-                Tab tab;
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
-
+                String whichTypeOfInsight = insightWizardPage1.whichTypeOfInsight.getSelectionModel().getSelectedItem().toString();
                 DataIntelligence dataInsight = new DataIntelligence();
+                if (whichTypeOfInsight.equals("Rare item sets")) {
+                    dataInsight.getRareItemSets(whichTabIsSelected.getTable(), transactionIDcolumn, itemIDcolumn);
+                } else {
+                    dataInsight.getFrequentItemSets(whichTabIsSelected.getTable(), transactionIDcolumn, itemIDcolumn);
+                }
 
-                Table tabellen = dataInsight.getInsight(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
+                Table tabellen = dataInsight.getInsight(dataInsight.result);
                 tabellen.setDataInsight(dataInsight);
                 createTabPaneWithDataInsight(tabellen);
 
-                //  System.out.println(e);
             }
 
         } else {
             System.out.println("qq");
         }
 
+    }
+
+    private void showInsightSummaryWizard() {
+        Table dataInsightTable = whichTabIsSelected.getTable();
+        InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
+        //  openDialogWithSQLConnectionInfo();
+
+        MyWizard wizard = new MyWizard(insightPage1);
+        wizard.blurMainWindow(pieChart.getScene().getRoot());
+        Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+
+        if (finished) {
+            if (whichTabIsSelected.getTable().getDataInsight() == null) {
+                System.out.println("error");
+            } else {
+                TabPane summaryTabPane = new TabPane();
+
+                CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
+                tabPaneInsightSummary.getTabs().add(summaryTab);
+                tabPaneInsightSummary.getSelectionModel().select(summaryTab);
+                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
+                for (Table table : tabs) {
+
+                    TableView tableView = new TableView();
+                    tableView.setPrefHeight(750);
+                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
+
+                    tableView = table.fillTableView(tableView, table);
+                    tableView.setMinHeight(tabPaneInsightSummary.getHeight() - 32);
+                    tab.setContent(tableView);
+                    summaryTabPane.getTabs().add(tab);
+                    tab.setOnClosed(new EventHandler<javafx.event.Event>() {
+                        @Override
+                        public void handle(javafx.event.Event e) {
+                            tablesList.remove(table);
+                            tabPaneInsightSummary.getTabs().remove(tab);
+                        }
+                    });
+                    summaryTab.setContent(summaryTabPane);
+                    tabPaneInsightNormal.setVisible(false);
+                    tabPaneInsightSummary.setVisible(true);
+
+                }
+
+            }
+
+        }
     }
 
     private void createChart(String whichVisualizationType, int en, int to, Table table, Boolean newSeries, Boolean rowCount) {
@@ -739,10 +750,18 @@ public class MainFXMLController implements Initializable {
         vBox.getChildren()
                 .addAll(split_pane);
         tableViewet = tabellen.fillTableView(tableViewet, tabellen);
+
         vBox.setId(
                 "" + tabPaneCounter);
         CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText()), tableViewet, anchorPaneInsight);
-
+        tab.setOnClosed(new EventHandler<javafx.event.Event>() {
+            @Override
+            public void handle(javafx.event.Event e) {
+                tablesList.remove(tabellen);
+                tabPaneInsightNormal.getTabs().remove(tab);
+            }
+        });
+        tableViewet.setMinHeight(tabPaneInsightNormal.getHeight() - 32);
         tab.setContent(vBox);
         tabPaneInsightNormal.getTabs().add(tab);
         tabPaneInsightNormal.getSelectionModel().select(tab);
@@ -815,7 +834,6 @@ public class MainFXMLController implements Initializable {
 
         tabPane.getSelectionModel()
                 .select(tab);
-        comboBox.getItems().addAll(whichTabIsSelected.getTableView().getColumns());
 
     }
 

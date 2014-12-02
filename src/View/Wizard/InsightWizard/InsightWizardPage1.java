@@ -29,7 +29,7 @@ public class InsightWizardPage1 implements WizardPage {
     public ComboBox transactionIDcolumn = new ComboBox();
     public ComboBox<Table> tableColumn = new ComboBox();
     public ComboBox itemIDcolumn = new ComboBox();
-    public CheckBox checkBox = new CheckBox();
+    public ComboBox whichTypeOfInsight = new ComboBox();
     final private GridPane pane = new GridPane();
     private boolean fulfilled = false;
     Table table;
@@ -41,6 +41,9 @@ public class InsightWizardPage1 implements WizardPage {
             tableColumn.getItems().add(table);
 
         }
+        whichTypeOfInsight.getItems().add("Rare item sets");
+        whichTypeOfInsight.getItems().add("Frequent item sets");
+
         tableColumn.valueProperty().addListener(new ChangeListener<Table>() {
             @Override
             public void changed(ObservableValue ov, Table t, Table t1) {
@@ -67,8 +70,10 @@ public class InsightWizardPage1 implements WizardPage {
         pane.add(transactionIDcolumn, 1, 1);
         pane.add(new Label("Select a column that represents the itemID: "), 0, 2);
         pane.add(itemIDcolumn, 1, 2);
-        pane.add(new Label(""), 0, 3);
+        pane.add(new Label("Select which type of insight you want: "), 0, 3);
+        pane.add(whichTypeOfInsight, 1, 3);
         pane.add(new Label(""), 0, 4);
+        pane.add(new Label(""), 0, 5);
 
     }
 
@@ -94,11 +99,10 @@ public class InsightWizardPage1 implements WizardPage {
     public void onEnter() {
 
     }
-    
+
     @Override
-    public void onFinish()
-    {
-        
+    public void onFinish() {
+
     }
 }
 

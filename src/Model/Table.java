@@ -52,15 +52,13 @@ public class Table {
     public SortedList<List<String>> sortedData;
     public FilteredList<List<String>> filteredItems;
     List<TextField> listOfTxtFields;
-    DataIntelligence datainsight = null;
+    public DataIntelligence datainsight = null;
     public final String NAVN;
     public List<String> rowMessages = new ArrayList();
     PopOver popup;
     Label label = new Label();
     List<TableRow> listofrows = new ArrayList();
     Map<List<String>, String> map = new HashMap();
-
-    public Map<Kolonne, TableColumn> mapKolonneTableColumn = new HashMap();
 
     public Table(String name) {
 
@@ -129,13 +127,12 @@ public class Table {
         for (Kolonne kol : listofColumns) {
 
             final int j = counter;
-            TableColumn col = new TableColumn(kol.NAVN);
-            mapKolonneTableColumn.put(kol, col);
+            MyTableColumn col = new MyTableColumn(kol.NAVN);
             int counterz = 0;
 
             if (kol.amIInteger) {
-                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
-                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
+                col.setCellValueFactory(new Callback<MyTableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
+                    public ObservableValue<Number> call(MyTableColumn.CellDataFeatures<ObservableList, Number> param) {
 
                         if (param.getValue().get(j) != null) {
                             return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
@@ -147,8 +144,8 @@ public class Table {
                 });
 
             } else if (kol.amIDouble) {
-                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
-                    public ObservableValue<Number> call(TableColumn.CellDataFeatures<ObservableList, Number> param) {
+                col.setCellValueFactory(new Callback<MyTableColumn.CellDataFeatures<ObservableList, Number>, ObservableValue<Number>>() {
+                    public ObservableValue<Number> call(MyTableColumn.CellDataFeatures<ObservableList, Number> param) {
                         if (param.getValue().get(j) != null) {
                             return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
                         } else {
@@ -160,8 +157,8 @@ public class Table {
                 System.out.println("true3");
 
             } else if (!kol.amIDouble && !kol.amIInteger) {
-                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                col.setCellValueFactory(new Callback<MyTableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(MyTableColumn.CellDataFeatures<ObservableList, String> param) {
                         if (param.getValue().get(j) != null) {
                             return new SimpleStringProperty(param.getValue().get(j).toString());
                         }

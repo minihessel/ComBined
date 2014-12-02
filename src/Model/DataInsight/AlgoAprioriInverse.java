@@ -29,7 +29,6 @@ import DataInsight.ArraysAlgos;
 import DataInsight.MemoryLogger;
 import Model.Item;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -442,14 +441,14 @@ public class AlgoAprioriInverse {
     /**
      * Print statistics about the algorithm execution to System.out.
      */
-    public void printStats() {
-        System.out.println("=============  APRIORI INVERSE - STATS =============");
-        System.out.println(" Candidates count : " + totalCandidateCount);
-        System.out.println(" The algorithm stopped at size " + (k - 1)
-                + ", because there is no candidate");
-        System.out.println(" Sporadic itemsets count : " + itemsetCount);
-        System.out.println(" Maximum memory usage : " + MemoryLogger.getInstance().getMaxMemory() + " mb");
-        System.out.println(" Total time ~ " + (endTimestamp - startTimestamp) + " ms");
-        System.out.println("===================================================");
+    public String getStats() {
+        String stats = "";
+        long temps = endTimestamp - startTimestamp;
+        stats += " Transactions found : " + getDatabaseSize() + "\n";
+        stats += " Max memory usage: " + MemoryLogger.getInstance().getMaxMemory() + " mb \n";
+        stats += " Frequent itemsets count : " + itemsetCount + "\n";
+        stats += " Total time ~ " + temps + " ms";
+        return stats;
+
     }
 }

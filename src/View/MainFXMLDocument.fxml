@@ -246,8 +246,8 @@
                               </VBox>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <TabPane id="tabPane" fx:id="tabPaneInsightSummary" visible="false" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                              <TabPane id="tabPane" fx:id="tabPaneInsightNormal" prefHeight="792.0" prefWidth="1219.0" visible="false" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <TabPane id="tabPane" fx:id="tabPaneInsightSummary" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                              <TabPane id="tabPane" fx:id="tabPaneInsightNormal" prefHeight="688.0" prefWidth="1219.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                               <HBox alignment="CENTER" prefHeight="134.0" prefWidth="1219.0">

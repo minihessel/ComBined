@@ -34,9 +34,10 @@ public class DataIntelligence {
     Integer createdProductNumber = 1;
     AlgoFPGrowth fpGrowth = new AlgoFPGrowth();
     AlgoAprioriInverse aprioriInverse = new AlgoAprioriInverse();
-
-    Itemsets result;
+    public Itemsets result;
     PopOver popover = new PopOver();
+    public int numberOfTransactionsFound;
+    String stats;
 
     void addNewDataToTransactionsMap(String key, String name) {
         //Metode for å legge til nye transaksjoner i transdata mappet
@@ -75,21 +76,14 @@ public class DataIntelligence {
         }
     }
 
-    //Metode for å regne ut itemsets(hvilke produkter som ofte blir solgt sammen)
-    //Dette er en del av data mining og pattern recognition 
-    //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
-    // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
-    public Table getInsight(Table selectedTable, int transactionColumn, int itmeColumn) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
-        //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
-        //deretter looper vi igjennom dataen og legger den til i transdata mappet.
-
+    public void getRareItemSets(Table selectedTable, int transactionColumn, int itemColumn) throws IOException, FileNotFoundException, UnsupportedEncodingException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         transdata = new HashMap<>();
         itemMap = new HashMap<>();
         invertedItemMap = new HashMap();
         result = null;
         createdProductNumber = 1;
         for (List<String> a : selectedTable.sortedData) {
-            addNewDataToTransactionsMap(a.get(transactionColumn), a.get(itmeColumn));
+            addNewDataToTransactionsMap(a.get(transactionColumn), a.get(itemColumn));
         }
 
         //minsup betyr minimum support..Alså, hva er minste grensen i % for itemsets vi skal se etter.
@@ -97,8 +91,43 @@ public class DataIntelligence {
 
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
-        //result = fpGrowth.runAlgorithm(transdata, 0.006);
-        result = aprioriInverse.runAlgorithm(transdata, 0.001, 0.0059);
+        //result = fpGrowth.runAlgorithm(transdata, 0.01);
+        result = aprioriInverse.runAlgorithm(transdata, 0.0001, 0.0003);
+        numberOfTransactionsFound = aprioriInverse.getDatabaseSize();
+        stats = aprioriInverse.getStats();
+
+    }
+
+    public void getFrequentItemSets(Table selectedTable, int transactionColumn, int itemColumn) throws IOException, FileNotFoundException, UnsupportedEncodingException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+        transdata = new HashMap<>();
+        itemMap = new HashMap<>();
+        invertedItemMap = new HashMap();
+        result = null;
+        createdProductNumber = 1;
+        for (List<String> a : selectedTable.sortedData) {
+            addNewDataToTransactionsMap(a.get(transactionColumn), a.get(itemColumn));
+        }
+
+        //minsup betyr minimum support..Alså, hva er minste grensen i % for itemsets vi skal se etter.
+        double minsup = 0.60;
+
+        //kjører FPGrowth algoritmen for å finne itemsets i transdataen
+        //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
+        //result = fpGrowth.runAlgorithm(transdata, 0.01);
+        result = fpGrowth.runAlgorithm(transdata, 0.006);
+        numberOfTransactionsFound = fpGrowth.getDatabaseSize();
+        stats = fpGrowth.getStats();
+
+    }
+
+    //Metode for å regne ut itemsets(hvilke produkter som ofte blir solgt sammen)
+    //Dette er en del av data mining og pattern recognition 
+    //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
+    // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
+    public Table getInsight(Itemsets result) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+        //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
+        //deretter looper vi igjennom dataen og legger den til i transdata mappet.
+
         //Deretter lager vi en tabell vi skal putte alle de nye itemsetsene inn i for å vise det til brukeren
         Table table = new Table("Data insight");
         //Lager tre kolonner, en for itemset, en for support og en for level. 
@@ -136,10 +165,10 @@ public class DataIntelligence {
 
                 itemSetKolonne.addField(itemSet);
                 // print the support of this itemset
-                supportKolonne.addField(itemset.getRelativeSupportAsString(aprioriInverse.getDatabaseSize()));
+                supportKolonne.addField(itemset.getRelativeSupportAsString(numberOfTransactionsFound));
 
                 Level.addField("" + levelCount);
-                supporNormalizedColumn.addField(" " + (Double.parseDouble(itemset.getRelativeSupportAsString(aprioriInverse.getDatabaseSize())) / 100) * aprioriInverse.getDatabaseSize());
+                supporNormalizedColumn.addField(" " + (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound);
 
             }
 
@@ -150,14 +179,13 @@ public class DataIntelligence {
         table.listofColumns.add(Level);
         table.listofColumns.add(supportKolonne);
         table.listofColumns.add(supporNormalizedColumn);
-        table.numberofRows = aprioriInverse.getDatabaseSize();
-        // System.out.println(fpGrowth.printStats());
+        table.numberofRows = numberOfTransactionsFound;
+
         return table;
 
     }
 
-    public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn, int transctionsFound) {
-        int transactionsFound = transctionsFound;
+    public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn) {
         itemIDandDescriptionMap = new HashMap<>();
         List<Table> tabs = new ArrayList();
         for (List<String> a : itemTable.sortedData) {
@@ -199,14 +227,14 @@ public class DataIntelligence {
                     }
 
                     items.addField(itemSet);
-                    support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(transactionsFound)) / 100) * transactionsFound);
-                    Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(transactionsFound)) / 100) * transactionsFound;
+                    support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound);
+                    Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
                     if (itemset.size() > 1) {
                         //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
-                        tabell.rowMessages.add(String.format("We reccomend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", transactionsFound, soldTogether));
+                        tabell.rowMessages.add(String.format("We reccomend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", numberOfTransactionsFound, soldTogether));
                     } else {
 
-                        tabell.rowMessages.add(String.format("This item is popular because we found that out of your %d transactions, this item is sold %.0f times.", transactionsFound, soldTogether));
+                        tabell.rowMessages.add(String.format("This item is popular because we found that out of your %d transactions, this item is sold %.0f times.", numberOfTransactionsFound, soldTogether));
                     }
                 }
 
@@ -225,7 +253,7 @@ public class DataIntelligence {
 
     public String getStats() {
 
-        return "";// fpGrowth.printStats();
+        return stats;
     }
 
     //metode for å inverte ett map

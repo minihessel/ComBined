@@ -374,7 +374,7 @@ public class AlgoFPGrowth {
      *
      * @return
      */
-    public String printStats() {
+    public String getStats() {
         String stats = "";
         long temps = endTime - startTimestamp;
         stats += " Transactions found : " + transactionCount + "\n";

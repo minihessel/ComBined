@@ -23,6 +23,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -126,24 +127,24 @@ public class AprioriRare {
 
             // for each item in this line (transaction)
             int[] trans = new int[transaction.size()];
-            System.out.println("----new trans----");
+
             for (int i = 0; i < transaction.size(); i++) {
                 // System.out.print(i);
                 // transform this item from a string to an integer
                 Item item = transaction.get(i);
                 trans[i] = item.createdInt;
-                System.out.println(item.ID);
+
                 // increase the support count of the item
                 Integer count = mapItemCount.get(item.createdInt);
                 if (count == null) {
-                    System.out.println("funker 1");
+
                     mapItemCount.put(item.createdInt, 1);
                 } else {
-                    System.out.println("funker 2");
+
                     mapItemCount.put(item.createdInt, ++count);
                 }
             }
-
+            Arrays.sort(trans);
             // add the transaction to the database
             database.add(trans);
             // increase the number of transaction
