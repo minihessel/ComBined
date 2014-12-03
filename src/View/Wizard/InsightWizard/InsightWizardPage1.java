@@ -10,6 +10,7 @@ import View.Wizard.ValidatorRegler;
 import View.Wizard.WizardPage;
 import Model.Kolonne;
 import Model.Table;
+import Model.WarningDialog;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -44,6 +45,15 @@ public class InsightWizardPage1 implements WizardPage {
         whichTypeOfInsight.getItems().add("Rare item sets");
         whichTypeOfInsight.getItems().add("Frequent item sets");
 
+        whichTypeOfInsight.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                if (t1.equals("Rare item sets")) {
+                    WarningDialog.WarningDialog("This will take time!", "This algorithm takes time on big datasets.");
+                }
+            }
+        });
+
         tableColumn.valueProperty().addListener(new ChangeListener<Table>() {
             @Override
             public void changed(ObservableValue ov, Table t, Table t1) {
@@ -62,16 +72,14 @@ public class InsightWizardPage1 implements WizardPage {
 
     @Override
     public void addElements() {
-        pane.add(new Label(
-                "Select which table that contains SalesLine table"), 0, 0);
-        pane.add(tableColumn, 1, 0);
-
-        pane.add(new Label("Select a column that represents the transactionID: "), 0, 1);
-        pane.add(transactionIDcolumn, 1, 1);
-        pane.add(new Label("Select a column that represents the itemID: "), 0, 2);
-        pane.add(itemIDcolumn, 1, 2);
-        pane.add(new Label("Select which type of insight you want: "), 0, 3);
-        pane.add(whichTypeOfInsight, 1, 3);
+        pane.add(new Label("Select which type of insight you want: "), 0, 0);
+        pane.add(whichTypeOfInsight, 1, 0);
+        pane.add(new Label("Select which table that contains SalesLine table"), 0, 1);
+        pane.add(tableColumn, 1, 1);
+        pane.add(new Label("Select a column that represents the transactionID: "), 0, 2);
+        pane.add(transactionIDcolumn, 1, 2);
+        pane.add(new Label("Select a column that represents the itemID: "), 0, 3);
+        pane.add(itemIDcolumn, 1, 3);
         pane.add(new Label(""), 0, 4);
         pane.add(new Label(""), 0, 5);
 
@@ -90,6 +98,7 @@ public class InsightWizardPage1 implements WizardPage {
 
     @Override
     public boolean valider() {
+        fulfilled = ValidatorRegler.ikkeTom(whichTypeOfInsight);
         fulfilled = ValidatorRegler.ikkeTom(transactionIDcolumn);
         fulfilled = ValidatorRegler.ikkeTom(itemIDcolumn);
         return fulfilled;

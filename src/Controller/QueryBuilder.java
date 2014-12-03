@@ -12,16 +12,27 @@ import java.util.List;
  *
  * @author Eskil Hesselroth
  */
-class QueryBuilder {
+public class QueryBuilder {
 
     StringBuilder query;
     List<String> columns = new ArrayList();
     String whichTable;
 
-    public QueryBuilder(String whichTable) {
+    public QueryBuilder(String whichTable, String databaseType) {
         query = new StringBuilder();
         query.append("select ");
-        this.whichTable = whichTable;
+
+        switch (databaseType) {
+            case "Microsoft SQL Server":
+                this.whichTable = "[" + whichTable + "]";
+                break;
+            case "MySQL":
+                this.whichTable = "`" + whichTable + "";
+                break;
+            default:
+                this.whichTable = whichTable;
+                break;
+        }
 
     }
 
@@ -29,7 +40,7 @@ class QueryBuilder {
         columns.addAll(columnNames);
     }
 
-    String getQuery() {
+  public String getQuery() {
 
         for (int i = 0; i < columns.size(); i++) {
             System.out.println(columns.size());
@@ -39,6 +50,10 @@ class QueryBuilder {
 
             }
             query.append(columns.get(i));
+        }
+
+        if (columns.isEmpty()) {
+            query.append("*");
         }
         query.append(" from ");
         query.append(whichTable);

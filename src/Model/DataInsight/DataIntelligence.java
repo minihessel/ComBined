@@ -38,6 +38,19 @@ public class DataIntelligence {
     PopOver popover = new PopOver();
     public int numberOfTransactionsFound;
     String stats;
+    Boolean rareItemSets = false;
+    Boolean frequentItemSets = false;
+
+    public DataIntelligence(String rareOrFrequent) {
+
+        if (rareOrFrequent.equals("rare")) {
+            rareItemSets = true;
+        }
+
+        if (rareOrFrequent.equals("frequent")) {
+            frequentItemSets = true;
+        }
+    }
 
     void addNewDataToTransactionsMap(String key, String name) {
         //Metode for å legge til nye transaksjoner i transdata mappet
@@ -114,7 +127,7 @@ public class DataIntelligence {
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
         //result = fpGrowth.runAlgorithm(transdata, 0.01);
-        result = fpGrowth.runAlgorithm(transdata, 0.006);
+        result = fpGrowth.runAlgorithm(transdata, 0.008);
         numberOfTransactionsFound = fpGrowth.getDatabaseSize();
         stats = fpGrowth.getStats();
 
@@ -186,12 +199,90 @@ public class DataIntelligence {
     }
 
     public List<Table> createSummary2(Table itemTable, int itemIDColumn, int itemDescriptionColumn) {
+        List<Table> tables;
+        if (frequentItemSets) {
+            tables = frequentSummary(itemTable, itemIDColumn, itemDescriptionColumn);
+            return tables;
+        }
+        if (rareItemSets) {
+            tables = rareSummary(itemTable, itemIDColumn, itemDescriptionColumn);
+            return tables;
+        } else {
+            return null;
+        }
+
+    }
+
+    private List<Table> rareSummary(Table itemTable, int itemIDColumn, int itemDescriptionColumn) throws NumberFormatException {
         itemIDandDescriptionMap = new HashMap<>();
-        List<Table> tabs = new ArrayList();
+        List<Table> tables = new ArrayList();
         for (List<String> a : itemTable.sortedData) {
             itemIDandDescriptionMap.put(a.get(itemIDColumn), a.get(itemDescriptionColumn));
         }
+        int levelCount = 0;
+        for (List<Itemset> level : result.getLevels()) {
 
+            if (levelCount > 0) {
+                Table tabell;
+                if (levelCount == 1) {
+                    tabell = new Table("Least popular single items");
+                } else {
+                    tabell = new Table("These " + levelCount + " items should probably not be placed together");
+                }
+
+                Kolonne items = new Kolonne("Items that should be placed together", 1, tabell, false, false);
+                Kolonne support = new Kolonne("Threshold", 2, tabell, false, true);
+
+                for (Itemset itemset : level) {
+
+                    Arrays.sort(itemset.getItems());
+                    int[] intArrayOfItemSets = itemset.getItems();
+                    String itemSet = "";
+                    int numberOfItems = 1;
+
+                    for (int i : intArrayOfItemSets) {
+                        //Vi vil nå vise brukeren hvilket produktnummer det er istedenfor den tilegnede int verdien laget. 
+                        // Av den grunn spør vi en inverted versjon av itemmappet om hva strengen(produktid'en) er for produktet
+
+                        itemSet += itemIDandDescriptionMap.get(invertedItemMap.get(i));
+                        //i f setning for å legge til & tegn mellom strengen for produkter i strengen
+                        if (intArrayOfItemSets.length > numberOfItems) {
+                            itemSet += " and ";
+                        }
+                        numberOfItems++;
+
+                    }
+
+                    items.addField(itemSet);
+                    support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound);
+                    Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
+                    if (itemset.size() > 1) {
+                        //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
+                        tabell.rowMessages.add(String.format("We reccomend not placing these items together because out of your %d transactions, this combination of items are only sold together %.0f times.", numberOfTransactionsFound, soldTogether));
+                    } else {
+
+                        tabell.rowMessages.add(String.format("This item is not popular,  because we found that out of your %d transactions, this item is only sold %.0f times.", numberOfTransactionsFound, soldTogether));
+                    }
+                }
+
+                tabell.listofColumns.add(items);
+                tabell.listofColumns.add(support);
+
+                tables.add(tabell);
+                tabell.numberofRows = items.allFields().size();
+            }
+            levelCount++;
+
+        }
+        return tables;
+    }
+
+    private List<Table> frequentSummary(Table itemTable, int itemIDColumn, int itemDescriptionColumn) throws NumberFormatException {
+        itemIDandDescriptionMap = new HashMap<>();
+        List<Table> tables = new ArrayList();
+        for (List<String> a : itemTable.sortedData) {
+            itemIDandDescriptionMap.put(a.get(itemIDColumn), a.get(itemDescriptionColumn));
+        }
         int levelCount = 0;
         for (List<Itemset> level : result.getLevels()) {
 
@@ -241,14 +332,13 @@ public class DataIntelligence {
                 tabell.listofColumns.add(items);
                 tabell.listofColumns.add(support);
 
-                tabs.add(tabell);
+                tables.add(tabell);
                 tabell.numberofRows = items.allFields().size();
             }
             levelCount++;
 
         }
-
-        return tabs;
+        return tables;
     }
 
     public String getStats() {

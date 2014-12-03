@@ -25,7 +25,7 @@ import javafx.scene.layout.GridPane;
  */
 public class InsightSummaryWizardPage1 implements WizardPage {
 
-    String header = "cted tables that represents your itemtable\n qweqweqweqwe";
+    String header = "Select your itemtable to run summary";
     public ComboBox<Table> tableColumn = new ComboBox();
     public ComboBox itemIDColumn = new ComboBox();
     public ComboBox itemDescriptionColumn = new ComboBox();
@@ -90,11 +90,10 @@ public class InsightSummaryWizardPage1 implements WizardPage {
     @Override
     public void onEnter() {
     }
-    
+
     @Override
-    public void onFinish()
-    {
-        
+    public void onFinish() {
+
     }
 }
 

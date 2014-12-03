@@ -6,6 +6,7 @@ import View.Wizard.VisualizationWizard.VisualizationPage1;
 import View.Wizard.SQLConnectWizard.SQlConnectPage11;
 import View.Wizard.SQLConnectWizard.SQlConnectPage1;
 import Model.DataInsight.DataIntelligence;
+import static Model.ErrorDialog.ErrorDialog;
 import View.Visualize;
 import Model.Kolonne;
 import Model.MyTableColumn;
@@ -621,7 +622,7 @@ public class MainFXMLController implements Initializable {
 
         if (finished) {
             String tableSelected = SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString();
-            QueryBuilder queryBuilder = new QueryBuilder(tableSelected);
+            QueryBuilder queryBuilder = new QueryBuilder(tableSelected, SQL_manager.md.getDatabaseProductName());
             List<String> selectedColumns = SQLConnectPage3.listView.getTargetItems();
             setVisibleView("tableView");
 
@@ -645,10 +646,12 @@ public class MainFXMLController implements Initializable {
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
                 int itemIDcolumn = insightWizardPage1.itemIDcolumn.getSelectionModel().getSelectedIndex();
                 String whichTypeOfInsight = insightWizardPage1.whichTypeOfInsight.getSelectionModel().getSelectedItem().toString();
-                DataIntelligence dataInsight = new DataIntelligence();
+                DataIntelligence dataInsight;
                 if (whichTypeOfInsight.equals("Rare item sets")) {
+                    dataInsight = new DataIntelligence("rare");
                     dataInsight.getRareItemSets(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                 } else {
+                    dataInsight = new DataIntelligence("frequent");
                     dataInsight.getFrequentItemSets(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                 }
 
@@ -668,29 +671,30 @@ public class MainFXMLController implements Initializable {
         Table dataInsightTable = whichTabIsSelected.getTable();
         InsightSummaryWizardPage1 insightPage1 = new InsightSummaryWizardPage1(tablesList);
         //  openDialogWithSQLConnectionInfo();
+        if (whichTabIsSelected.getTable().getDataInsight() == null) {
+            ErrorDialog("Run analysis first", "Please run an analysis before trying to create a summary");
+        } else {
 
-        MyWizard wizard = new MyWizard(insightPage1);
-        wizard.blurMainWindow(pieChart.getScene().getRoot());
-        Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+            MyWizard wizard = new MyWizard(insightPage1);
+            wizard.blurMainWindow(pieChart.getScene().getRoot());
+            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+            if (finished) {
 
-        if (finished) {
-            if (whichTabIsSelected.getTable().getDataInsight() == null) {
-                System.out.println("error");
-            } else {
                 TabPane summaryTabPane = new TabPane();
 
                 CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
                 tabPaneInsightSummary.getTabs().add(summaryTab);
                 tabPaneInsightSummary.getSelectionModel().select(summaryTab);
-                List<Table> tabs = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
-                for (Table table : tabs) {
+                List<Table> tables = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
+
+                for (Table table : tables) {
 
                     TableView tableView = new TableView();
                     tableView.setPrefHeight(750);
-                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, anchorPaneInsight);
+                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, tabPaneInsightSummary);
 
                     tableView = table.fillTableView(tableView, table);
-                    tableView.setMinHeight(tabPaneInsightSummary.getHeight() - 32);
+                    tableView.setMinHeight(tabPaneInsightSummary.getHeight() - 100);
                     tab.setContent(tableView);
                     summaryTabPane.getTabs().add(tab);
                     tab.setOnClosed(new EventHandler<javafx.event.Event>() {
@@ -707,7 +711,6 @@ public class MainFXMLController implements Initializable {
                 }
 
             }
-
         }
     }
 
@@ -753,7 +756,7 @@ public class MainFXMLController implements Initializable {
 
         vBox.setId(
                 "" + tabPaneCounter);
-        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText()), tableViewet, anchorPaneInsight);
+        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText()), tableViewet, tabPaneInsightNormal);
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
             @Override
             public void handle(javafx.event.Event e) {

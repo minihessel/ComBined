@@ -130,7 +130,7 @@ public class Visualize {
 
         }
         lineChart.setAnimated(false);//bug fix
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(lineChartData::add);
 
@@ -155,7 +155,7 @@ public class Visualize {
 
         }
         barChart.setAnimated(false);//bug fix
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
 
@@ -180,7 +180,7 @@ public class Visualize {
 
         }
         areaChart.setAnimated(false);//bug fix
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(areaChartData::add);
 
@@ -210,7 +210,7 @@ public class Visualize {
 
         }
         scatterChart.setAnimated(false);//bug fix
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(scatterChartData::add);
 
@@ -233,7 +233,7 @@ public class Visualize {
 
         }
         stackedBarChart.setAnimated(false);//bug fix
-        addDataFromTable(table, valueColumn, nameColumn, rowCounter);
+        addDataFromTable(table, nameColumn, valueColumn, rowCounter);
 
         data.entrySet().stream().map(entry -> new XYChart.Data(entry.getKey(), entry.getValue())).forEach(barChartData::add);
 
@@ -291,19 +291,23 @@ public class Visualize {
 
     private void addDataFromTable(Table selectedTable, Integer nameColumn, Integer valueColumn, Boolean rowCount) throws NumberFormatException {
 
-        for (List<String> a : selectedTable.sortedData) {
-            if (!a.get(nameColumn).isEmpty() && NumberUtils.isNumber(a.get(valueColumn))) {
-                //hvis brukeren ønsker å telle hvor mange rader en kategori har, bruker vi bare 1
-                //for eksempel, hvor mange produkter har varegruppe Vifte, legg til 1 for hver vare
-                if (rowCount) {
-                    addNewDataPoint(a.get(nameColumn).toString(), 1);
-                } //hvis ikke, bruker vi bare verdien fra kolonnen
-                else {
-                    addNewDataPoint(a.get(nameColumn).toString(), Double.parseDouble(a.get(valueColumn)));
-                }
+        for (List<String> a : selectedTable.filteredItems) {
+            if (rowCount) {
+                addNewDataPoint(a.get(nameColumn), 1);
+            } //hvis ikke, bruker vi bare verdien fra kolonnen
+            else {
 
-            } else {
-                System.out.println("LEGG TIL FEILMELDING AT DETTE IKKE ER NUMMER");
+                if (!a.get(nameColumn).isEmpty() && NumberUtils.isNumber(a.get(valueColumn))) {
+                    //hvis brukeren ønsker å telle hvor mange rader en kategori har, bruker vi bare 1
+                    //for eksempel, hvor mange produkter har varegruppe Vifte, legg til 1 for hver vare
+
+                    addNewDataPoint(a.get(nameColumn), Double.parseDouble(a.get(valueColumn)));
+                } else {
+                    System.out.println(a.get(nameColumn));
+                    System.out.println(a.get(valueColumn));
+                    System.out.println("LEGG TIL FEILMELDING AT DETTE IKKE ER NUMMER");
+
+                }
 
             }
         }

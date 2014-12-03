@@ -71,7 +71,8 @@ public final class SQlConnectPage3 implements WizardPage {
 
     @Override
     public void onEnter() {
-        comboBox.getItems().clear();
+        listView.getSourceItems().clear();
+        listView.getTargetItems().clear();
         try {
 
             for (int i = 1; i <= SQL_manager.rs.getMetaData().getColumnCount(); i++) {

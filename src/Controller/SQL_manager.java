@@ -26,6 +26,7 @@ public class SQL_manager {
     public Task<Boolean> service;
     public static Task<Boolean> task;
     public static String instanceName;
+    public static DatabaseMetaData md;
 
     public SQL_manager() {
 
@@ -33,7 +34,8 @@ public class SQL_manager {
 
     public static void getAllTables(ComboBox comboBox) throws SQLException {
         //Henter ut alle tabellene i databasen ved hjelp av metadata
-        DatabaseMetaData md = conn.getMetaData();
+        md = conn.getMetaData();
+
         String[] types = {"TABLE"};
         ResultSet rs = md.getTables(null, null, "%", types);
 
@@ -102,6 +104,6 @@ public class SQL_manager {
             System.err.println(e.getMessage());
 
         }
-
     }
+
 }

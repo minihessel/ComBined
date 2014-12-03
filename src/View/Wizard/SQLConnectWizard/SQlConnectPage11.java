@@ -5,6 +5,7 @@
  */
 package View.Wizard.SQLConnectWizard;
 
+import Controller.QueryBuilder;
 import Controller.SQL_manager;
 import Controller.SelectKeyComboBoxListener;
 import View.Wizard.ValidatorRegler;
@@ -34,7 +35,7 @@ public final class SQlConnectPage11 implements WizardPage {
 
     public SQlConnectPage11() throws SQLException {
         new SelectKeyComboBoxListener(comboBox);
-      
+
         addElements();
     }
 
@@ -63,14 +64,16 @@ public final class SQlConnectPage11 implements WizardPage {
     }
 
     @Override
-    public void onFinish()
-    {
+    public void onFinish() {
         try {
-            SQL_manager.getDataFromSQL("select * from " + comboBox.getSelectionModel().getSelectedItem().toString());
+            QueryBuilder qb = new QueryBuilder(comboBox.getSelectionModel().getSelectedItem().toString(), SQL_manager.md.getDatabaseProductName());
+
+            SQL_manager.getDataFromSQL(qb.getQuery());
         } catch (SQLException ex) {
             Logger.getLogger(SQlConnectPage11.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @Override
     public void onEnter() {
         comboBox.getItems().clear();

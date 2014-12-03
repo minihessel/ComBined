@@ -1,7 +1,6 @@
 package Model;
 
 import Model.DataInsight.DataIntelligence;
-import Controller.Column;
 import Controller.SQL_manager;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -24,14 +23,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -137,7 +134,7 @@ public class Table {
                         if (param.getValue().get(j) != null) {
                             return new SimpleIntegerProperty(Integer.parseInt(param.getValue().get(j).toString()));
                         } else {
-                            return new SimpleIntegerProperty();
+                            return null;
                         }
 
                     }
@@ -149,7 +146,7 @@ public class Table {
                         if (param.getValue().get(j) != null) {
                             return new SimpleDoubleProperty(Double.parseDouble(param.getValue().get(j).toString()));
                         } else {
-                            return new SimpleDoubleProperty();
+                            return null;
                         }
 
                     }
@@ -162,7 +159,7 @@ public class Table {
                         if (param.getValue().get(j) != null) {
                             return new SimpleStringProperty(param.getValue().get(j).toString());
                         }
-                        return new SimpleStringProperty("");
+                        return null;
                     }
                 });
             }
@@ -276,8 +273,7 @@ public class Table {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
                         int originalRowIndex = dataen.indexOf(tableView.getSelectionModel().getSelectedItem());
                         label.setText(rowMessages.get(originalRowIndex));
-                        double y = ((TableRow) event.getSource()).getLocalToSceneTransform().getTy();
-                        double x = ((TableRow) event.getSource()).getLocalToSceneTransform().getTx();
+
                         popup.show(row);
 
                         //    popup.setAnchorX(tableView.getLayoutX());

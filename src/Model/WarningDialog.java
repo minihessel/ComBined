@@ -12,11 +12,11 @@ import javafx.scene.control.Alert.AlertType;
  *
  * @author Eskil Hesselroth
  */
-public class ErrorDialog {
+public class WarningDialog {
 
-    public static void ErrorDialog(String header, String message) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error");
+    public static void WarningDialog(String header, String message) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Warning!");
         alert.setHeaderText(header);
         alert.setContentText(message);
         alert.showAndWait();

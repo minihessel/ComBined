@@ -131,11 +131,10 @@ public final class SQlConnectPage1 implements WizardPage {
         txtUserName.setText("");
 
     }
-    
+
     @Override
-    public void onFinish()
-    {
-        
+    public void onFinish() {
+
     }
 
     private void testSQLConnection() {

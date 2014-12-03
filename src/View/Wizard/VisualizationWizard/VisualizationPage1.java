@@ -45,16 +45,17 @@ public class VisualizationPage1 implements WizardPage {
     @Override
     public void addElements() {
 
-        pane.add(new Label("You are now visualizing on table: " + table + "\n \n \n \n \n"), 0, 0);
-        pane.add(new Label("Select a column that represents the categories: "), 0, 1);
-        pane.add(nameColumn, 1, 1);
-        pane.add(new Label("Select a column that represents the values: "), 0, 2);
-        pane.add(valueColumn, 1, 2);
-        pane.add(new Label(""), 0, 3);
+        pane.add(new Label("You are now visualizing on table: "), 0, 0);
+        pane.add(new Label("" + table + "\n\n\n\n\n"), 0, 1);
+        pane.add(new Label("Select a column that represents the categories: "), 0, 2);
+        pane.add(nameColumn, 1, 2);
+        pane.add(new Label("Select a column that represents the values: "), 0, 3);
+        pane.add(valueColumn, 1, 3);
         pane.add(new Label(""), 0, 4);
-        pane.add(checkBox, 1, 5);
-        pane.add(new Label("Select this checkbox if you just want to "), 1, 6);
-        pane.add(new Label("count how many rows each category has"), 1, 7);
+        pane.add(new Label(""), 0, 5);
+        pane.add(checkBox, 1, 6);
+        pane.add(new Label("Select this checkbox if you just want to "), 1, 7);
+        pane.add(new Label("count how many rows each category has"), 1, 8);
 
     }
 
@@ -80,11 +81,10 @@ public class VisualizationPage1 implements WizardPage {
     public void onEnter() {
 
     }
-    
+
     @Override
-    public void onFinish()
-    {
-        
+    public void onFinish() {
+
     }
 }
 
