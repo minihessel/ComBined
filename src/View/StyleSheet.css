@@ -46,6 +46,12 @@
 
 
 }
+#stackedBarChartButton{
+    -fx-graphic:url('/Icons/stacked_bar_chart_icon.png');
+    -fx-background-color: transparent;
+
+
+}
 
 #pieChartButton{
     -fx-graphic:url('/Icons/pie_chart_icon.png');

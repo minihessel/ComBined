@@ -231,7 +231,7 @@ public class DataIntelligence {
                 }
 
                 Kolonne items = new Kolonne("Items that should be placed together", 1, tabell, false, false);
-                Kolonne support = new Kolonne("Threshold", 2, tabell, false, true);
+                Kolonne support = new Kolonne("Threshold", 2, tabell, true, false);
 
                 for (Itemset itemset : level) {
 
@@ -253,9 +253,10 @@ public class DataIntelligence {
 
                     }
 
-                    items.addField(itemSet);
-                    support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound);
                     Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
+                    int supportNormalized = (int) Math.round(soldTogether);
+                    items.addField(itemSet);
+                    support.addField("" + supportNormalized);
                     if (itemset.size() > 1) {
                         //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
                         tabell.rowMessages.add(String.format("We recommend not placing these items together because out of your %d transactions, this combination of items are only sold together %.0f times.", numberOfTransactionsFound, soldTogether));
@@ -295,7 +296,7 @@ public class DataIntelligence {
                 }
 
                 Kolonne items = new Kolonne("Items that should be placed together", 1, tabell, false, false);
-                Kolonne support = new Kolonne("Threshold", 2, tabell, false, true);
+                Kolonne support = new Kolonne("Threshold", 2, tabell, true, false);
 
                 for (Itemset itemset : level) {
 
@@ -317,9 +318,10 @@ public class DataIntelligence {
 
                     }
 
-                    items.addField(itemSet);
-                    support.addField("" + (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound);
                     Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
+                    int supportNormalized = (int) Math.round(soldTogether);
+                    items.addField(itemSet);
+                    support.addField("" + supportNormalized);
                     if (itemset.size() > 1) {
                         //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
                         tabell.rowMessages.add(String.format("We recommend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", numberOfTransactionsFound, soldTogether));

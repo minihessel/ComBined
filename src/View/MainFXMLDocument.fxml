@@ -144,16 +144,16 @@
                                                         <Tooltip text="Click here to make a bar chart" />
                                                     </tooltip>
                                                 </Button>
+                                    <Button id="stackedBarChartButton" fx:id="stackedBarChartButton" onAction="#stackedBarChartButton">
+                                       <tooltip>
+                                          <Tooltip text="Click here to make a stacked bar chart" />
+                                       </tooltip>
+                                    </Button>
                                                 <Button id="lineChartButton" fx:id="lineChartButton" onAction="#lineChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a line chart" />
                                                     </tooltip>
                                                 </Button>
-                                    <Button id="stackedBarChartButton" fx:id="stackedBarChartButton" onAction="#stackedBarChartButton">
-                                       <tooltip>
-                                          <Tooltip text="Click here to make a bar chart" />
-                                       </tooltip>
-                                    </Button>
                                                 <Button id="scatterChartButton" fx:id="scatterChartButton" onAction="#scatterChartButton">
                                                     <tooltip>
                                                         <Tooltip text="Click here to make a scatter chart" />
@@ -209,7 +209,7 @@
                         </SplitPane>
                             </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="anchorPaneInsight" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="anchorPaneInsight" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <SplitPane fx:id="splitPaneTables1" dividerPositions="0.061, 0.95" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="871.0" prefWidth="1221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <items>

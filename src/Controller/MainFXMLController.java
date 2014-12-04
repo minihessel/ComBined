@@ -657,7 +657,7 @@ public class MainFXMLController implements Initializable {
 
                 Table tabellen = dataInsight.getInsight(dataInsight.result);
                 tabellen.setDataInsight(dataInsight);
-                createTabPaneWithDataInsight(tabellen);
+                createTabPaneWithDataInsight(tabellen, whichTypeOfInsight);
 
             }
 
@@ -737,7 +737,7 @@ public class MainFXMLController implements Initializable {
         }
     }
 
-    public void createTabPaneWithDataInsight(Table tabellen) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+    public void createTabPaneWithDataInsight(Table tabellen, String whichInsightType) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
 
         VBox vBox = new VBox();
         TableView tableViewet = new TableView();
@@ -756,7 +756,7 @@ public class MainFXMLController implements Initializable {
 
         vBox.setId(
                 "" + tabPaneCounter);
-        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText()), tableViewet, tabPaneInsightNormal);
+        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText() + " - " + whichInsightType), tableViewet, tabPaneInsightNormal);
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
             @Override
             public void handle(javafx.event.Event e) {
