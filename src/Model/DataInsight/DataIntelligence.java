@@ -105,7 +105,7 @@ public class DataIntelligence {
         //kjører FPGrowth algoritmen for å finne itemsets i transdataen
         //  result = fpGrowth.runAlgorithm(transdata, null, minsup);
         //result = fpGrowth.runAlgorithm(transdata, 0.01);
-        result = aprioriInverse.runAlgorithm(transdata, 0.00002666, 0.0002666);
+        result = aprioriInverse.runAlgorithm(transdata, 0.0001, 0.0002);
         numberOfTransactionsFound = aprioriInverse.getDatabaseSize();
         stats = aprioriInverse.getStats();
 
@@ -258,7 +258,7 @@ public class DataIntelligence {
                     Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
                     if (itemset.size() > 1) {
                         //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
-                        tabell.rowMessages.add(String.format("We reccomend not placing these items together because out of your %d transactions, this combination of items are only sold together %.0f times.", numberOfTransactionsFound, soldTogether));
+                        tabell.rowMessages.add(String.format("We recommend not placing these items together because out of your %d transactions, this combination of items are only sold together %.0f times.", numberOfTransactionsFound, soldTogether));
                     } else {
 
                         tabell.rowMessages.add(String.format("This item is not popular,  because we found that out of your %d transactions, this item is only sold %.0f times.", numberOfTransactionsFound, soldTogether));
@@ -322,7 +322,7 @@ public class DataIntelligence {
                     Double soldTogether = (Double.parseDouble(itemset.getRelativeSupportAsString(numberOfTransactionsFound)) / 100) * numberOfTransactionsFound;
                     if (itemset.size() > 1) {
                         //tabell.rowMessages.add("The reason is because this is sold together " + soldTogether + " times out of all the " + fpGrowth.getDatabaseSize() + " transactions");
-                        tabell.rowMessages.add(String.format("We reccomend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", numberOfTransactionsFound, soldTogether));
+                        tabell.rowMessages.add(String.format("We recommend placing these items together because out of your %d transactions, this combination of items are sold together %.0f times.", numberOfTransactionsFound, soldTogether));
                     } else {
 
                         tabell.rowMessages.add(String.format("This item is popular because we found that out of your %d transactions, this item is sold %.0f times.", numberOfTransactionsFound, soldTogether));
