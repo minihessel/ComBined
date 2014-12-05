@@ -13,6 +13,7 @@ import Model.MyTableColumn;
 import Model.Table;
 import View.ChartToPng;
 import View.SideBar;
+import View.Wizard.CombineColumnsWizard.CombineColumnsWizardPage1;
 import View.Wizard.InsightWizard.InsightSummaryWizard.InsightSummaryWizardPage1;
 import View.Wizard.InsightWizard.InsightWizardPage1;
 import View.Wizard.SQLConnectWizard.SQlConnectPage3;
@@ -33,9 +34,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -62,13 +60,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -599,7 +594,7 @@ public class MainFXMLController implements Initializable {
 
             MyWizard wizard = new MyWizard(visualizationPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
-            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 700, 500);
 
             if (finished) {
 
@@ -623,7 +618,7 @@ public class MainFXMLController implements Initializable {
         Button button = (Button) event.getSource();
         MyWizard wizard = new MyWizard(sQlConnectPage1, SQLConnectPage2, SQLConnectPage3);
         wizard.blurMainWindow(button.getScene().getRoot());
-        Boolean finished = wizard.createDialog(button.getScene().getWindow());
+        Boolean finished = wizard.createDialog(button.getScene().getWindow(), 700, 500);
 
         if (finished) {
             String tableSelected = SQLConnectPage2.comboBox.getSelectionModel().getSelectedItem().toString();
@@ -645,7 +640,7 @@ public class MainFXMLController implements Initializable {
             //  openDialogWithSQLConnectionInfo();
             MyWizard wizard = new MyWizard(insightWizardPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
-            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 700, 500);
 
             if (finished) {
                 int transactionIDcolumn = insightWizardPage1.transactionIDcolumn.getSelectionModel().getSelectedIndex();
@@ -682,7 +677,7 @@ public class MainFXMLController implements Initializable {
 
             MyWizard wizard = new MyWizard(insightPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
-            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow());
+            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 500, 700);
             if (finished) {
 
                 TabPane summaryTabPane = new TabPane();
@@ -875,32 +870,78 @@ public class MainFXMLController implements Initializable {
     }
 
     private void openCombineColumnWizard() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
-        Parent thisRoot = fxmlLoader.load();
-        CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
 
-        Stage stagen = new Stage();
+        CombineColumnsWizardPage1 combineColumnsWizardPage1 = new CombineColumnsWizardPage1(tablesList);
+        //  openDialogWithSQLConnectionInfo();
 
-        Effect previousEffect = pieChart.getScene().getRoot().getEffect();
-        final BoxBlur blur = new BoxBlur(0, 0, 5);
-        blur.setInput(previousEffect);
-        pieChart.getScene().getRoot().setEffect(blur);
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500),
-                new KeyValue(blur.widthProperty(), 10),
-                new KeyValue(blur.heightProperty(), 10)
-        ));
-        timeline.play();
+        MyWizard wizard = new MyWizard(combineColumnsWizardPage1);
+        wizard.blurMainWindow(pieChart.getScene().getRoot());
+        Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 1200, 800);
 
-        pieChart.getScene().getWindow().setOnHidden(t -> pieChart.getScene().getRoot().setEffect(previousEffect));
+        if (finished) {
 
-        ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList, anchorPaneTables);
-        c.myTabPane = tabPane;
+            if (!combineColumnsWizardPage1.combinedTable.listofColumns.isEmpty()) {
 
-        stagen.setOpacity(1);
-        stagen.setScene(new Scene(thisRoot));
-        stagen.show();
+                TableView tableViewCombined = new TableView();
+                VBox tabPaneVBox = new VBox();
+                tableViewCombined = combineColumnsWizardPage1.combinedTable.fillTableView(tableViewCombined, combineColumnsWizardPage1.combinedTable);
+                CustomTab tab = new CustomTab(combineColumnsWizardPage1.combinedTable, "combined table", tableViewCombined, anchorPaneTables);
+                tab.setOnClosed(new EventHandler<javafx.event.Event>() {
+                    @Override
+                    public void handle(javafx.event.Event e) {
+                        tablesList.remove(combineColumnsWizardPage1.combinedTable);
+                        tabPane.getTabs().remove(tab);
+                    }
+                });
+                combineColumnsWizardPage1.combinedTable.numberofRows = combineColumnsWizardPage1.combinedTable.listofColumns.get(0).allFields().size();
+                Label lbl = new Label("Number of rows : " + combineColumnsWizardPage1.combinedTable.numberofRows);
+                AnchorPane anchorPane = new AnchorPane(lbl);
 
+                anchorPane.setRightAnchor(lbl,
+                        5.0);
+                //legger til tableviewet i tabben
+                tabPaneVBox.getChildren()
+                        .addAll(tableViewCombined, anchorPane);
+                tab.setContent(tabPaneVBox);
+                tablesList.add(combineColumnsWizardPage1.combinedTable);
+                tabPane.getTabs().add(tab);
+                tabPane.getSelectionModel().select(tab);
+                // myTabPane.getSelectionModel().selectLast();
+                tab.setId("" + tabPane.getTabs().size() + 1);
+
+            } else {
+                ErrorDialog("No columns created", "There are no columns created, can not continue. Please create atleast one combined column");
+            }
+
+        }
+
+        /*
+         FXMLLoader fxmlLoader = new FXMLLoader();
+         fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
+         Parent thisRoot = fxmlLoader.load();
+         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
+
+         Stage stagen = new Stage();
+
+         Effect previousEffect = pieChart.getScene().getRoot().getEffect();
+         final BoxBlur blur = new BoxBlur(0, 0, 5);
+         blur.setInput(previousEffect);
+         pieChart.getScene().getRoot().setEffect(blur);
+         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500),
+         new KeyValue(blur.widthProperty(), 10),
+         new KeyValue(blur.heightProperty(), 10)
+         ));
+         timeline.play();
+
+         pieChart.getScene().getWindow().setOnHidden(t -> pieChart.getScene().getRoot().setEffect(previousEffect));
+
+         ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList, anchorPaneTables);
+         c.myTabPane = tabPane;
+
+         stagen.setOpacity(1);
+         stagen.setScene(new Scene(thisRoot));
+         stagen.show();
+         */
     }
 
 }

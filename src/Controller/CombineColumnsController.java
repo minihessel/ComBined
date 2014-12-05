@@ -232,7 +232,6 @@ public class CombineColumnsController implements Initializable {
 
     public void blurMainWindow(Parent rootPane, Stage s) {
 
-      
     }
 
 }

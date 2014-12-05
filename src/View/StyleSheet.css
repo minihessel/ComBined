@@ -33,6 +33,10 @@
 
 }
 
+.split-pane:horizontal > .split-pane-divider {
+
+    -fx-background-color: transparent, derive(#1d1d1d,20%);
+}
 
 
 #exportToPNGbutton{

@@ -49,7 +49,7 @@ public class MyWizard {
 
     }
 
-    public Boolean createDialog(Window owner) {
+    public Boolean createDialog(Window owner, int xSize, int ySize) {
 
         stage.initOwner(owner);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -63,7 +63,7 @@ public class MyWizard {
         header.setText(pages[currentPage].getHeader());
         header.setStyle("-fx-font-size:20px;");
         header.setAlignment(Pos.CENTER);
-        pagePane.setMaxSize(700, 500);
+        pagePane.setMaxSize(xSize, ySize);
         FlowPane buttonPane = new FlowPane(nextButton, previousButton, cancelButton);
         FlowPane headerPane = new FlowPane(header);
         buttonPane.setAlignment(Pos.BOTTOM_RIGHT);
@@ -79,7 +79,7 @@ public class MyWizard {
         dialogRoot.setTop(headerPane);
         dialogRoot.setStyle("-fx-background-color: derive(lightgrey, 90%) ; -fx-border-color: black;"
                 + "-fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-width: 3px;-fx-font-family:Menlo;");
-        final Scene scene = new Scene(dialogRoot, 700, 500,
+        final Scene scene = new Scene(dialogRoot, xSize, ySize,
                 Color.TRANSPARENT);
         enableDragging(scene);
         stage.setScene(scene);
