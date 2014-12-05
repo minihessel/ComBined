@@ -5,7 +5,7 @@
             <url>src/Controller/MainFXMLController.java</url>
             <bookmark id="1">
                 <name/>
-                <line>151</line>
+                <line>152</line>
                 <key/>
             </bookmark>
         </file>
@@ -13,10 +13,23 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Testing">
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AlgoFPGrowth.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage3.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/InsightWizard/InsightSummaryWizard/InsightSummaryWizardPage1.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/QueryBuilder.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumnsController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/ErrorDialog.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/VisualizationWizard/VisualizationPage1.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/WarningDialog.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AprioriRare.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AlgoAprioriInverse.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/SQL_manager.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Visualize.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/DataIntelligence.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/CustomTab.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage11.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/SQLConnectWizard/SQlConnectPage1.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/InsightWizard/InsightWizardPage1.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/Table.java</file>
         </group>

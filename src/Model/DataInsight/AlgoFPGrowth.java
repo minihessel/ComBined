@@ -88,18 +88,30 @@ public class AlgoFPGrowth {
         //initialize tool to record memory usage
         memoryLogger = new MemoryLogger();
         memoryLogger.checkMemory();
+        
+        //først skannes hele databasen (transdata) for å sjekke frequency av hvert produkt
 
         // (1) PREPROCESSING: Initial database scan to determine the frequency of each item
         // The frequency is stored in a map:
         //    key: item   value: support
         final Map<Integer, Integer> mapSupport = new HashMap<Integer, Integer>();
-
         scanDatabaseToDetermineFrequencyOfSingleItems(map, mapSupport);
+        //^
+        //I
+        //I
+        //I
+        //slutt på steg 1, vi vet nå frequency of single items
 
         // convert the minimum support as percentage to a
         // relative minimum support
+        
+        //ta i mot minimums grensen(treshhold) som brukeren har tastet inn og jgør den om til "relative minimum support/
         this.relativeMinsupp = (int) Math.ceil(minsupp * transactionCount);
+        
 
+        //skann databasen en gang til for å lage et FP tre. Før vi legger til dataene i 
+        //fp treet, sorterer vi produktene i "descending order". Hvis produktene er solgt MINDRE enn treshhold, gidder vi ikke legge de til
+        
         // (2) Scan the database again to build the initial FP-Tree
         // Before inserting a transaction in the FPTree, we sort the items
         // by descending order of support.  We ignore items that

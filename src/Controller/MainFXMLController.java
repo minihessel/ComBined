@@ -33,6 +33,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -64,6 +67,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -872,13 +877,28 @@ public class MainFXMLController implements Initializable {
     private void openCombineColumnWizard() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/View/CombineColumns.fxml"));
-        Parent root = fxmlLoader.load();
+        Parent thisRoot = fxmlLoader.load();
         CombineColumnsController c = (CombineColumnsController) fxmlLoader.getController();
+
         Stage stagen = new Stage();
+
+        Effect previousEffect = pieChart.getScene().getRoot().getEffect();
+        final BoxBlur blur = new BoxBlur(0, 0, 5);
+        blur.setInput(previousEffect);
+        pieChart.getScene().getRoot().setEffect(blur);
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500),
+                new KeyValue(blur.widthProperty(), 10),
+                new KeyValue(blur.heightProperty(), 10)
+        ));
+        timeline.play();
+
+        pieChart.getScene().getWindow().setOnHidden(t -> pieChart.getScene().getRoot().setEffect(previousEffect));
+
         ((CombineColumnsController) fxmlLoader.getController()).setContext(tablesList, anchorPaneTables);
         c.myTabPane = tabPane;
+
         stagen.setOpacity(1);
-        stagen.setScene(new Scene(root));
+        stagen.setScene(new Scene(thisRoot));
         stagen.show();
 
     }
