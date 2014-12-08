@@ -5,11 +5,13 @@
  */
 package View.Wizard;
 
+import java.util.List;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
 import org.controlsfx.control.ListSelectionView;
@@ -19,6 +21,17 @@ import org.controlsfx.control.ListSelectionView;
  * @author Eskil Hesselroth
  */
 public class ValidatorRegler {
+
+    public static boolean ikkeTom(ListView listView) {
+
+        if (listView.getItems().size() >= 2) {
+            return true;
+        } else {
+            blink(listView);
+            return false;
+        }
+
+    }
 
     public static boolean ikkeTom(TextField txtField) {
 
@@ -44,7 +57,7 @@ public class ValidatorRegler {
 
     public static boolean ikkeTom(ListSelectionView listSelectView) {
 
-        if (listSelectView.getTargetItems().size() >0) {
+        if (listSelectView.getTargetItems().size() > 0) {
             return true;
         } else {
             blink(listSelectView);
