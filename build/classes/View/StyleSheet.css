@@ -33,9 +33,6 @@
 
 }
 
-.split-pane {
-    -fx-padding: 1 0 0 0;
-}
 
 #exportToPNGbutton{
     -fx-graphic:url('/Icons/exportToPNG.png');

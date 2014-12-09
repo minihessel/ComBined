@@ -13,12 +13,22 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Testing">
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/StyleSheet.css</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/CombineColumnsWizard/CombineColumnsWizardPage1.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/CombineColumnsController.java</file>
-            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/MyWizard.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AlgoFPGrowth.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AssocRules.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/VisualizationWizard/VisualizationPage1.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Controller/MainFXMLController.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AssocRule.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/Itemset.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/Rule.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/CombineColumnsWizard/CombineColumnsWizardPage1.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/MyWizard.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/DataIntelligence.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AbstractOrderedItemset.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AlgoAgrawalFaster94.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/CustomTab.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/Itemsets.java</file>
             <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/View/Wizard/ValidatorRegler.java</file>
+            <file>file:/Users/Eskil/NetBeansProjects/Einblick_App/src/Model/DataInsight/AbstractItemset.java</file>
         </group>
     </open-files>
 </project-private>

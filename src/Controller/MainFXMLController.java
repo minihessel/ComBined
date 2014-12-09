@@ -668,6 +668,7 @@ public class MainFXMLController implements Initializable {
                 tabPaneInsightNormal.getTabs().add(combinedTab);
                 tabPaneInsightNormal.setVisible(true);
                 tabPaneInsightSummary.setVisible(false);
+                tabPaneInsightNormal.getSelectionModel().select(combinedTab);
 
             }
 
@@ -687,7 +688,7 @@ public class MainFXMLController implements Initializable {
 
             MyWizard wizard = new MyWizard(insightPage1);
             wizard.blurMainWindow(pieChart.getScene().getRoot());
-            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 500, 700);
+            Boolean finished = wizard.createDialog(pieChart.getScene().getWindow(), 700, 500);
             if (finished) {
 
                 TabPane summaryTabPane = new TabPane();
@@ -695,16 +696,16 @@ public class MainFXMLController implements Initializable {
                 CustomTab summaryTab = new CustomTab("Summary for " + tabPaneInsightNormal.getSelectionModel().getSelectedItem().getText());
                 tabPaneInsightSummary.getTabs().add(summaryTab);
                 tabPaneInsightSummary.getSelectionModel().select(summaryTab);
-                List<Table> tables = dataInsightTable.getDataInsight().createSummary2(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
+                List<Table> tables = dataInsightTable.getDataInsight().createUnderstandableSummary(insightPage1.tableColumn.getSelectionModel().getSelectedItem(), insightPage1.itemIDColumn.getSelectionModel().getSelectedIndex(), insightPage1.itemDescriptionColumn.getSelectionModel().getSelectedIndex());
 
                 for (Table table : tables) {
 
                     TableView tableView = new TableView();
-                    tableView.setPrefHeight(750);
+
                     CustomTab tab = new CustomTab(table, table.NAVN, tableView, tabPaneInsightSummary, tablesList);
 
                     tableView = table.fillTableView(tableView, table);
-                    tableView.setMinHeight(tabPaneInsightSummary.getHeight() - 100);
+                    tableView.setMinHeight(760);
                     tab.setContent(tableView);
                     summaryTabPane.getTabs().add(tab);
 
@@ -762,9 +763,8 @@ public class MainFXMLController implements Initializable {
                 "" + tabPaneCounter);
         CustomTab tab = new CustomTab(tabellen, tabName, tableViewet, tabPaneInsightNormal, tablesList);
 
-        tableViewet.setMinHeight(tabPaneInsightNormal.getHeight() - 32);
         tab.setContent(vBox);
-
+        tableViewet.setMinHeight(760);
         return tab;
     }
 
