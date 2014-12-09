@@ -8,7 +8,6 @@ package Model.DataInsight;
 import Model.Item;
 import Model.Kolonne;
 import Model.Table;
-import com.sun.jnlp.ApiDialog;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,12 +33,17 @@ public class DataIntelligence {
     Integer createdProductNumber = 1;
     AlgoFPGrowth fpGrowth = new AlgoFPGrowth();
     AlgoAprioriInverse aprioriInverse = new AlgoAprioriInverse();
+    AlgoAgrawalFaster94 algoAgrawal = new AlgoAgrawalFaster94();
+    AssocRules rules;
     public Itemsets result;
     PopOver popover = new PopOver();
     public int numberOfTransactionsFound;
+
     String stats;
     Boolean rareItemSets = false;
     Boolean frequentItemSets = false;
+    private String itemSetsStats;
+    private String assocationRulesStats;
 
     public DataIntelligence(String rareOrFrequent) {
 
@@ -129,15 +133,18 @@ public class DataIntelligence {
         //result = fpGrowth.runAlgorithm(transdata, 0.01);
         result = fpGrowth.runAlgorithm(transdata, 0.008);
         numberOfTransactionsFound = fpGrowth.getDatabaseSize();
-        stats = fpGrowth.getStats();
+        itemSetsStats = fpGrowth.getStats();
+        rules = algoAgrawal.runAlgorithm(result,fpGrowth.getDatabaseSize(), 0.001);
+        assocationRulesStats = algoAgrawal.getStats();
+        //  rules.printRules(fpGrowth.getDatabaseSize());
 
     }
 
     //Metode for å regne ut itemsets(hvilke produkter som ofte blir solgt sammen)
-    //Dette er en del av data mining og pattern recognition 
-    //metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
-    // Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
-    public Table getInsight(Itemsets result) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
+//Dette er en del av data mining og pattern recognition 
+//metoden benytter seg av FPGrowth, som ligger i et open source library utviklet av Philippe Fournier-Viger(http://www.philippe-fournier-viger.com/spmf/)
+// Jeg har tilpasset FPGrowth og bibliteket masse og optimalisert det en del for at det skal fungere med min kode.  
+    public Table getItemSets(Itemsets result) throws FileNotFoundException, UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
         //Først henter vi ut hvilken tabell som nå er valgt i tableslisten
         //deretter looper vi igjennom dataen og legger den til i transdata mappet.
 
@@ -158,7 +165,7 @@ public class DataIntelligence {
         for (List<Itemset> level : result.getLevels()) {
 
             for (Itemset itemset : level) {
-                System.out.println(itemset.getItems());
+
                 Arrays.sort(itemset.getItems());
                 int[] intArrayOfItemSets = itemset.getItems();
                 String itemSet = "";
@@ -192,6 +199,57 @@ public class DataIntelligence {
         table.listofColumns.add(Level);
         table.listofColumns.add(supportKolonne);
         table.listofColumns.add(supporNormalizedColumn);
+        table.numberofRows = numberOfTransactionsFound;
+
+        return table;
+
+    }
+
+    public Table getAssociationRules() {
+        Table table = new Table("Association rules");
+        //Lager tre kolonner, en for itemset, en for support og en for level. 
+        // Itemset er settet av produktene
+        // Support er hvor stor andel av alle transaksjonene som har dette itemsettet
+        // Level er hvor mange produkter det er i itemsettet
+        Kolonne ruleKolonne = new Kolonne("Assocation rule", 0, table, false, false);
+        Kolonne supportKolonne = new Kolonne("Support ", 1, table, false, true);
+        Kolonne confidenceKolonne = new Kolonne("Confidence", 2, table, false, true);
+
+        for (Rule rule : rules.getRules()) {
+            StringBuilder aRule = new StringBuilder();
+            double confidence;
+            int support;
+
+            for (int i = 0; i < rule.getItemset1().length; i++) {
+                aRule.append(invertedItemMap.get(rule.getItemset1()[i]));
+                if (i != rule.getItemset1().length) {
+                    aRule.append(" ");
+                }
+            }
+
+            aRule.append("==>");
+            for (int i = 0; i < rule.getItemset2().length; i++) {
+                aRule.append(invertedItemMap.get(rule.getItemset2()[i]));
+                if (i != rule.getItemset2().length) {
+                    aRule.append(" ");
+                }
+            }
+            support = rule.getAbsoluteSupport();
+            confidence = rule.getConfidence();
+            System.out.println(aRule.toString());
+
+            //Deretter looper vi igjennom itemsettene og legger til dataen i tabellen
+            ruleKolonne.addField(aRule.toString());
+            // print the support of this itemset
+            supportKolonne.addField("" + support);
+            confidenceKolonne.addField("" + confidence);
+        }
+
+        //legger til de nye kolonnene med all dataen i tabellen
+        table.listofColumns.add(ruleKolonne);
+
+        table.listofColumns.add(supportKolonne);
+        table.listofColumns.add(confidenceKolonne);
         table.numberofRows = numberOfTransactionsFound;
 
         return table;
@@ -340,12 +398,72 @@ public class DataIntelligence {
             levelCount++;
 
         }
+
+        tables.add(createAssociationRulesSummary());
+
         return tables;
     }
 
-    public String getStats() {
+    private Table createAssociationRulesSummary() {
+        Table table = new Table("Association rules");
+        //Lager tre kolonner, en for itemset, en for support og en for level. 
+        // Itemset er settet av produktene
+        // Support er hvor stor andel av alle transaksjonene som har dette itemsettet
+        // Level er hvor mange produkter det er i itemsettet
+        Kolonne ruleKolonne = new Kolonne("Assocation rule", 0, table, false, false);
+        Kolonne supportKolonne = new Kolonne("Treshhold", 1, table, true, false);
+        Kolonne confidenceKolonne = new Kolonne("Confidence", 2, table, true, false);
 
-        return stats;
+        for (Rule rule : rules.getRules()) {
+            StringBuilder aRule = new StringBuilder();
+            double confidence;
+            int support;
+
+            for (int i = 0; i < rule.getItemset1().length; i++) {
+                aRule.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset1()[i])).trim());
+                if (i != rule.getItemset1().length) {
+                    aRule.append(" ");
+                }
+            }
+
+            aRule.append("==>");
+            for (int i = 0; i < rule.getItemset2().length; i++) {
+                aRule.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset2()[i])).trim());
+                if (i != rule.getItemset2().length) {
+                    aRule.append(" ");
+                }
+            }
+            support = rule.getAbsoluteSupport();
+            confidence = rule.getConfidence();
+            System.out.println(aRule.toString());
+
+            //Deretter looper vi igjennom itemsettene og legger til dataen i tabellen
+            ruleKolonne.addField(aRule.toString());
+            // print the support of this itemset
+            supportKolonne.addField("" + support);
+            confidenceKolonne.addField("" + Math.round(100*confidence));
+            System.out.println(confidence);
+        }
+
+        //legger til de nye kolonnene med all dataen i tabellen
+        table.listofColumns.add(ruleKolonne);
+
+        table.listofColumns.add(supportKolonne);
+        table.listofColumns.add(confidenceKolonne);
+        table.numberofRows = numberOfTransactionsFound;
+
+        return table;
+    }
+    
+
+    public String getItemSetsStats() {
+
+        return itemSetsStats;
+    }
+
+    public String getAssociationRulesStats() {
+
+        return assocationRulesStats;
     }
 
     //metode for å inverte ett map

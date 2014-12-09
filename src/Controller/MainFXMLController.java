@@ -655,9 +655,19 @@ public class MainFXMLController implements Initializable {
                     dataInsight.getFrequentItemSets(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem(), transactionIDcolumn, itemIDcolumn);
                 }
 
-                Table tabellen = dataInsight.getInsight(dataInsight.result);
-                tabellen.setDataInsight(dataInsight);
-                createTabPaneWithDataInsight(tabellen, whichTypeOfInsight);
+                Table itemSetsTable = dataInsight.getItemSets(dataInsight.result);
+                Table associationRulesTable = dataInsight.getAssociationRules();
+                itemSetsTable.setDataInsight(dataInsight);
+                associationRulesTable.setDataInsight(dataInsight);
+                CustomTab itemSetsTab = createaTabWithDataInsight("Item Sets", itemSetsTable, whichTypeOfInsight, dataInsight.getItemSetsStats());
+                CustomTab associationRulesTab = createaTabWithDataInsight("Association Rules", associationRulesTable, "Association Rules", dataInsight.getAssociationRulesStats());
+                CustomTab combinedTab = new CustomTab(insightWizardPage1.tableColumn.getSelectionModel().getSelectedItem() + " analysis");
+                TabPane combinedTabPane = new TabPane();
+                combinedTabPane.getTabs().addAll(itemSetsTab, associationRulesTab);
+                combinedTab.setContent(combinedTabPane);
+                tabPaneInsightNormal.getTabs().add(combinedTab);
+                tabPaneInsightNormal.setVisible(true);
+                tabPaneInsightSummary.setVisible(false);
 
             }
 
@@ -691,19 +701,13 @@ public class MainFXMLController implements Initializable {
 
                     TableView tableView = new TableView();
                     tableView.setPrefHeight(750);
-                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, tabPaneInsightSummary);
+                    CustomTab tab = new CustomTab(table, table.NAVN, tableView, tabPaneInsightSummary, tablesList);
 
                     tableView = table.fillTableView(tableView, table);
                     tableView.setMinHeight(tabPaneInsightSummary.getHeight() - 100);
                     tab.setContent(tableView);
                     summaryTabPane.getTabs().add(tab);
-                    tab.setOnClosed(new EventHandler<javafx.event.Event>() {
-                        @Override
-                        public void handle(javafx.event.Event e) {
-                            tablesList.remove(table);
-                            tabPaneInsightSummary.getTabs().remove(tab);
-                        }
-                    });
+
                     summaryTab.setContent(summaryTabPane);
                     tabPaneInsightNormal.setVisible(false);
                     tabPaneInsightSummary.setVisible(true);
@@ -737,12 +741,12 @@ public class MainFXMLController implements Initializable {
         }
     }
 
-    public void createTabPaneWithDataInsight(Table tabellen, String whichInsightType) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
+    public CustomTab createaTabWithDataInsight(String tabName, Table tabellen, String whichInsightType, String stats) throws UnsupportedEncodingException, IOException, FileNotFoundException, ClassNotFoundException, SQLException, InterruptedException, ExecutionException {
 
         VBox vBox = new VBox();
         TableView tableViewet = new TableView();
 
-        Label lbl = new Label(tabellen.getDataInsight().getStats());
+        Label lbl = new Label(stats);
         Label lbl2 = new Label("Stats:");
         lbl2.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
         SplitPane split_pane = new SplitPane();
@@ -756,20 +760,12 @@ public class MainFXMLController implements Initializable {
 
         vBox.setId(
                 "" + tabPaneCounter);
-        CustomTab tab = new CustomTab(tabellen, (tabPane.getSelectionModel().getSelectedItem().getText() + " - " + whichInsightType), tableViewet, tabPaneInsightNormal);
-        tab.setOnClosed(new EventHandler<javafx.event.Event>() {
-            @Override
-            public void handle(javafx.event.Event e) {
-                tablesList.remove(tabellen);
-                tabPaneInsightNormal.getTabs().remove(tab);
-            }
-        });
+        CustomTab tab = new CustomTab(tabellen, tabName, tableViewet, tabPaneInsightNormal, tablesList);
+
         tableViewet.setMinHeight(tabPaneInsightNormal.getHeight() - 32);
         tab.setContent(vBox);
-        tabPaneInsightNormal.getTabs().add(tab);
-        tabPaneInsightNormal.getSelectionModel().select(tab);
-        tabPaneInsightSummary.setVisible(false);
-        tabPaneInsightNormal.setVisible(true);
+
+        return tab;
     }
 
     public void createTabPaneWithTable(String sql, String tableName) throws SQLException, ClassNotFoundException, InterruptedException, ExecutionException {
@@ -785,7 +781,7 @@ public class MainFXMLController implements Initializable {
         System.out.println(sql);
         tabellen.loadData(sql, tabellen, tablesList.size() + 1);
 
-        //legger til den nye tilkoblede tabellen i listen over tilkoblede tabeller
+        //legger til den nye tilkoblede itemSetsTable i listen over tilkoblede tabeller
         tablesList.add(tabellen);
 
         TableView tableViewet = new TableView();
@@ -805,7 +801,7 @@ public class MainFXMLController implements Initializable {
                 "" + tabPaneCounter);
 
         CustomTab tab = new CustomTab(tabellen, (tableName
-                + "@" + sql_manager.instanceName), tableViewet, anchorPaneTables);
+                + "@" + sql_manager.instanceName), tableViewet, anchorPaneTables, tablesList);
 
         tab.setOnClosed(new EventHandler<javafx.event.Event>() {
             @Override
@@ -885,7 +881,7 @@ public class MainFXMLController implements Initializable {
                 TableView tableViewCombined = new TableView();
                 VBox tabPaneVBox = new VBox();
                 tableViewCombined = combineColumnsWizardPage1.combinedTable.fillTableView(tableViewCombined, combineColumnsWizardPage1.combinedTable);
-                CustomTab tab = new CustomTab(combineColumnsWizardPage1.combinedTable, "combined table", tableViewCombined, anchorPaneTables);
+                CustomTab tab = new CustomTab(combineColumnsWizardPage1.combinedTable, "combined table", tableViewCombined, anchorPaneTables, tablesList);
                 tab.setOnClosed(new EventHandler<javafx.event.Event>() {
                     @Override
                     public void handle(javafx.event.Event e) {
