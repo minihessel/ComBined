@@ -230,16 +230,16 @@ public class DataIntelligence {
 
             for (int i = 0; i < rule.getItemset1().length; i++) {
                 aRule.append(invertedItemMap.get(rule.getItemset1()[i]));
-                if (i != rule.getItemset1().length) {
-                    aRule.append(" ");
+                if (i != rule.getItemset1().length - 1 && rule.getItemset1().length > 0) {
+                    aRule.append(" & ");
                 }
             }
 
-            aRule.append("==>");
+            aRule.append(" ==> ");
             for (int i = 0; i < rule.getItemset2().length; i++) {
                 aRule.append(invertedItemMap.get(rule.getItemset2()[i]));
-                if (i != rule.getItemset2().length) {
-                    aRule.append(" ");
+                if (i != rule.getItemset2().length - 1 && rule.getItemset2().length > 0) {
+                    aRule.append(" & ");
                 }
             }
             support = rule.getAbsoluteSupport();
@@ -441,18 +441,20 @@ public class DataIntelligence {
             for (int i = 0; i < rule.getItemset1().length; i++) {
                 aRule.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset1()[i])).trim());
                 messagePart1.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset1()[i])).trim());
-                if (i != rule.getItemset1().length-1 && rule.getItemset1().length > 1) {
-                    aRule.append(" ");
+                if (i != rule.getItemset1().length - 1 && rule.getItemset1().length > 0) {
+
+                    aRule.append(" & ");
                     messagePart1.append(" & ");
                 }
             }
 
-            aRule.append("==>");
+            aRule.append(" ==> ");
             for (int i = 0; i < rule.getItemset2().length; i++) {
                 aRule.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset2()[i])).trim());
                 messagePart2.append(itemIDandDescriptionMap.get(invertedItemMap.get(rule.getItemset2()[i])).trim());
-                if (i != rule.getItemset2().length-1 && rule.getItemset2().length > 1) {
-                    aRule.append(" ");
+                if (i != rule.getItemset2().length - 1 && rule.getItemset2().length > 0) {
+
+                    aRule.append(" & ");
                     messagePart2.append(" & ");
                 }
             }
